@@ -1,0 +1,3 @@
+npm run dev
+
+se o nginx não funcionar, crie dentro da pasta nginx a pasta temp
