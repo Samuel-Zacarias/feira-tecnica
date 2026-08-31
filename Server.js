@@ -10,36 +10,26 @@ const logger = require("./src/api/utils/Logger"); // <-- Logger profissional
 const JwtMiddleware = require("./src/api/middleware/JwtMiddleware");
 
 // Roteadores
-const CargoRouter = require("./src/api/routes/CargoRouter");
-const FuncionarioRouter = require("./src/api/routes/FuncionarioRouter");
 const ProfessorRouter = require("./src/api/routes/ProfessorRouter");
 const ProjetoRouter = require("./src/api/routes/ProjetoRouter");
 const AvaliacaoRouter = require("./src/api/routes/AvaliacaoRouter");
 
 // Middlewares específicos das entidades
-const CargoMiddleware = require("./src/api/middleware/CargoMiddleware");
-const FuncionarioMiddleware = require("./src/api/middleware/FuncionarioMiddleware");
 const ProfessorMiddleware = require("./src/api/middleware/ProfessorMiddleware");
 const ProjetoMiddleware = require("./src/api/middleware/ProjetoMiddleware");
 const AvaliacaoMiddleware = require("./src/api/middleware/AvaliacaoMiddleware");
 
 // Controllers
-const CargoController = require("./src/api/controllers/CargoController");
-const FuncionarioController = require("./src/api/controllers/FuncionarioController");
 const ProfessorController = require("./src/api/controllers/ProfessorController");
 const ProjetoController = require("./src/api/controllers/ProjetoController");
 const AvaliacaoController = require("./src/api/controllers/AvaliacaoController");
 
 // Services
-const CargoService = require("./src/api/services/CargoService");
-const FuncionarioService = require("./src/api/services/FuncionarioService");
 const ProfessorService = require("./src/api/services/ProfessorService");
 const ProjetoService = require("./src/api/services/ProjetoService");
 const AvaliacaoService = require("./src/api/services/AvaliacaoService");
 
 // DAOs MongoDB
-const CargoDAOMongo = require("./src/api/dao/CargoDAOMongo");
-const FuncionarioDAOMongo = require("./src/api/dao/FuncionarioDAOMongo");
 const ProfessorDAOMongo = require("./src/api/dao/ProfessorDAOMongo");
 const ProjetoDAOMongo = require("./src/api/dao/ProjetoDAOMongo");
 const AvaliacaoDAOMongo = require("./src/api/dao/AvaliacaoDAOMongo");
@@ -58,18 +48,6 @@ module.exports = class Server {
     #database;
 
     #jwtMiddleware;
-
-    #cargoRouter;
-    #cargoMiddleware;
-    #cargoController;
-    #cargoService;
-    #cargoDAO;
-
-    #funcionarioRouter;
-    #funcionarioMiddleware;
-    #funcionarioController;
-    #funcionarioService;
-    #funcionarioDAO;
 
     #ProfessorRouter;
     #ProfessorMiddleware;
@@ -134,8 +112,6 @@ module.exports = class Server {
 
         // Monta dependências e rotas
         this.beforeRouting();
-        this.setupCargo();
-        this.setupFuncionario();
         this.setupProfessor();
         this.setupProjeto();
         this.setupAvaliacao();
@@ -151,106 +127,7 @@ module.exports = class Server {
         const method = 'Server.#seedDatabase';
         logger.debug(`🔄 ${method} - Verificando necessidade de seed`);
 
-        try {
-            const cargosCollection = await this.#database.getCollection('cargos');
-            const funcionariosCollection = await this.#database.getCollection('funcionarios');
-
-            // Verifica se já existem cargos
-            const cargoCount = await cargosCollection.countDocuments();
-            if (cargoCount === 0) {
-                logger.info(`🌱 ${method} - Inserindo cargos iniciais...`);
-                const cargos = [
-                    { nomeCargo: 'Administrador' },
-                    { nomeCargo: 'Técnico em Informática Jr' },
-                    { nomeCargo: 'Técnico em Informática Pleno' },
-                    { nomeCargo: 'Analista de Sistemas Jr' },
-                ];
-                const inserted = await cargosCollection.insertMany(cargos);
-                const cargoIds = Object.values(inserted.insertedIds);
-                logger.debug(`✅ ${method} - ${cargos.length} cargos inseridos`);
-
-                // Verifica se já existem funcionários
-                const funcCount = await funcionariosCollection.countDocuments();
-                if (funcCount === 0) {
-                    logger.info(`🌱 ${method} - Inserindo funcionários iniciais...`);
-                    const senhaHash = await bcrypt.hash('@Helio123456', 12);
-                    const funcionarios = [
-                        { nomeFuncionario: 'adm', email: 'adm@adm.com', senha: senhaHash, recebeValeTransporte: 1, cargoId: cargoIds[0] },
-                        { nomeFuncionario: 'adm1', email: 'adm1@adm.com', senha: senhaHash, recebeValeTransporte: 1, cargoId: cargoIds[0] },
-                        { nomeFuncionario: 'Hélio', email: 'helioesperidiao@gmail.com', senha: senhaHash, recebeValeTransporte: 1, cargoId: cargoIds[0] },
-                    ];
-                    await funcionariosCollection.insertMany(funcionarios);
-                    logger.info(`✅ ${method} - Seed concluída com sucesso!`);
-                } else {
-                    logger.info(`✅ ${method} - Funcionários já existentes, seed parcial.`);
-                }
-            } else {
-                logger.info(`✅ ${method} - Cargos já existentes, seed não executada.`);
-            }
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro durante seed`, {
-                error: error.message,
-                stack: error.stack,
-            });
-            throw error;
-        }
-    };
-
-    setupCargo = () => {
-        const method = 'Server.setupCargo';
-        logger.info(`⬆️ ${method} - Configurando módulo Cargo`);
-
-        try {
-            this.#cargoMiddleware = new CargoMiddleware();
-            this.#cargoDAO = new CargoDAOMongo(this.#database);
-            this.#cargoService = new CargoService(this.#cargoDAO);
-            this.#cargoController = new CargoController(this.#cargoService);
-            this.#cargoRouter = new CargoRouter(
-                this.#router,
-                this.#jwtMiddleware,
-                this.#cargoMiddleware,
-                this.#cargoController
-            );
-            this.#app.use("/api/v1/cargos", this.#cargoRouter.createRoutes());
-            logger.info(`✅ ${method} - Rotas de Cargo configuradas com sucesso`);
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao configurar Cargo`, {
-                error: error.message,
-                stack: error.stack,
-            });
-            throw error;
-        }
-    };
-
-    setupFuncionario = () => {
-        const method = 'Server.setupFuncionario';
-        logger.info(`⬆️ ${method} - Configurando módulo Funcionario`);
-
-        try {
-            this.#funcionarioMiddleware = new FuncionarioMiddleware();
-            this.#funcionarioDAO = new FuncionarioDAOMongo(this.#database);
-
-            if (!this.#cargoDAO) {
-                logger.warn(`⚠️ ${method} - CargoDAO não encontrado, criando nova instância`);
-                this.#cargoDAO = new CargoDAOMongo(this.#database);
-            }
-
-            this.#funcionarioService = new FuncionarioService(this.#funcionarioDAO, this.#cargoDAO);
-            this.#funcionarioController = new FuncionarioController(this.#funcionarioService);
-            this.#funcionarioRouter = new FuncionarioRouter(
-                this.#jwtMiddleware,
-                this.#funcionarioMiddleware,
-                this.#funcionarioController
-            );
-            this.#app.use('/api/v1/funcionarios', this.#funcionarioRouter.createRoutes());
-            logger.info(`✅ ${method} - Rotas de Funcionario configuradas com sucesso`);
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao configurar Funcionario`, {
-                error: error.message,
-                stack: error.stack,
-            });
-            throw error;
-        }
+        // TODO: implementar lógica de seed aqui
     };
 
     setupProfessor = () => {
