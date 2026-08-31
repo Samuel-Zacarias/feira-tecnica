@@ -19,7 +19,7 @@ module.exports = class ProjetoRouter {
         const method = 'ProjetoRouter.createRoutes';
         logger.info(`⬆️ ${method} - Configurando rotas de Projeto`);
 
-        // Pública: alunos cadastram o grupo.
+        // Pública: Professores cadastram o grupo.
         this.#router.post('/',
             this.#projetoMiddleware.validateBody,
             this.#projetoController.store

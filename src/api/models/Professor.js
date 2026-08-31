@@ -1,13 +1,13 @@
-// api/models/Aluno.js
+// api/models/Professor.js
 
 /**
- * Representa a entidade Aluno do sistema.
+ * Representa a entidade Professor do sistema.
  * 
  * Objetivo:
- * - Encapsular os dados de um aluno.
+ * - Encapsular os dados de um Professor.
  * - Garantir integridade dos atributos via getters e setters.
  */
-module.exports = class Aluno {
+module.exports = class Professor {
     // Atributos privados
     #id;
     #matricula;
@@ -18,23 +18,23 @@ module.exports = class Aluno {
     #turma;
 
     constructor() {
-        console.log("⬆️  Aluno.constructor()");
+        console.log("⬆️  Professor.constructor()");
     }
 
     /**
      * Getter para id
-     * @returns {string} Identificador único do aluno
+     * @returns {string} Identificador único do Professor
      */
     get id() {
         return this.#id;
     }
 
     /**
-     * Define o ID do aluno.
+     * Define o ID do Professor.
      *
      * 🔹 Regra de domínio: deve ser uma string não vazia.
      *
-     * @param {string} value - ID do aluno.
+     * @param {string} value - ID do Professor.
      * @throws {Error} - Se o valor for vazio.
      */
     set id(value) {
@@ -46,14 +46,14 @@ module.exports = class Aluno {
 
     /**
      * Getter para matricula
-     * @returns {string} Número de matrícula do aluno
+     * @returns {string} Número de matrícula do Professor
      */
     get matricula() {
         return this.#matricula;
     }
 
     /**
-     * Define a matrícula do aluno.
+     * Define a matrícula do Professor.
      *
      * 🔹 Regra de domínio: deve ser uma string não vazia.
      *
@@ -69,18 +69,18 @@ module.exports = class Aluno {
 
     /**
      * Getter para nome
-     * @returns {string} Nome do aluno
+     * @returns {string} Nome do Professor
      */
     get nome() {
         return this.#nome;
     }
 
     /**
-     * Define o nome do aluno.
+     * Define o nome do Professor.
      *
      * 🔹 Regra de domínio: deve ser uma string com pelo menos 3 caracteres.
      *
-     * @param {string} value - Nome do aluno.
+     * @param {string} value - Nome do Professor.
      * @throws {Error} - Se não for string ou tiver menos de 3 caracteres.
      */
     set nome(value) {
@@ -92,14 +92,14 @@ module.exports = class Aluno {
 
     /**
      * Getter para nascimento
-     * @returns {Date} Data de nascimento do aluno
+     * @returns {Date} Data de nascimento do Professor
      */
     get nascimento() {
         return this.#nascimento;
     }
 
     /**
-     * Define a data de nascimento do aluno.
+     * Define a data de nascimento do Professor.
      *
      * 🔹 Regra de domínio: deve ser uma data válida (não futura).
      *
@@ -127,14 +127,14 @@ module.exports = class Aluno {
 
     /**
      * Getter para cpf
-     * @returns {string} CPF do aluno (apenas números)
+     * @returns {string} CPF do Professor (apenas números)
      */
     get cpf() {
         return this.#cpf;
     }
 
     /**
-     * Define o CPF do aluno.
+     * Define o CPF do Professor.
      *
      * 🔹 Regra de domínio: deve conter 11 dígitos e ser válido (algoritmo de validação).
      *
@@ -164,7 +164,7 @@ module.exports = class Aluno {
     }
 
     /**
-     * Define o curso do aluno.
+     * Define o curso do Professor.
      *
      * 🔹 Regra de domínio: deve ser uma string com pelo menos 2 caracteres.
      *
@@ -187,7 +187,7 @@ module.exports = class Aluno {
     }
 
     /**
-     * Define a turma do aluno.
+     * Define a turma do Professor.
      *
      * 🔹 Regra de domínio: deve ser uma string não vazia.
      *

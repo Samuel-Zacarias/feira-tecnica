@@ -1,0 +1,43 @@
+# ===== Dependências =====
+node_modules/
+vendor/
+venv/
+env/
+__pycache__/
+
+# ===== Build / Compilados =====
+dist/
+build/
+bin/
+obj/
+*.exe
+*.dll
+*.pyc
+
+# ===== Unity =====
+Library/
+Temp/
+Obj/
+Build/
+Logs/
+UserSettings/
+*.csproj
+*.sln
+
+# ===== Configurações e segredos =====
+.env
+appsettings.Development.json
+
+# ===== Editor / IDE =====
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ===== Sistema Operacional =====
+Thumbs.db
+.DS_Store
+
+# ===== Logs e temporários =====
+*.log
+*.tmp

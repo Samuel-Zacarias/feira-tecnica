@@ -17,12 +17,12 @@ module.exports = class ProjetoDAOMongo {
 
         try {
             const collection = await this.#database.getCollection('projetos');
-            const alunoIds = objProjetoModel.alunos.map(aluno => new ObjectId(aluno.id));
+            const ProfessorIds = objProjetoModel.Professors.map(Professor => new ObjectId(Professor.id));
             const doc = {
                 titulo: objProjetoModel.titulo,
                 descricao: objProjetoModel.descricao,
-                liderId: alunoIds[0],
-                alunoIds,
+                liderId: ProfessorIds[0],
+                ProfessorIds,
                 dataCadastro: new Date(),
             };
             const result = await collection.insertOne(doc);
@@ -87,14 +87,14 @@ module.exports = class ProjetoDAOMongo {
 
         try {
             const collection = await this.#database.getCollection('projetos');
-            const alunoIds = objProjetoModel.alunos.map(aluno => new ObjectId(aluno.id));
+            const ProfessorIds = objProjetoModel.Professors.map(Professor => new ObjectId(Professor.id));
             const filter = { _id: new ObjectId(objProjetoModel.id) };
             const update = {
                 $set: {
                     titulo: objProjetoModel.titulo,
                     descricao: objProjetoModel.descricao,
-                    liderId: alunoIds[0],
-                    alunoIds,
+                    liderId: ProfessorIds[0],
+                    ProfessorIds,
                     dataAtualizacao: new Date(),
                 },
             };
@@ -127,7 +127,7 @@ module.exports = class ProjetoDAOMongo {
 
         try {
             const collection = await this.#database.getCollection('projetos');
-            const docs = await collection.aggregate(this.#lookupAlunosPipeline()).toArray();
+            const docs = await collection.aggregate(this.#lookupProfessorsPipeline()).toArray();
             const projetos = docs.map(doc => this.#documentToObject(doc));
 
             logger.info(`✅ ${method} - ${projetos.length} projetos encontrados`);
@@ -149,7 +149,7 @@ module.exports = class ProjetoDAOMongo {
             const collection = await this.#database.getCollection('projetos');
             const pipeline = [
                 { $match: { _id: new ObjectId(idProjeto) } },
-                ...this.#lookupAlunosPipeline(),
+                ...this.#lookupProfessorsPipeline(),
             ];
             const [doc] = await collection.aggregate(pipeline).toArray();
 
@@ -175,7 +175,7 @@ module.exports = class ProjetoDAOMongo {
         logger.debug(`🟢 ${method} - Buscando projetos por campo`, { field, value });
 
         try {
-            const allowedFields = ['id', 'titulo', 'liderId', 'alunoId'];
+            const allowedFields = ['id', 'titulo', 'liderId', 'ProfessorId'];
             if (!allowedFields.includes(field)) {
                 throw new Error(`Campo inválido para busca: ${field}`);
             }
@@ -183,11 +183,11 @@ module.exports = class ProjetoDAOMongo {
             let filter;
             if (field === 'id') filter = { _id: new ObjectId(value) };
             else if (field === 'liderId') filter = { liderId: new ObjectId(value) };
-            else if (field === 'alunoId') filter = { alunoIds: new ObjectId(value) };
+            else if (field === 'ProfessorId') filter = { ProfessorIds: new ObjectId(value) };
             else filter = { [field]: value };
 
             const collection = await this.#database.getCollection('projetos');
-            const pipeline = [{ $match: filter }, ...this.#lookupAlunosPipeline()];
+            const pipeline = [{ $match: filter }, ...this.#lookupProfessorsPipeline()];
             const docs = await collection.aggregate(pipeline).toArray();
             const projetos = docs.map(doc => this.#documentToObject(doc));
 
@@ -204,19 +204,19 @@ module.exports = class ProjetoDAOMongo {
         }
     }
 
-    #lookupAlunosPipeline() {
+    #lookupProfessorsPipeline() {
         return [
             {
                 $lookup: {
-                    from: 'alunos',
-                    localField: 'alunoIds',
+                    from: 'Professors',
+                    localField: 'ProfessorIds',
                     foreignField: '_id',
-                    as: 'alunos',
+                    as: 'Professors',
                 },
             },
             {
                 $lookup: {
-                    from: 'alunos',
+                    from: 'Professors',
                     localField: 'liderId',
                     foreignField: '_id',
                     as: 'lider',
@@ -228,22 +228,22 @@ module.exports = class ProjetoDAOMongo {
     }
 
     #documentToObject(doc) {
-        const formatarAluno = aluno => aluno ? {
-            id: aluno._id.toString(),
-            matricula: aluno.matricula,
-            nome: aluno.nome,
-            nascimento: aluno.nascimento,
-            cpf: aluno.cpf,
-            curso: aluno.curso,
-            turma: aluno.turma,
+        const formatarProfessor = Professor => Professor ? {
+            id: Professor._id.toString(),
+            matricula: Professor.matricula,
+            nome: Professor.nome,
+            nascimento: Professor.nascimento,
+            cpf: Professor.cpf,
+            curso: Professor.curso,
+            turma: Professor.turma,
         } : null;
 
         return {
             id: doc._id.toString(),
             titulo: doc.titulo,
             descricao: doc.descricao,
-            lider: formatarAluno(doc.lider),
-            alunos: (doc.alunos || []).map(formatarAluno),
+            lider: formatarProfessor(doc.lider),
+            Professors: (doc.Professors || []).map(formatarProfessor),
             dataCadastro: doc.dataCadastro,
             dataAtualizacao: doc.dataAtualizacao,
         };

@@ -1,25 +1,25 @@
 const ProjetoDAO = require('../dao/ProjetoDAOMongo');
-const AlunoDAO = require('../dao/AlunoDAOMongo');
+const ProfessorDAO = require('../dao/ProfessorDAOMongo');
 const Projeto = require('../models/Projeto');
-const Aluno = require('../models/Aluno');
+const Professor = require('../models/Professor');
 const ErrorResponse = require('../utils/ErrorResponse');
 const logger = require('../utils/Logger');
 
 module.exports = class ProjetoService {
     #projetoDAO;
-    #alunoDAO;
+    #ProfessorDAO;
 
     /**
      * @param {ProjetoDAO} projetoDAODependency - Instância de ProjetoDAOMongo
-     * @param {AlunoDAO} alunoDAODependency - Instância de AlunoDAOMongo
+     * @param {ProfessorDAO} ProfessorDAODependency - Instância de ProfessorDAOMongo
      */
-    constructor(projetoDAODependency, alunoDAODependency) {
+    constructor(projetoDAODependency, ProfessorDAODependency) {
         logger.info('⬆️ ProjetoService.constructor()');
         this.#projetoDAO = projetoDAODependency;
-        this.#alunoDAO = alunoDAODependency;
+        this.#ProfessorDAO = ProfessorDAODependency;
         logger.debug('🔍 Dependências injetadas no ProjetoService', {
             hasProjetoDAO: !!this.#projetoDAO,
-            hasAlunoDAO: !!this.#alunoDAO,
+            hasProfessorDAO: !!this.#ProfessorDAO,
         });
     }
 
@@ -48,16 +48,16 @@ module.exports = class ProjetoService {
 
             if (grupoJson.length > 10) {
                 throw new ErrorResponse(400, 'Limite de integrantes excedido', {
-                    message: 'O projeto pode ter no máximo 10 alunos, incluindo o líder',
+                    message: 'O projeto pode ter no máximo 10 Professors, incluindo o líder',
                 });
             }
 
-            const alunos = [];
-            for (const jsonAluno of grupoJson) {
-                alunos.push(await this.#findOrCreateAluno(jsonAluno));
+            const Professors = [];
+            for (const jsonProfessor of grupoJson) {
+                Professors.push(await this.#findOrCreateProfessor(jsonProfessor));
             }
 
-            projeto.alunos = alunos;
+            projeto.Professors = Professors;
             projeto.id = await this.#projetoDAO.create(projeto);
 
             logger.info(`✅ ${method} - Projeto criado com sucesso`, {
@@ -130,15 +130,15 @@ module.exports = class ProjetoService {
 
             if (grupoJson.length > 10) {
                 throw new ErrorResponse(400, 'Limite de integrantes excedido', {
-                    message: 'O projeto pode ter no máximo 10 alunos, incluindo o líder',
+                    message: 'O projeto pode ter no máximo 10 Professors, incluindo o líder',
                 });
             }
 
-            const alunos = [];
-            for (const jsonAluno of grupoJson) {
-                alunos.push(await this.#findOrCreateAluno(jsonAluno));
+            const Professors = [];
+            for (const jsonProfessor of grupoJson) {
+                Professors.push(await this.#findOrCreateProfessor(jsonProfessor));
             }
-            projeto.alunos = alunos;
+            projeto.Professors = Professors;
             return await this.#projetoDAO.update(projeto);
         } catch (error) {
             logger.error(`❌ ${method} - Erro ao atualizar projeto`, {
@@ -175,37 +175,37 @@ module.exports = class ProjetoService {
             email: jsonProjeto.emailCapitao,
             turma: jsonProjeto.turmaCapitao || jsonProjeto.turma_capitao,
         };
-        const lider = this.#normalizarAluno(liderOriginal);
-        const integrantesOriginais = jsonProjeto.integrantes || jsonProjeto.grupo || jsonProjeto.alunos || [];
-        const integrantes = integrantesOriginais.map(item => this.#normalizarAluno(item));
+        const lider = this.#normalizarProfessor(liderOriginal);
+        const integrantesOriginais = jsonProjeto.integrantes || jsonProjeto.grupo || jsonProjeto.Professors || [];
+        const integrantes = integrantesOriginais.map(item => this.#normalizarProfessor(item));
         return { lider, integrantes };
     }
 
-    #normalizarAluno(jsonAluno) {
+    #normalizarProfessor(jsonProfessor) {
         const encontrar = prefixo => {
-            const chave = Object.keys(jsonAluno || {}).find(item => item.startsWith(prefixo));
-            return chave ? jsonAluno[chave] : undefined;
+            const chave = Object.keys(jsonProfessor || {}).find(item => item.startsWith(prefixo));
+            return chave ? jsonProfessor[chave] : undefined;
         };
 
         return {
-            nome: jsonAluno?.nome || encontrar('nomeAluno'),
-            matricula: jsonAluno?.matricula || encontrar('matriculaAluno'),
-            email: jsonAluno?.email,
-            turma: jsonAluno?.turma || encontrar('turmaAluno'),
-            curso: jsonAluno?.curso,
+            nome: jsonProfessor?.nome || encontrar('nomeProfessor'),
+            matricula: jsonProfessor?.matricula || encontrar('matriculaProfessor'),
+            email: jsonProfessor?.email,
+            turma: jsonProfessor?.turma || encontrar('turmaProfessor'),
+            curso: jsonProfessor?.curso,
         };
     }
 
     #validarMatriculasUnicas(grupoJson) {
-        const matriculas = grupoJson.map(aluno => aluno.matricula?.trim());
+        const matriculas = grupoJson.map(Professor => Professor.matricula?.trim());
         if (matriculas.some(matricula => !matricula)) {
             throw new ErrorResponse(400, 'Erro na validação de dados', {
-                message: 'Todos os alunos devem possuir matrícula',
+                message: 'Todos os Professors devem possuir matrícula',
             });
         }
         if (new Set(matriculas).size !== matriculas.length) {
             throw new ErrorResponse(400, 'Matrícula repetida', {
-                message: 'O mesmo aluno não pode aparecer duas vezes no projeto',
+                message: 'O mesmo Professor não pode aparecer duas vezes no projeto',
             });
         }
     }
@@ -238,28 +238,28 @@ module.exports = class ProjetoService {
         projeto.outrosRecursos = outrosRecursos?.trim() || null;
     }
 
-    async #findOrCreateAluno(jsonAluno) {
-        const aluno = new Aluno();
-        aluno.matricula = jsonAluno.matricula;
-        aluno.nome = jsonAluno.nome;
-        aluno.turma = jsonAluno.turma;
-        if (jsonAluno.curso) aluno.curso = jsonAluno.curso;
+    async #findOrCreateProfessor(jsonProfessor) {
+        const Professor = new Professor();
+        Professor.matricula = jsonProfessor.matricula;
+        Professor.nome = jsonProfessor.nome;
+        Professor.turma = jsonProfessor.turma;
+        if (jsonProfessor.curso) Professor.curso = jsonProfessor.curso;
 
-        if (jsonAluno.email) {
-            const email = jsonAluno.email.trim().toLowerCase();
+        if (jsonProfessor.email) {
+            const email = jsonProfessor.email.trim().toLowerCase();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) throw new Error('email do líder está em formato inválido.');
-            aluno.email = email;
+            Professor.email = email;
         }
 
-        const encontrados = await this.#alunoDAO.findByField('matricula', aluno.matricula);
+        const encontrados = await this.#ProfessorDAO.findByField('matricula', Professor.matricula);
         if (encontrados.length > 0) {
-            aluno.id = encontrados[0].id;
-            await this.#alunoDAO.update(aluno);
-            return aluno;
+            Professor.id = encontrados[0].id;
+            await this.#ProfessorDAO.update(Professor);
+            return Professor;
         }
 
-        aluno.id = await this.#alunoDAO.create(aluno);
-        return aluno;
+        Professor.id = await this.#ProfessorDAO.create(Professor);
+        return Professor;
     }
 };

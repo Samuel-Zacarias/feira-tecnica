@@ -1,14 +1,14 @@
-const Aluno = require("./Aluno");
+const Professor = require("./Professor");
 
 module.exports = class Projeto {
     #id;
     #titulo;
     #descricao;
-    #alunos;
+    #Professores;
 
     constructor() {
         console.log("⬆️  Projeto.constructor()");
-        this.#alunos = []; // inicializa array vazio
+        this.#Professores = []; // inicializa array vazio
     }
 
     get id() { return this.#id; }
@@ -37,40 +37,40 @@ module.exports = class Projeto {
         this.#descricao = value.trim() || null; // permite vazio, mas guarda null
     }
 
-    get alunos() { return this.#alunos; }
-    set alunos(value) {
+    get Professores() { return this.#Professores; }
+    set Professores(value) {
         if (!Array.isArray(value)) {
-            throw new Error("alunos deve ser um array.");
+            throw new Error("Professores deve ser um array.");
         }
         if (value.length > 10) {
-            throw new Error("alunos não pode ter mais de 10 integrantes.");
+            throw new Error("Professores não pode ter mais de 10 integrantes.");
         }
-        // Verifica se todos os elementos são instâncias de Aluno
+        // Verifica se todos os elementos são instâncias de Professor               
         for (const item of value) {
-            if (!(item instanceof Aluno)) {
-                throw new Error("Cada elemento de alunos deve ser uma instância de Aluno.");
+            if (!(item instanceof Professor)) {
+                throw new Error("Cada elemento de Professores deve ser uma instância de Professor.");
             }
         }
-        this.#alunos = value.slice(); // faz cópia para evitar mutação externa
+        this.#Professores = value.slice(); // faz cópia para evitar mutação externa
     }
 
-    // Método para adicionar um aluno (opcional, facilita)
-    addAluno(aluno) {
-        if (!(aluno instanceof Aluno)) {
-            throw new Error("aluno deve ser uma instância de Aluno.");
+    // Método para adicionar um professor (opcional, facilita)
+    addProfessor(professor) {
+        if (!(professor instanceof Professor)) {
+            throw new Error("professor deve ser uma instância de Professor.");
         }
-        if (this.#alunos.length >= 10) {
-            throw new Error("Limite máximo de 10 alunos atingido.");
+        if (this.#Professores.length >= 10) {
+            throw new Error("Limite máximo de 10 professores atingido.");
         }
-        this.#alunos.push(aluno);
+        this.#Professores.push(professor);
     }
 
-    // Método para remover um aluno (opcional)
-    removeAluno(aluno) {
-        const index = this.#alunos.indexOf(aluno);
+    // Método para remover um professor (opcional)
+    removeProfessor(professor) {
+        const index = this.#Professores.indexOf(professor);
         if (index === -1) {
-            throw new Error("Aluno não encontrado no projeto.");
+            throw new Error("Professor não encontrado no projeto.");
         }
-        this.#alunos.splice(index, 1);
+        this.#Professores.splice(index, 1);
     }
 };

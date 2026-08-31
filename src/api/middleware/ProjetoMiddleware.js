@@ -25,7 +25,7 @@ module.exports = class ProjetoMiddleware {
         }
 
         const lider = this.#getLider(projeto);
-        this.#validateAluno(lider, 'líder');
+        this.#validateProfessor(lider, 'líder');
         if (!lider.email || typeof lider.email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lider.email)) {
             throw new ErrorResponse(400, 'Erro na validação de dados', {
                 message: 'O e-mail do líder é obrigatório e deve ser válido',
@@ -40,19 +40,19 @@ module.exports = class ProjetoMiddleware {
         }
         if (integrantes.length > 9) {
             throw new ErrorResponse(400, 'Limite de integrantes excedido', {
-                message: 'São permitidos no máximo 10 alunos, incluindo o líder',
+                message: 'São permitidos no máximo 10 Professors, incluindo o líder',
             });
         }
-        integrantes.forEach((aluno, index) => this.#validateAluno(
-            this.#normalizarAluno(aluno),
+        integrantes.forEach((Professor, index) => this.#validateProfessor(
+            this.#normalizarProfessor(Professor),
             `integrante ${index + 1}`
         ));
 
-        const matriculas = [lider, ...integrantes.map(item => this.#normalizarAluno(item))]
-            .map(aluno => aluno.matricula.trim());
+        const matriculas = [lider, ...integrantes.map(item => this.#normalizarProfessor(item))]
+            .map(Professor => Professor.matricula.trim());
         if (new Set(matriculas).size !== matriculas.length) {
             throw new ErrorResponse(400, 'Matrícula repetida', {
-                message: 'O mesmo aluno não pode aparecer duas vezes no grupo',
+                message: 'O mesmo Professor não pode aparecer duas vezes no grupo',
             });
         }
 
@@ -76,7 +76,7 @@ module.exports = class ProjetoMiddleware {
     };
 
     #getLider(projeto) {
-        if (projeto.lider) return this.#normalizarAluno(projeto.lider);
+        if (projeto.lider) return this.#normalizarProfessor(projeto.lider);
         if (projeto.nomeCapitao || projeto.matriculaCapitao) {
             return {
                 nome: projeto.nomeCapitao,
@@ -85,10 +85,10 @@ module.exports = class ProjetoMiddleware {
                 turma: projeto.turmaCapitao || projeto.turma_capitao,
             };
         }
-        if (Array.isArray(projeto.alunos) && projeto.alunos.length > 0) {
+        if (Array.isArray(projeto.Professors) && projeto.Professors.length > 0) {
             return {
-                ...this.#normalizarAluno(projeto.alunos[0]),
-                email: projeto.alunos[0].email || projeto.emailCapitao,
+                ...this.#normalizarProfessor(projeto.Professors[0]),
+                email: projeto.Professors[0].email || projeto.emailCapitao,
             };
         }
         return {};
@@ -97,35 +97,35 @@ module.exports = class ProjetoMiddleware {
     #getIntegrantes(projeto) {
         if (projeto.integrantes) return projeto.integrantes;
         if (projeto.grupo) return projeto.grupo;
-        if (Array.isArray(projeto.alunos)) return projeto.alunos.slice(1);
+        if (Array.isArray(projeto.Professors)) return projeto.Professors.slice(1);
         return [];
     }
 
-    #normalizarAluno(aluno) {
+    #normalizarProfessor(Professor) {
         const encontrar = prefixo => {
-            const chave = Object.keys(aluno || {}).find(item => item.startsWith(prefixo));
-            return chave ? aluno[chave] : undefined;
+            const chave = Object.keys(Professor || {}).find(item => item.startsWith(prefixo));
+            return chave ? Professor[chave] : undefined;
         };
         return {
-            nome: aluno?.nome || encontrar('nomeAluno'),
-            matricula: aluno?.matricula || encontrar('matriculaAluno'),
-            email: aluno?.email,
-            turma: aluno?.turma || encontrar('turmaAluno'),
+            nome: Professor?.nome || encontrar('nomeProfessor'),
+            matricula: Professor?.matricula || encontrar('matriculaProfessor'),
+            email: Professor?.email,
+            turma: Professor?.turma || encontrar('turmaProfessor'),
         };
     }
 
-    #validateAluno(aluno, descricao) {
-        if (!aluno.nome || typeof aluno.nome !== 'string' || aluno.nome.trim().length < 3) {
+    #validateProfessor(Professor, descricao) {
+        if (!Professor.nome || typeof Professor.nome !== 'string' || Professor.nome.trim().length < 3) {
             throw new ErrorResponse(400, 'Erro na validação de dados', {
                 message: `O nome do ${descricao} deve ter pelo menos 3 caracteres`,
             });
         }
-        if (!aluno.matricula || typeof aluno.matricula !== 'string') {
+        if (!Professor.matricula || typeof Professor.matricula !== 'string') {
             throw new ErrorResponse(400, 'Erro na validação de dados', {
                 message: `A matrícula do ${descricao} é obrigatória`,
             });
         }
-        if (!aluno.turma || typeof aluno.turma !== 'string') {
+        if (!Professor.turma || typeof Professor.turma !== 'string') {
             throw new ErrorResponse(400, 'Erro na validação de dados', {
                 message: `A turma do ${descricao} é obrigatória`,
             });

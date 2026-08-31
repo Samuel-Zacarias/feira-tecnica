@@ -12,35 +12,35 @@ const JwtMiddleware = require("./src/api/middleware/JwtMiddleware");
 // Roteadores
 const CargoRouter = require("./src/api/routes/CargoRouter");
 const FuncionarioRouter = require("./src/api/routes/FuncionarioRouter");
-const AlunoRouter = require("./src/api/routes/AlunoRouter");
+const ProfessorRouter = require("./src/api/routes/ProfessorRouter");
 const ProjetoRouter = require("./src/api/routes/ProjetoRouter");
 const AvaliacaoRouter = require("./src/api/routes/AvaliacaoRouter");
 
 // Middlewares específicos das entidades
 const CargoMiddleware = require("./src/api/middleware/CargoMiddleware");
 const FuncionarioMiddleware = require("./src/api/middleware/FuncionarioMiddleware");
-const AlunoMiddleware = require("./src/api/middleware/AlunoMiddleware");
+const ProfessorMiddleware = require("./src/api/middleware/ProfessorMiddleware");
 const ProjetoMiddleware = require("./src/api/middleware/ProjetoMiddleware");
 const AvaliacaoMiddleware = require("./src/api/middleware/AvaliacaoMiddleware");
 
 // Controllers
 const CargoController = require("./src/api/controllers/CargoController");
 const FuncionarioController = require("./src/api/controllers/FuncionarioController");
-const AlunoController = require("./src/api/controllers/AlunoController");
+const ProfessorController = require("./src/api/controllers/ProfessorController");
 const ProjetoController = require("./src/api/controllers/ProjetoController");
 const AvaliacaoController = require("./src/api/controllers/AvaliacaoController");
 
 // Services
 const CargoService = require("./src/api/services/CargoService");
 const FuncionarioService = require("./src/api/services/FuncionarioService");
-const AlunoService = require("./src/api/services/AlunoService");
+const ProfessorService = require("./src/api/services/ProfessorService");
 const ProjetoService = require("./src/api/services/ProjetoService");
 const AvaliacaoService = require("./src/api/services/AvaliacaoService");
 
 // DAOs MongoDB
 const CargoDAOMongo = require("./src/api/dao/CargoDAOMongo");
 const FuncionarioDAOMongo = require("./src/api/dao/FuncionarioDAOMongo");
-const AlunoDAOMongo = require("./src/api/dao/AlunoDAOMongo");
+const ProfessorDAOMongo = require("./src/api/dao/ProfessorDAOMongo");
 const ProjetoDAOMongo = require("./src/api/dao/ProjetoDAOMongo");
 const AvaliacaoDAOMongo = require("./src/api/dao/AvaliacaoDAOMongo");
 
@@ -71,11 +71,11 @@ module.exports = class Server {
     #funcionarioService;
     #funcionarioDAO;
 
-    #alunoRouter;
-    #alunoMiddleware;
-    #alunoController;
-    #alunoService;
-    #alunoDAO;
+    #ProfessorRouter;
+    #ProfessorMiddleware;
+    #ProfessorController;
+    #ProfessorService;
+    #ProfessorDAO;
 
     #projetoRouter;
     #projetoMiddleware;
@@ -136,7 +136,7 @@ module.exports = class Server {
         this.beforeRouting();
         this.setupCargo();
         this.setupFuncionario();
-        this.setupAluno();
+        this.setupProfessor();
         this.setupProjeto();
         this.setupAvaliacao();
         this.setupErrorMiddleware();
@@ -253,24 +253,24 @@ module.exports = class Server {
         }
     };
 
-    setupAluno = () => {
-        const method = 'Server.setupAluno';
-        logger.info(`⬆️ ${method} - Configurando módulo Aluno`);
+    setupProfessor = () => {
+        const method = 'Server.setupProfessor';
+        logger.info(`⬆️ ${method} - Configurando módulo Professor`);
 
         try {
-            this.#alunoMiddleware = new AlunoMiddleware();
-            this.#alunoDAO = new AlunoDAOMongo(this.#database);
-            this.#alunoService = new AlunoService(this.#alunoDAO);
-            this.#alunoController = new AlunoController(this.#alunoService);
-            this.#alunoRouter = new AlunoRouter(
+            this.#ProfessorMiddleware = new ProfessorMiddleware();
+            this.#ProfessorDAO = new ProfessorDAOMongo(this.#database);
+            this.#ProfessorService = new ProfessorService(this.#ProfessorDAO);
+            this.#ProfessorController = new ProfessorController(this.#ProfessorService);
+            this.#ProfessorRouter = new ProfessorRouter(
                 this.#jwtMiddleware,
-                this.#alunoMiddleware,
-                this.#alunoController
+                this.#ProfessorMiddleware,
+                this.#ProfessorController
             );
-            this.#app.use('/api/v1/alunos', this.#alunoRouter.createRoutes());
-            logger.info(`✅ ${method} - Rotas de Aluno configuradas com sucesso`);
+            this.#app.use('/api/v1/Professors', this.#ProfessorRouter.createRoutes());
+            logger.info(`✅ ${method} - Rotas de Professor configuradas com sucesso`);
         } catch (error) {
-            logger.error(`❌ ${method} - Erro ao configurar Aluno`, {
+            logger.error(`❌ ${method} - Erro ao configurar Professor`, {
                 error: error.message,
                 stack: error.stack,
             });
@@ -285,8 +285,8 @@ module.exports = class Server {
         try {
             this.#projetoMiddleware = new ProjetoMiddleware();
             this.#projetoDAO = new ProjetoDAOMongo(this.#database);
-            if (!this.#alunoDAO) this.#alunoDAO = new AlunoDAOMongo(this.#database);
-            this.#projetoService = new ProjetoService(this.#projetoDAO, this.#alunoDAO);
+            if (!this.#ProfessorDAO) this.#ProfessorDAO = new ProfessorDAOMongo(this.#database);
+            this.#projetoService = new ProjetoService(this.#projetoDAO, this.#ProfessorDAO);
             this.#projetoController = new ProjetoController(this.#projetoService);
             this.#projetoRouter = new ProjetoRouter(
                 this.#jwtMiddleware,

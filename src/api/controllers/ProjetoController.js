@@ -57,17 +57,17 @@ module.exports = class ProjetoController {
         const method = 'ProjetoController.showPublic';
         try {
             const projeto = await this.#projetoService.findById(request.params.idProjeto);
-            const formatarAluno = aluno => aluno ? {
-                nome: aluno.nome,
-                turma: aluno.turma,
-                curso: aluno.curso,
+            const formatarProfessor = Professor => Professor ? {
+                nome: Professor.nome,
+                turma: Professor.turma,
+                curso: Professor.curso,
             } : null;
             const projetoPublico = {
                 id: projeto.id,
                 titulo: projeto.titulo,
                 descricao: projeto.descricao,
-                lider: formatarAluno(projeto.lider),
-                alunos: (projeto.alunos || []).map(formatarAluno),
+                lider: formatarProfessor(projeto.lider),
+                Professors: (projeto.Professors || []).map(formatarProfessor),
                 precisaComputador: projeto.precisaComputador,
                 observacoes: projeto.observacoes,
                 outrosRecursos: projeto.outrosRecursos,
