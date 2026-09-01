@@ -16,7 +16,7 @@ class MongoDatabase {
         const method = 'MongoDatabase.constructor';
         this.#host = config.host || 'localhost';
         this.#port = config.port || 27017;
-        this.#database = config.database || 'gestao_rh';
+        this.#database = config.database || 'feira-tecnica2026';
         this.#user = config.user || '';
         this.#password = config.password || '';
         this.#url = this.#buildUrl();

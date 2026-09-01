@@ -1,231 +1,148 @@
-// api/models/Professor.js
-
-/**
- * Representa a entidade Professor do sistema.
- * 
- * Objetivo:
- * - Encapsular os dados de um Professor.
- * - Garantir integridade dos atributos via getters e setters.
- */
 module.exports = class Professor {
-    // Atributos privados
     #id;
-    #matricula;
     #nome;
-    #nascimento;
-    #cpf;
-    #curso;
-    #turma;
+    #email;
+    #senha;
+    #role;
 
     constructor() {
-        console.log("⬆️  Professor.constructor()");
+        console.log("⬆️ Professor.constructor()");
+        this.#role = "AVALIADOR";
     }
 
-    /**
-     * Getter para id
-     * @returns {string} Identificador único do Professor
-     */
     get id() {
         return this.#id;
     }
 
-    /**
-     * Define o ID do Professor.
-     *
-     * 🔹 Regra de domínio: deve ser uma string não vazia.
-     *
-     * @param {string} value - ID do Professor.
-     * @throws {Error} - Se o valor for vazio.
-     */
     set id(value) {
         if (!value) {
             throw new Error("id é obrigatório.");
         }
+
         this.#id = value.toString();
     }
 
-    /**
-     * Getter para matricula
-     * @returns {string} Número de matrícula do Professor
-     */
-    get matricula() {
-        return this.#matricula;
-    }
-
-    /**
-     * Define a matrícula do Professor.
-     *
-     * 🔹 Regra de domínio: deve ser uma string não vazia.
-     *
-     * @param {string} value - Número de matrícula.
-     * @throws {Error} - Se não for string ou estiver vazia.
-     */
-    set matricula(value) {
-        if (!value || typeof value !== 'string' || value.trim() === '') {
-            throw new Error("matricula é obrigatória e deve ser uma string não vazia.");
-        }
-        this.#matricula = value.trim();
-    }
-
-    /**
-     * Getter para nome
-     * @returns {string} Nome do Professor
-     */
     get nome() {
         return this.#nome;
     }
 
-    /**
-     * Define o nome do Professor.
-     *
-     * 🔹 Regra de domínio: deve ser uma string com pelo menos 3 caracteres.
-     *
-     * @param {string} value - Nome do Professor.
-     * @throws {Error} - Se não for string ou tiver menos de 3 caracteres.
-     */
     set nome(value) {
-        if (typeof value !== 'string' || value.trim().length < 3) {
-            throw new Error("nome deve ser uma string com pelo menos 3 caracteres.");
+        if (
+            typeof value !== "string" ||
+            value.trim().length < 3
+        ) {
+            throw new Error(
+                "nome deve ter pelo menos 3 caracteres."
+            );
         }
+
         this.#nome = value.trim();
     }
 
-    /**
-     * Getter para nascimento
-     * @returns {Date} Data de nascimento do Professor
-     */
-    get nascimento() {
-        return this.#nascimento;
+    get email() {
+        return this.#email;
     }
 
-    /**
-     * Define a data de nascimento do Professor.
-     *
-     * 🔹 Regra de domínio: deve ser uma data válida (não futura).
-     *
-     * @param {string|Date} value - Data de nascimento (string ISO ou objeto Date).
-     * @throws {Error} - Se a data for inválida ou futura.
-     */
-    set nascimento(value) {
-        let date;
-        if (value instanceof Date) {
-            date = value;
-        } else if (typeof value === 'string') {
-            date = new Date(value);
-            if (isNaN(date.getTime())) {
-                throw new Error("nascimento deve ser uma data válida (formato ISO ou Date).");
-            }
-        } else {
-            throw new Error("nascimento deve ser uma data válida (string ISO ou Date).");
+    set email(value) {
+        if (typeof value !== "string") {
+            throw new Error(
+                "email deve ser uma string."
+            );
         }
-        // Verifica se a data é futura
-        if (date > new Date()) {
-            throw new Error("nascimento não pode ser uma data futura.");
+
+        const email =
+            value.trim().toLowerCase();
+
+        const formatoEmail =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!formatoEmail.test(email)) {
+            throw new Error(
+                "email em formato inválido."
+            );
         }
-        this.#nascimento = date;
+
+        this.#email = email;
     }
 
-    /**
-     * Getter para cpf
-     * @returns {string} CPF do Professor (apenas números)
-     */
-    get cpf() {
-        return this.#cpf;
+    get senha() {
+        return this.#senha;
     }
 
-    /**
-     * Define o CPF do Professor.
-     *
-     * 🔹 Regra de domínio: deve conter 11 dígitos e ser válido (algoritmo de validação).
-     *
-     * @param {string} value - CPF (pode conter formatação, será limpo).
-     * @throws {Error} - Se o CPF for inválido.
-     */
-    set cpf(value) {
-        if (typeof value !== 'string') {
-            throw new Error("cpf deve ser uma string.");
+    set senha(value) {
+        if (
+            typeof value !== "string" ||
+            value.length < 8
+        ) {
+            throw new Error(
+                "senha deve ter pelo menos 8 caracteres."
+            );
         }
-        const cpfLimpo = value.replace(/\D/g, '');
-        if (cpfLimpo.length !== 11) {
-            throw new Error("cpf deve conter 11 dígitos.");
+
+        if (!/[A-Z]/.test(value)) {
+            throw new Error(
+                "senha deve possuir uma letra maiúscula."
+            );
         }
-        if (!this.#validarCPF(cpfLimpo)) {
-            throw new Error("cpf inválido.");
+
+        if (!/[a-z]/.test(value)) {
+            throw new Error(
+                "senha deve possuir uma letra minúscula."
+            );
         }
-        this.#cpf = cpfLimpo;
+
+        if (!/[0-9]/.test(value)) {
+            throw new Error(
+                "senha deve possuir um número."
+            );
+        }
+
+        if (
+            !/[!@#$%^&*(),.?":{}|<>]/.test(value)
+        ) {
+            throw new Error(
+                "senha deve possuir um caractere especial."
+            );
+        }
+
+        this.#senha = value;
     }
 
-    /**
-     * Getter para curso
-     * @returns {string} Nome do curso
-     */
-    get curso() {
-        return this.#curso;
+    get role() {
+        return this.#role;
     }
 
-    /**
-     * Define o curso do Professor.
-     *
-     * 🔹 Regra de domínio: deve ser uma string com pelo menos 2 caracteres.
-     *
-     * @param {string} value - Nome do curso.
-     * @throws {Error} - Se não for string ou tiver menos de 2 caracteres.
-     */
-    set curso(value) {
-        if (typeof value !== 'string' || value.trim().length < 2) {
-            throw new Error("curso deve ser uma string com pelo menos 2 caracteres.");
+    set role(value) {
+        const permitidos = [
+            "ADMINISTRADOR",
+            "AVALIADOR"
+        ];
+
+        if (typeof value !== "string") {
+            throw new Error(
+                "role deve ser uma string."
+            );
         }
-        this.#curso = value.trim();
+
+        const role =
+            value.trim().toUpperCase();
+
+        if (!permitidos.includes(role)) {
+            throw new Error(
+                `role deve ser: ${permitidos.join(" ou ")}.`
+            );
+        }
+
+        this.#role = role;
     }
 
-    /**
-     * Getter para turma
-     * @returns {string} Identificador da turma
-     */
-    get turma() {
-        return this.#turma;
-    }
-
-    /**
-     * Define a turma do Professor.
-     *
-     * 🔹 Regra de domínio: deve ser uma string não vazia.
-     *
-     * @param {string} value - Identificador da turma.
-     * @throws {Error} - Se não for string ou estiver vazia.
-     */
-    set turma(value) {
-        if (typeof value !== 'string' || value.trim() === '') {
-            throw new Error("turma deve ser uma string não vazia.");
-        }
-        this.#turma = value.trim();
-    }
-
-    /**
-     * Validação de CPF (algoritmo dos dígitos verificadores).
-     * @param {string} cpf - CPF com 11 dígitos.
-     * @returns {boolean} true se válido, false caso contrário.
-     */
-    #validarCPF(cpf) {
-        if (cpf.length !== 11) return false;
-        // Elimina CPFs com todos os dígitos iguais
-        if (/^(\d)\1{10}$/.test(cpf)) return false;
-        // Validação do primeiro dígito verificador
-        let soma = 0;
-        for (let i = 0; i < 9; i++) {
-            soma += parseInt(cpf.charAt(i)) * (10 - i);
-        }
-        let resto = 11 - (soma % 11);
-        let digitoVerificador = resto >= 10 ? 0 : resto;
-        if (parseInt(cpf.charAt(9)) !== digitoVerificador) return false;
-        // Validação do segundo dígito verificador
-        soma = 0;
-        for (let i = 0; i < 10; i++) {
-            soma += parseInt(cpf.charAt(i)) * (11 - i);
-        }
-        resto = 11 - (soma % 11);
-        digitoVerificador = resto >= 10 ? 0 : resto;
-        if (parseInt(cpf.charAt(10)) !== digitoVerificador) return false;
-        return true;
+    // A senha nunca será devolvida nas respostas JSON.
+    toJSON() {
+        return {
+            id: this.#id,
+            nome: this.#nome,
+            email: this.#email,
+            role: this.#role
+        };
     }
 };

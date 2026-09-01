@@ -1,43 +1,271 @@
-const { ObjectId } = require('mongodb');
-const ErrorResponse = require('../utils/ErrorResponse');
-const logger = require('../utils/Logger');
+const { ObjectId } = require("mongodb");
+const ErrorResponse = require(
+    "../utils/ErrorResponse"
+);
 
 module.exports = class ProfessorMiddleware {
-    validateBody = (request, response, next) => {
-        const method = 'ProfessorMiddleware.validateBody';
-        logger.debug(`🔷 ${method} - Validando corpo da requisição`);
+    validateLoginBody = (
+        request,
+        response,
+        next
+    ) => {
+        try {
+            const professor =
+                this.#getProfessor(request);
 
-        const Professor = request.body.Professor;
-        if (!Professor) {
-            throw new ErrorResponse(400, 'Erro na validação de dados', {
-                message: "O campo 'Professor' é obrigatório",
-            });
+            if (!professor) {
+                throw new Error(
+                    "O campo 'professor' é obrigatório."
+                );
+            }
+
+            this.#validarEmail(
+                professor.email
+            );
+
+            if (
+                typeof professor.senha !==
+                    "string" ||
+                professor.senha === ""
+            ) {
+                throw new Error(
+                    "A senha é obrigatória."
+                );
+            }
+
+            next();
+        } catch (error) {
+            next(
+                this.#erroValidacao(
+                    error.message
+                )
+            );
         }
-        if (!Professor.nome || typeof Professor.nome !== 'string' || Professor.nome.trim().length < 3) {
-            throw new ErrorResponse(400, 'Erro na validação de dados', {
-                message: "O campo 'nome' deve ter pelo menos 3 caracteres",
-            });
+    };
+
+    validateCreateBody = (
+        request,
+        response,
+        next
+    ) => {
+        try {
+            const professor =
+                this.#getProfessor(request);
+
+            if (!professor) {
+                throw new Error(
+                    "O campo 'professor' é obrigatório."
+                );
+            }
+
+            this.#validarNome(
+                professor.nome
+            );
+
+            this.#validarEmail(
+                professor.email
+            );
+
+            this.#validarSenha(
+                professor.senha
+            );
+
+            this.#validarRole(
+                professor.role ||
+                "AVALIADOR"
+            );
+
+            next();
+        } catch (error) {
+            next(
+                this.#erroValidacao(
+                    error.message
+                )
+            );
         }
-        if (!Professor.matricula || typeof Professor.matricula !== 'string') {
-            throw new ErrorResponse(400, 'Erro na validação de dados', {
-                message: "O campo 'matricula' é obrigatório",
-            });
+    };
+
+    validateUpdateBody = (
+        request,
+        response,
+        next
+    ) => {
+        try {
+            const professor =
+                this.#getProfessor(request);
+
+            if (!professor) {
+                throw new Error(
+                    "O campo 'professor' é obrigatório."
+                );
+            }
+
+            if (
+                professor.nome !== undefined
+            ) {
+                this.#validarNome(
+                    professor.nome
+                );
+            }
+
+            if (
+                professor.email !== undefined
+            ) {
+                this.#validarEmail(
+                    professor.email
+                );
+            }
+
+            if (
+                professor.senha !== undefined &&
+                professor.senha !== ""
+            ) {
+                this.#validarSenha(
+                    professor.senha
+                );
+            }
+
+            if (
+                professor.role !== undefined
+            ) {
+                this.#validarRole(
+                    professor.role
+                );
+            }
+
+            next();
+        } catch (error) {
+            next(
+                this.#erroValidacao(
+                    error.message
+                )
+            );
         }
-        if (!Professor.turma || typeof Professor.turma !== 'string') {
-            throw new ErrorResponse(400, 'Erro na validação de dados', {
-                message: "O campo 'turma' é obrigatório",
-            });
+    };
+
+    validateIdParam = (
+        request,
+        response,
+        next
+    ) => {
+        const idProfessor =
+            request.params.idProfessor;
+
+        if (
+            !idProfessor ||
+            !ObjectId.isValid(idProfessor)
+        ) {
+            return next(
+                new ErrorResponse(
+                    400,
+                    "ID de professor inválido",
+                    {
+                        message:
+                            "O idProfessor deve ser um ObjectId válido."
+                    }
+                )
+            );
         }
+
         next();
     };
 
-    validateIdParam = (request, response, next) => {
-        const idProfessor = request.params.idProfessor;
-        if (!idProfessor || !ObjectId.isValid(idProfessor)) {
-            throw new ErrorResponse(400, 'ID de Professor inválido', {
-                message: "O parâmetro 'idProfessor' deve ser um ObjectId válido",
-            });
+    #getProfessor(request) {
+        return (
+            request.body.professor ||
+            request.body.Professor
+        );
+    }
+
+    #validarNome(nome) {
+        if (
+            typeof nome !== "string" ||
+            nome.trim().length < 3
+        ) {
+            throw new Error(
+                "O nome deve ter pelo menos 3 caracteres."
+            );
         }
-        next();
-    };
+    }
+
+    #validarEmail(email) {
+        const formatoEmail =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (
+            typeof email !== "string" ||
+            !formatoEmail.test(email.trim())
+        ) {
+            throw new Error(
+                "O e-mail informado é inválido."
+            );
+        }
+    }
+
+    #validarSenha(senha) {
+        if (
+            typeof senha !== "string" ||
+            senha.length < 8
+        ) {
+            throw new Error(
+                "A senha deve ter pelo menos 8 caracteres."
+            );
+        }
+
+        if (!/[A-Z]/.test(senha)) {
+            throw new Error(
+                "A senha deve possuir uma letra maiúscula."
+            );
+        }
+
+        if (!/[a-z]/.test(senha)) {
+            throw new Error(
+                "A senha deve possuir uma letra minúscula."
+            );
+        }
+
+        if (!/[0-9]/.test(senha)) {
+            throw new Error(
+                "A senha deve possuir um número."
+            );
+        }
+
+        if (
+            !/[!@#$%^&*(),.?":{}|<>]/.test(
+                senha
+            )
+        ) {
+            throw new Error(
+                "A senha deve possuir um caractere especial."
+            );
+        }
+    }
+
+    #validarRole(role) {
+        const permitidos = [
+            "ADMINISTRADOR",
+            "AVALIADOR"
+        ];
+
+        if (
+            typeof role !== "string" ||
+            !permitidos.includes(
+                role.trim().toUpperCase()
+            )
+        ) {
+            throw new Error(
+                `A função deve ser: ${permitidos.join(" ou ")}.`
+            );
+        }
+    }
+
+    #erroValidacao(message) {
+        return new ErrorResponse(
+            400,
+            "Erro na validação de dados",
+            {
+                message
+            }
+        );
+    }
 };

@@ -1,209 +1,264 @@
-const { ObjectId } = require('mongodb');
-const logger = require('../utils/Logger');
+const { ObjectId } = require("mongodb");
+const bcrypt = require("bcrypt");
+const logger = require("../utils/Logger");
 
 module.exports = class ProfessorDAOMongo {
     #database;
 
     constructor(databaseInstance) {
-        logger.info('⬆️ ProfessorDAOMongo.constructor()');
+        logger.info(
+            "⬆️ ProfessorDAOMongo.constructor()"
+        );
+
         this.#database = databaseInstance;
     }
 
-    async create(objProfessorModel) {
-        const method = 'ProfessorDAOMongo.create';
-        logger.debug(`🟢 ${method} - Iniciando criação de Professor`, {
-            matricula: objProfessorModel.matricula,
-            nome: objProfessorModel.nome,
-        });
+    async create(professor) {
+        const method =
+            "ProfessorDAOMongo.create";
 
         try {
-            const collection = await this.#database.getCollection('Professors');
-            const doc = this.#modelToDocument(objProfessorModel);
-            const result = await collection.insertOne(doc);
+            const collection =
+                await this.#database.getCollection(
+                    "professores"
+                );
 
-            if (!result.insertedId) {
-                throw new Error('Falha ao inserir Professor');
+            // Impede dois professores com o mesmo e-mail.
+            await collection.createIndex(
+                { email: 1 },
+                { unique: true }
+            );
+
+            // A senha nunca é salva como texto normal.
+            const senhaHash = await bcrypt.hash(
+                professor.senha,
+                12
+            );
+
+            const resultado =
+                await collection.insertOne({
+                    nome: professor.nome,
+                    email: professor.email,
+                    senha: senhaHash,
+                    role: professor.role,
+                    dataCadastro: new Date()
+                });
+
+            if (!resultado.insertedId) {
+                throw new Error(
+                    "Falha ao inserir professor."
+                );
             }
 
-            const insertedId = result.insertedId.toString();
-            logger.info(`✅ ${method} - Professor criado com sucesso`, {
-                idProfessor: insertedId,
-                matricula: objProfessorModel.matricula,
-            });
-            return insertedId;
+            return resultado.insertedId.toString();
         } catch (error) {
-            logger.error(`❌ ${method} - Erro ao criar Professor`, {
-                matricula: objProfessorModel?.matricula,
-                error: error.message,
-                stack: error.stack,
-            });
+            logger.error(
+                `❌ ${method} - Erro ao criar professor`,
+                {
+                    email: professor?.email,
+                    error: error.message,
+                    stack: error.stack
+                }
+            );
+
             throw error;
         }
     }
 
-    async delete(objProfessorModel) {
-        const method = 'ProfessorDAOMongo.delete';
-        logger.debug(`🟢 ${method} - Iniciando exclusão de Professor`, {
-            idProfessor: objProfessorModel.id,
-        });
+    async update(professor) {
+        const method =
+            "ProfessorDAOMongo.update";
 
         try {
-            const collection = await this.#database.getCollection('Professors');
-            const filter = { _id: new ObjectId(objProfessorModel.id) };
-            const result = await collection.deleteOne(filter);
-            const deleted = result.deletedCount > 0;
+            const collection =
+                await this.#database.getCollection(
+                    "professores"
+                );
 
-            if (deleted) {
-                logger.info(`✅ ${method} - Professor excluído com sucesso`, {
-                    idProfessor: objProfessorModel.id,
-                });
-            } else {
-                logger.warn(`⚠️ ${method} - Professor não encontrado para exclusão`, {
-                    idProfessor: objProfessorModel.id,
-                });
+            const campos = {
+                nome: professor.nome,
+                email: professor.email,
+                role: professor.role,
+                dataAtualizacao: new Date()
+            };
+
+            // Só altera a senha quando uma nova for enviada.
+            if (professor.senha) {
+                campos.senha = await bcrypt.hash(
+                    professor.senha,
+                    12
+                );
             }
-            return deleted;
+
+            const resultado =
+                await collection.updateOne(
+                    {
+                        _id: new ObjectId(
+                            professor.id
+                        )
+                    },
+                    {
+                        $set: campos
+                    }
+                );
+
+            return resultado.matchedCount > 0;
         } catch (error) {
-            logger.error(`❌ ${method} - Erro ao excluir Professor`, {
-                idProfessor: objProfessorModel?.id,
-                error: error.message,
-                stack: error.stack,
-            });
+            logger.error(
+                `❌ ${method} - Erro ao atualizar professor`,
+                {
+                    idProfessor: professor?.id,
+                    error: error.message,
+                    stack: error.stack
+                }
+            );
+
             throw error;
         }
     }
 
-    async update(objProfessorModel) {
-        const method = 'ProfessorDAOMongo.update';
-        logger.debug(`🟢 ${method} - Iniciando atualização de Professor`, {
-            idProfessor: objProfessorModel.id,
-            matricula: objProfessorModel.matricula,
-        });
+    async delete(professor) {
+        const collection =
+            await this.#database.getCollection(
+                "professores"
+            );
 
-        try {
-            const collection = await this.#database.getCollection('Professors');
-            const filter = { _id: new ObjectId(objProfessorModel.id) };
-            const update = { $set: this.#modelToDocument(objProfessorModel) };
-            const result = await collection.updateOne(filter, update);
-            const updated = result.modifiedCount > 0;
-
-            if (updated) {
-                logger.info(`✅ ${method} - Professor atualizado com sucesso`, {
-                    idProfessor: objProfessorModel.id,
-                });
-            } else {
-                logger.warn(`⚠️ ${method} - Professor não encontrado ou sem alterações`, {
-                    idProfessor: objProfessorModel.id,
-                });
-            }
-            return updated;
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao atualizar Professor`, {
-                idProfessor: objProfessorModel?.id,
-                error: error.message,
-                stack: error.stack,
+        const resultado =
+            await collection.deleteOne({
+                _id: new ObjectId(professor.id)
             });
-            throw error;
-        }
+
+        return resultado.deletedCount > 0;
     }
 
     async findAll() {
-        const method = 'ProfessorDAOMongo.findAll';
-        logger.debug(`🟢 ${method} - Buscando todos os Professors`);
+        const collection =
+            await this.#database.getCollection(
+                "professores"
+            );
 
-        try {
-            const collection = await this.#database.getCollection('Professors');
-            const docs = await collection.find().sort({ nome: 1 }).toArray();
-            const Professors = docs.map(doc => this.#documentToObject(doc));
+        const documentos = await collection
+            .find(
+                {},
+                {
+                    projection: {
+                        senha: 0
+                    }
+                }
+            )
+            .sort({ nome: 1 })
+            .toArray();
 
-            logger.info(`✅ ${method} - ${Professors.length} Professors encontrados`);
-            return Professors;
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao buscar todos os Professors`, {
-                error: error.message,
-                stack: error.stack,
-            });
-            throw error;
-        }
+        return documentos.map(documento =>
+            this.#documentToObject(documento)
+        );
     }
 
     async findById(idProfessor) {
-        const method = 'ProfessorDAOMongo.findById';
-        logger.debug(`🟢 ${method} - Buscando Professor por ID`, { idProfessor });
+        const collection =
+            await this.#database.getCollection(
+                "professores"
+            );
 
-        try {
-            const collection = await this.#database.getCollection('Professors');
-            const doc = await collection.findOne({ _id: new ObjectId(idProfessor) });
+        const documento =
+            await collection.findOne(
+                {
+                    _id: new ObjectId(idProfessor)
+                },
+                {
+                    projection: {
+                        senha: 0
+                    }
+                }
+            );
 
-            if (!doc) {
-                logger.warn(`⚠️ ${method} - Professor não encontrado`, { idProfessor });
-                return null;
-            }
-
-            logger.info(`✅ ${method} - Professor encontrado`, { idProfessor });
-            return this.#documentToObject(doc);
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao buscar Professor`, {
-                idProfessor,
-                error: error.message,
-                stack: error.stack,
-            });
-            throw error;
-        }
+        return documento
+            ? this.#documentToObject(documento)
+            : null;
     }
 
     async findByField(field, value) {
-        const method = 'ProfessorDAOMongo.findByField';
-        logger.debug(`🟢 ${method} - Buscando Professors por campo`, { field, value });
+        const camposPermitidos = [
+            "id",
+            "nome",
+            "email",
+            "role"
+        ];
 
-        try {
-            const allowedFields = ['id', 'matricula', 'nome', 'cpf', 'curso', 'turma'];
-            if (!allowedFields.includes(field)) {
-                throw new Error(`Campo inválido para busca: ${field}`);
-            }
-
-            const collection = await this.#database.getCollection('Professors');
-            const filter = field === 'id'
-                ? { _id: new ObjectId(value) }
-                : { [field]: value };
-            const docs = await collection.find(filter).toArray();
-            const Professors = docs.map(doc => this.#documentToObject(doc));
-
-            logger.info(`✅ ${method} - ${Professors.length} Professors encontrados para ${field}=${value}`);
-            return Professors;
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao buscar Professors por campo`, {
-                field,
-                value,
-                error: error.message,
-                stack: error.stack,
-            });
-            throw error;
+        if (!camposPermitidos.includes(field)) {
+            throw new Error(
+                `Campo inválido para busca: ${field}`
+            );
         }
+
+        const collection =
+            await this.#database.getCollection(
+                "professores"
+            );
+
+        const filtro =
+            field === "id"
+                ? {
+                    _id: new ObjectId(value)
+                }
+                : {
+                    [field]: value
+                };
+
+        const documentos = await collection
+            .find(
+                filtro,
+                {
+                    projection: {
+                        senha: 0
+                    }
+                }
+            )
+            .toArray();
+
+        return documentos.map(documento =>
+            this.#documentToObject(documento)
+        );
     }
 
-    #modelToDocument(objProfessorModel) {
-        const doc = {
-            matricula: objProfessorModel.matricula,
-            nome: objProfessorModel.nome,
-            turma: objProfessorModel.turma,
-        };
+    async login(email, senha) {
+        const collection =
+            await this.#database.getCollection(
+                "professores"
+            );
 
-        if (objProfessorModel.nascimento !== undefined) doc.nascimento = objProfessorModel.nascimento;
-        if (objProfessorModel.cpf !== undefined) doc.cpf = objProfessorModel.cpf;
-        if (objProfessorModel.curso !== undefined) doc.curso = objProfessorModel.curso;
-        return doc;
+        const documento =
+            await collection.findOne({
+                email
+            });
+
+        if (!documento) {
+            return null;
+        }
+
+        const senhaValida =
+            await bcrypt.compare(
+                senha,
+                documento.senha
+            );
+
+        if (!senhaValida) {
+            return null;
+        }
+
+        return this.#documentToObject(documento);
     }
 
-    #documentToObject(doc) {
+    #documentToObject(documento) {
         return {
-            id: doc._id.toString(),
-            matricula: doc.matricula,
-            nome: doc.nome,
-            nascimento: doc.nascimento,
-            cpf: doc.cpf,
-            curso: doc.curso,
-            turma: doc.turma,
+            id: documento._id.toString(),
+            nome: documento.nome,
+            email: documento.email,
+            role: documento.role,
+            dataCadastro:
+                documento.dataCadastro,
+            dataAtualizacao:
+                documento.dataAtualizacao || null
         };
     }
 };

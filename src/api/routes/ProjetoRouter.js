@@ -1,5 +1,5 @@
-const express = require('express');
-const logger = require('../utils/Logger');
+const express = require("express");
+const logger = require("../utils/Logger");
 
 module.exports = class ProjetoRouter {
     #router;
@@ -7,58 +7,105 @@ module.exports = class ProjetoRouter {
     #projetoMiddleware;
     #projetoController;
 
-    constructor(jwtMiddlewareDependency, projetoMiddlewareDependency, projetoControllerDependency) {
-        logger.info('⬆️ ProjetoRouter.constructor()');
+    constructor(
+        jwtMiddlewareDependency,
+        projetoMiddlewareDependency,
+        projetoControllerDependency
+    ) {
+        logger.info("⬆️ ProjetoRouter.constructor()");
+
         this.#router = express.Router();
-        this.#jwtMiddleware = jwtMiddlewareDependency;
-        this.#projetoMiddleware = projetoMiddlewareDependency;
-        this.#projetoController = projetoControllerDependency;
+
+        this.#jwtMiddleware =
+            jwtMiddlewareDependency;
+
+        this.#projetoMiddleware =
+            projetoMiddlewareDependency;
+
+        this.#projetoController =
+            projetoControllerDependency;
     }
 
     createRoutes = () => {
-        const method = 'ProjetoRouter.createRoutes';
-        logger.info(`⬆️ ${method} - Configurando rotas de Projeto`);
+        const method =
+            "ProjetoRouter.createRoutes";
 
-        // Pública: Professores cadastram o grupo.
-        this.#router.post('/',
-            this.#projetoMiddleware.validateBody,
-            this.#projetoController.store
-        );
-
-        // Pública: página aberta pelo QR Code, sem dados pessoais sensíveis.
-        this.#router.get('/publico/:idProjeto',
+        /*
+         * Rota pública:
+         * será aberta quando o visitante escanear
+         * o QR Code.
+         */
+        this.#router.get(
+            "/publico/:idProjeto",
             this.#projetoMiddleware.validateIdParam,
             this.#projetoController.showPublic
         );
 
-        // Protegidas: administração por professores/administradores.
-        this.#router.get('/',
+        /*
+         * Rotas protegidas:
+         * somente professores com token poderão usar.
+         */
+
+        // Cadastrar projeto.
+        this.#router.post(
+            "/",
+            this.#jwtMiddleware.validateToken,
+            this.#projetoMiddleware.validateBody,
+            this.#projetoController.store
+        );
+
+        // Listar todos os projetos.
+        this.#router.get(
+            "/",
             this.#jwtMiddleware.validateToken,
             this.#projetoController.index
         );
-        this.#router.get('/:idProjeto',
+
+        // Buscar projeto pelo ID.
+        this.#router.get(
+            "/:idProjeto",
             this.#jwtMiddleware.validateToken,
             this.#projetoMiddleware.validateIdParam,
             this.#projetoController.show
         );
-        this.#router.put('/:idProjeto',
+
+        // Atualizar projeto.
+        this.#router.put(
+            "/:idProjeto",
             this.#jwtMiddleware.validateToken,
             this.#projetoMiddleware.validateIdParam,
             this.#projetoMiddleware.validateBody,
             this.#projetoController.update
         );
-        this.#router.delete('/:idProjeto',
+
+        // Excluir projeto.
+        this.#router.delete(
+            "/:idProjeto",
             this.#jwtMiddleware.validateToken,
             this.#projetoMiddleware.validateIdParam,
             this.#projetoController.destroy
         );
 
-        logger.info(`✅ ${method} - Rotas de Projeto configuradas`, {
-            basePath: '/api/v1/projetos',
-            publicRoutes: ['POST /', 'GET /publico/:idProjeto'],
-            protectedRoutes: ['GET /', 'GET /:idProjeto', 'PUT /:idProjeto', 'DELETE /:idProjeto'],
-            totalRoutes: 6,
-        });
+        logger.info(
+            `✅ ${method} - Rotas configuradas`,
+            {
+                basePath:
+                    "/api/v1/projetos",
+
+                publicRoutes: [
+                    "GET /publico/:idProjeto"
+                ],
+
+                protectedRoutes: [
+                    "POST /",
+                    "GET /",
+                    "GET /:idProjeto",
+                    "PUT /:idProjeto",
+                    "DELETE /:idProjeto"
+                ]
+            }
+        );
+
         return this.#router;
     };
 };

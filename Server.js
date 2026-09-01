@@ -123,12 +123,43 @@ module.exports = class Server {
     /**
      * Seed: cria coleções e insere dados iniciais se não existirem.
      */
-    #seedDatabase = async () => {
-        const method = 'Server.#seedDatabase';
-        logger.debug(`🔄 ${method} - Verificando necessidade de seed`);
+     #seedDatabase = async () => {
+    const method = 'Server.#seedDatabase';
+    logger.debug(`🔄 ${method} - Verificando necessidade de seed`);
 
-        // TODO: implementar lógica de seed aqui
-    };
+    try {
+        const collection = await this.#database.getCollection('professores');
+
+        await collection.createIndex(
+            { email: 1 },
+            { unique: true }
+        );
+
+        const totalProfessores = await collection.countDocuments();
+
+        if (totalProfessores === 0) {
+            const senhaHash = await bcrypt.hash('Admin@2026', 12);
+
+            await collection.insertOne({
+                nome: 'Administrador da Feira',
+                email: 'admin@feira.com',
+                senha: senhaHash,
+                role: 'ADMINISTRADOR',
+                dataCadastro: new Date(),
+            });
+
+            logger.info(`✅ ${method} - Administrador inicial criado`);
+        } else {
+            logger.info(`✅ ${method} - Professores já cadastrados`);
+        }
+    } catch (error) {
+        logger.error(`❌ ${method} - Erro ao executar seed`, {
+            error: error.message,
+            stack: error.stack,
+        });
+        throw error;
+    }
+};
 
     setupProfessor = () => {
         const method = 'Server.setupProfessor';
@@ -144,7 +175,8 @@ module.exports = class Server {
                 this.#ProfessorMiddleware,
                 this.#ProfessorController
             );
-            this.#app.use('/api/v1/Professors', this.#ProfessorRouter.createRoutes());
+           this.#app.use("/api/v1/professores",this.#ProfessorRouter.createRoutes()
+);
             logger.info(`✅ ${method} - Rotas de Professor configuradas com sucesso`);
         } catch (error) {
             logger.error(`❌ ${method} - Erro ao configurar Professor`, {
@@ -162,8 +194,7 @@ module.exports = class Server {
         try {
             this.#projetoMiddleware = new ProjetoMiddleware();
             this.#projetoDAO = new ProjetoDAOMongo(this.#database);
-            if (!this.#ProfessorDAO) this.#ProfessorDAO = new ProfessorDAOMongo(this.#database);
-            this.#projetoService = new ProjetoService(this.#projetoDAO, this.#ProfessorDAO);
+            this.#projetoService = new ProjetoService(this.#projetoDAO);
             this.#projetoController = new ProjetoController(this.#projetoService);
             this.#projetoRouter = new ProjetoRouter(
                 this.#jwtMiddleware,

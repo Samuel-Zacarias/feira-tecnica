@@ -1,54 +1,117 @@
-const express = require('express');
-const logger = require('../utils/Logger');
+const express = require("express");
+const logger = require("../utils/Logger");
 
 module.exports = class ProfessorRouter {
     #router;
     #jwtMiddleware;
-    #ProfessorMiddleware;
-    #ProfessorController;
+    #professorMiddleware;
+    #professorController;
 
-    constructor(jwtMiddlewareDependency, ProfessorMiddlewareDependency, ProfessorControllerDependency) {
-        logger.info('⬆️ ProfessorRouter.constructor()');
+    constructor(
+        jwtMiddlewareDependency,
+        professorMiddlewareDependency,
+        professorControllerDependency
+    ) {
+        logger.info(
+            "⬆️ ProfessorRouter.constructor()"
+        );
+
         this.#router = express.Router();
-        this.#jwtMiddleware = jwtMiddlewareDependency;
-        this.#ProfessorMiddleware = ProfessorMiddlewareDependency;
-        this.#ProfessorController = ProfessorControllerDependency;
+
+        this.#jwtMiddleware =
+            jwtMiddlewareDependency;
+
+        this.#professorMiddleware =
+            professorMiddlewareDependency;
+
+        this.#professorController =
+            professorControllerDependency;
     }
 
     createRoutes = () => {
-        const method = 'ProfessorRouter.createRoutes';
-        logger.info(`⬆️ ${method} - Configurando rotas de Professor`);
+        const method =
+            "ProfessorRouter.createRoutes";
 
-        this.#router.post('/',
-            this.#jwtMiddleware.validateToken,
-            this.#ProfessorMiddleware.validateBody,
-            this.#ProfessorController.store
-        );
-        this.#router.get('/',
-            this.#jwtMiddleware.validateToken,
-            this.#ProfessorController.index
-        );
-        this.#router.get('/:idProfessor',
-            this.#jwtMiddleware.validateToken,
-            this.#ProfessorMiddleware.validateIdParam,
-            this.#ProfessorController.show
-        );
-        this.#router.put('/:idProfessor',
-            this.#jwtMiddleware.validateToken,
-            this.#ProfessorMiddleware.validateIdParam,
-            this.#ProfessorMiddleware.validateBody,
-            this.#ProfessorController.update
-        );
-        this.#router.delete('/:idProfessor',
-            this.#jwtMiddleware.validateToken,
-            this.#ProfessorMiddleware.validateIdParam,
-            this.#ProfessorController.destroy
+        /*
+         * Rota pública de login.
+         * Não precisa de token.
+         */
+        this.#router.post(
+            "/login",
+            this.#professorMiddleware
+                .validateLoginBody,
+            this.#professorController.login
         );
 
-        logger.info(`✅ ${method} - Rotas de Professor configuradas`, {
-            basePath: '/api/v1/Professors',
-            totalRoutes: 5,
-        });
+        /*
+         * Rotas protegidas.
+         */
+
+        // Cadastrar professor.
+        this.#router.post(
+            "/",
+            this.#jwtMiddleware.validateToken,
+            this.#professorMiddleware
+                .validateCreateBody,
+            this.#professorController.store
+        );
+
+        // Listar professores.
+        this.#router.get(
+            "/",
+            this.#jwtMiddleware.validateToken,
+            this.#professorController.index
+        );
+
+        // Buscar professor pelo ID.
+        this.#router.get(
+            "/:idProfessor",
+            this.#jwtMiddleware.validateToken,
+            this.#professorMiddleware
+                .validateIdParam,
+            this.#professorController.show
+        );
+
+        // Atualizar professor.
+        this.#router.put(
+            "/:idProfessor",
+            this.#jwtMiddleware.validateToken,
+            this.#professorMiddleware
+                .validateIdParam,
+            this.#professorMiddleware
+                .validateUpdateBody,
+            this.#professorController.update
+        );
+
+        // Excluir professor.
+        this.#router.delete(
+            "/:idProfessor",
+            this.#jwtMiddleware.validateToken,
+            this.#professorMiddleware
+                .validateIdParam,
+            this.#professorController.destroy
+        );
+
+        logger.info(
+            `✅ ${method} - Rotas configuradas`,
+            {
+                basePath:
+                    "/api/v1/professores",
+
+                publicRoutes: [
+                    "POST /login"
+                ],
+
+                protectedRoutes: [
+                    "POST /",
+                    "GET /",
+                    "GET /:idProfessor",
+                    "PUT /:idProfessor",
+                    "DELETE /:idProfessor"
+                ]
+            }
+        );
+
         return this.#router;
     };
 };
