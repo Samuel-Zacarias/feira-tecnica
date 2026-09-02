@@ -9,7 +9,6 @@
     "dev": "kill-port 3000 & taskkill /IM nginx.exe /F >nul 2>&1 & cd nginx && start \"\" /B nginx.exe && cd .. && nodemon",
     "build": "tsc",
     "start": "node index.js"
-
   },
   "author": "Hélio Lourenço Esperidião Ferreira",
   "license": "ISC",
@@ -21,6 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^7.6.0",
     "mysql2": "^3.11.3",
+    "qrcode": "^1.5.4",
     "winston": "^3.19.0"
   },
   "devDependencies": {

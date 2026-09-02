@@ -1,6 +1,7 @@
 const Projeto = require("../models/Projeto");
 const ErrorResponse = require("../utils/ErrorResponse");
 const logger = require("../utils/Logger");
+const QrCodeGenerator = require("../utils/QrCodeGenerator");
 
 module.exports = class ProjetoService {
     #projetoDAO;
@@ -19,6 +20,12 @@ module.exports = class ProjetoService {
             await this.#validarParticipacaoUnica(projeto);
 
             projeto.id = await this.#projetoDAO.create(projeto);
+
+            // Gera o QR Code apontando para a página pública do projeto.
+            const urlPublica = `${process.env.BASE_URL}/projeto.html?id=${projeto.id}`;
+            const qrCodeBase64 = await QrCodeGenerator.gerar(urlPublica);
+
+            await this.#projetoDAO.salvarQrCode(projeto.id, qrCodeBase64, urlPublica);
 
             logger.info(`✅ ${method} - Projeto criado`, {
                 idProjeto: projeto.id,

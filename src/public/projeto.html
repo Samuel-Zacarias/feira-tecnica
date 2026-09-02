@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projeto - Feira Técnica</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+  <div class="container py-5" style="max-width: 700px;">
+    <div id="carregando" class="text-center text-muted">Carregando projeto...</div>
+    <div id="erro" class="alert alert-danger d-none"></div>
+
+    <div id="conteudo" class="card shadow-sm d-none">
+      <div class="card-body">
+        <h2 id="tema" class="card-title mb-3"></h2>
+
+        <p><strong>Curso:</strong> <span id="curso"></span></p>
+        <p><strong>Equipamento:</strong> <span id="equipamento"></span></p>
+
+        <hr>
+
+        <h5>Representante</h5>
+        <p id="representante" class="mb-3"></p>
+
+        <h5>Integrantes</h5>
+        <p id="integrantes" class="mb-3"></p>
+
+        <div id="outrosRecursosBox" class="d-none">
+          <h5>Outros recursos</h5>
+          <p id="outrosRecursos"></p>
+        </div>
+
+        <div id="observacoesBox" class="d-none">
+          <h5>Observações</h5>
+          <p id="observacoes"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const idProjeto = new URLSearchParams(window.location.search).get("id");
+
+    const elCarregando = document.getElementById("carregando");
+    const elErro = document.getElementById("erro");
+    const elConteudo = document.getElementById("conteudo");
+
+    const mostrarErro = (mensagem) => {
+      elCarregando.classList.add("d-none");
+      elErro.textContent = mensagem;
+      elErro.classList.remove("d-none");
+    };
+
+    if (!idProjeto) {
+      mostrarErro("Nenhum projeto informado na URL.");
+    } else {
+      fetch(`/api/v1/projetos/publico/${idProjeto}`)
+        .then(async (resposta) => {
+          const json = await resposta.json();
+
+          if (!resposta.ok || !json.success) {
+            throw new Error(json.message || "Projeto não encontrado.");
+          }
+
+          return json.data.projeto;
+        })
+        .then((projeto) => {
+          document.getElementById("tema").textContent = projeto.tema;
+          document.getElementById("curso").textContent = projeto.curso;
+          document.getElementById("equipamento").textContent = projeto.equipamento;
+
+          document.getElementById("representante").textContent =
+            `${projeto.representante.nome} (${projeto.representante.turma})`;
+
+          document.getElementById("integrantes").textContent =
+            projeto.integrantes.length
+              ? projeto.integrantes.map(i => `${i.nome} (${i.turma})`).join(", ")
+              : "Nenhum integrante além do representante.";
+
+          if (projeto.outrosRecursos) {
+            document.getElementById("outrosRecursos").textContent = projeto.outrosRecursos;
+            document.getElementById("outrosRecursosBox").classList.remove("d-none");
+          }
+
+          if (projeto.observacoes) {
+            document.getElementById("observacoes").textContent = projeto.observacoes;
+            document.getElementById("observacoesBox").classList.remove("d-none");
+          }
+
+          elCarregando.classList.add("d-none");
+          elConteudo.classList.remove("d-none");
+        })
+        .catch((erro) => mostrarErro(erro.message));
+    }
+  </script>
+</body>
+</html>

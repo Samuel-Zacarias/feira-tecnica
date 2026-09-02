@@ -144,6 +144,33 @@ module.exports = class ProjetoDAOMongo {
         }
     }
 
+    /**
+     * Salva o QR Code (base64) e a URL pública gerados para o projeto.
+     * Chamado logo após a criação do projeto, quando o id já existe.
+     */
+    async salvarQrCode(idProjeto, qrCodeBase64, urlPublica) {
+        const method = "ProjetoDAOMongo.salvarQrCode";
+
+        try {
+            const collection = await this.#database.getCollection("projetos");
+
+            const resultado = await collection.updateOne(
+                { _id: new ObjectId(idProjeto) },
+                { $set: { qrCode: qrCodeBase64, urlPublica } }
+            );
+
+            return resultado.matchedCount > 0;
+        } catch (error) {
+            logger.error(`❌ ${method} - Erro ao salvar QR Code`, {
+                idProjeto,
+                error: error.message,
+                stack: error.stack
+            });
+
+            throw error;
+        }
+    }
+
     async findByField(field, value) {
         const method = "ProjetoDAOMongo.findByField";
 
@@ -234,7 +261,9 @@ module.exports = class ProjetoDAOMongo {
             outrosRecursos: documento.outrosRecursos || null,
             observacoes: documento.observacoes || null,
             dataCadastro: documento.dataCadastro,
-            dataAtualizacao: documento.dataAtualizacao || null
+            dataAtualizacao: documento.dataAtualizacao || null,
+            qrCode: documento.qrCode || null,
+            urlPublica: documento.urlPublica || null
         };
     }
 };

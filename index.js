@@ -2,6 +2,10 @@
 const Server = require("./Server");
 const logger = require("./src/api/utils/Logger");
 
+// Endereço base usado para montar as URLs dos QR Codes.
+// Em produção, troque pelo domínio/IP real do servidor.
+process.env.BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+
 /**
  * Arquivo principal de inicialização do servidor.
  * 
@@ -19,9 +23,9 @@ const logger = require("./src/api/utils/Logger");
     logger.info(`🚀 ${method} - Iniciando aplicação`);
 
     try {
-        // Cria instância do servidor na porta 8080
+        // Cria instância do servidor na porta 3000
         const server = new Server(3000);
-        logger.debug(`🔍 ${method} - Instância do Server criada`, { porta: 8080 });
+        logger.debug(`🔍 ${method} - Instância do Server criada`, { porta: 3000 });
 
         // Inicializa o servidor (conexão com DB, middlewares, roteadores)
         logger.debug(`🔄 ${method} - Inicializando servidor...`);
