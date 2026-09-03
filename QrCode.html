@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerar QR Code</title>
+</head>
+<body>
+
+  <input id="texto" type="text" placeholder="Digite um texto ou URL">
+  <button onclick="gerarQRCode()">Gerar QR Code</button>
+
+  <br><br>
+  <canvas id="qrcode"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+  <script>
+    function gerarQRCode() {
+      const texto = document.getElementById("texto").value;
+      const canvas = document.getElementById("qrcode");
+
+      QRCode.toCanvas(canvas, texto, {
+        width: 250,
+        margin: 2
+      }, function (erro) {
+        if (erro) console.error(erro);
+      });
+    }
+  </script>
+
+</body>
+</html>

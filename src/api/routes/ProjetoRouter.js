@@ -49,7 +49,7 @@ module.exports = class ProjetoRouter {
         // Cadastrar projeto.
         this.#router.post(
             "/",
-            this.#jwtMiddleware.validateToken,
+            //this.#jwtMiddleware.validateToken,
             this.#projetoMiddleware.validateBody,
             this.#projetoController.store
         );

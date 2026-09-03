@@ -14,3 +14,27 @@
     
 
 }
+
+
+
+{
+	"projeto": {
+        "tema" : "Plataforma de Ensino Gamificado $(Get-Random)",
+        "curso" : "INFORMÁTICA",
+        "equipamento" : "EQUIPE TRAZ SEU COMPUTADOR",
+        "representante" : {
+            "nome" : "Matheus Oliveira",
+            "matricula" : "77111",
+            "email" : "matheus.oliveira@email.com",
+            "turma" : "2F"
+        		},
+        "integrantes" : [
+            {
+                "nome" : "Larissa Martins",
+                "matricula" : "77222",
+                "turma" : "2F"
+            }
+        ]
+    
+	}
+}

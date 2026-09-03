@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importar Projetos</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        #log {
+            margin-top: 20px;
+            background: #111;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .sucesso {
+            color: green;
+        }
+
+        .erro {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Importar projetos</h1>
+
+    <input
+        type="file"
+        id="arquivoCsv"
+        accept=".csv"
+    >
+
+    <button id="btnEnviar">
+        Importar projetos
+    </button>
+
+    <div id="log"></div>
+
+    <script>
+        const API_URL =
+            "http://localhost/feira-tecnica/api/v1/projetos";
+
+        const arquivoInput =
+            document.getElementById("arquivoCsv");
+
+        const btnEnviar =
+            document.getElementById("btnEnviar");
+
+        const log =
+            document.getElementById("log");
+
+
+        function escreverLog(mensagem, tipo = "") {
+            const linha = document.createElement("div");
+
+            linha.textContent = mensagem;
+
+            if (tipo) {
+                linha.classList.add(tipo);
+            }
+
+            log.appendChild(linha);
+        }
+
+
+        /*
+         * Converte uma linha CSV respeitando campos
+         * entre aspas.
+         */
+        function parseCSVLine(linha) {
+            const resultado = [];
+            let campo = "";
+            let dentroAspas = false;
+
+            for (let i = 0; i < linha.length; i++) {
+                const caractere = linha[i];
+
+                if (caractere === '"') {
+
+                    // Aspas duplas dentro de um campo
+                    if (
+                        dentroAspas &&
+                        linha[i + 1] === '"'
+                    ) {
+                        campo += '"';
+                        i++;
+                    } else {
+                        dentroAspas = !dentroAspas;
+                    }
+
+                } else if (
+                    caractere === "," &&
+                    !dentroAspas
+                ) {
+                    resultado.push(campo.trim());
+                    campo = "";
+
+                } else {
+                    campo += caractere;
+                }
+            }
+
+            resultado.push(campo.trim());
+
+            return resultado;
+        }
+
+
+        /*
+         * Converte o CSV inteiro em objetos.
+         */
+        function csvParaObjetos(csv) {
+
+            const linhas = csv
+                .replace(/^\uFEFF/, "")
+                .split(/\r?\n/)
+                .filter(linha => linha.trim() !== "");
+
+            if (linhas.length < 2) {
+                throw new Error("CSV vazio ou sem dados.");
+            }
+
+            const cabecalho =
+                parseCSVLine(linhas[0]);
+
+            return linhas.slice(1).map(linha => {
+
+                const valores =
+                    parseCSVLine(linha);
+
+                const objeto = {};
+
+                cabecalho.forEach((campo, index) => {
+                    objeto[campo] =
+                        valores[index] ?? "";
+                });
+
+                return objeto;
+            });
+        }
+
+
+        /*
+         * Transforma uma linha do CSV no formato
+         * do JSON original.
+         */
+        function montarProjeto(linha) {
+
+            return {
+                projeto: {
+                    tema: linha.tema,
+                    curso: linha.curso,
+                    equipamento: linha.equipamento,
+
+                    representante: {
+                        nome: linha.representante_nome,
+                        matricula: linha.representante_matricula,
+                        email: linha.representante_email,
+                        turma: linha.representante_turma
+                    },
+
+                    integrantes: [
+                        {
+                            nome: linha.integrante_nome,
+                            matricula: linha.integrante_matricula,
+                            turma: linha.integrante_turma
+                        }
+                    ]
+                }
+            };
+        }
+
+
+        /*
+         * Envia um projeto para a API.
+         */
+        async function enviarProjeto(projeto) {
+
+            const resposta = await fetch(API_URL, {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(projeto)
+            });
+
+            if (!resposta.ok) {
+
+                let detalhe = "";
+
+                try {
+                    detalhe = await resposta.text();
+                } catch (e) {
+                    // Ignora erro ao ler resposta
+                }
+
+                throw new Error(
+                    `HTTP ${resposta.status} - ${detalhe}`
+                );
+            }
+
+            return resposta;
+        }
+
+
+        /*
+         * Evento principal.
+         */
+        btnEnviar.addEventListener("click", async () => {
+
+            log.innerHTML = "";
+
+            const arquivo =
+                arquivoInput.files[0];
+
+            if (!arquivo) {
+                escreverLog(
+                    "Selecione um arquivo CSV.",
+                    "erro"
+                );
+
+                return;
+            }
+
+            btnEnviar.disabled = true;
+
+            try {
+
+                escreverLog(
+                    `Lendo arquivo: ${arquivo.name}`
+                );
+
+                const conteudo =
+                    await arquivo.text();
+
+                const linhas =
+                    csvParaObjetos(conteudo);
+
+                escreverLog(
+                    `${linhas.length} projetos encontrados.`
+                );
+
+                for (
+                    let i = 0;
+                    i < linhas.length;
+                    i++
+                ) {
+
+                    const linha = linhas[i];
+
+                    const projeto =
+                        montarProjeto(linha);
+
+                    escreverLog(
+                        `Enviando projeto ${i + 1}/${linhas.length}: ${projeto.projeto.tema}`
+                    );
+
+                    try {
+
+                        await enviarProjeto(projeto);
+
+                        escreverLog(
+                            `✓ Projeto ${i + 1} enviado com sucesso.`,
+                            "sucesso"
+                        );
+
+                    } catch (erro) {
+
+                        escreverLog(
+                            `✗ Erro no projeto ${i + 1}: ${erro.message}`,
+                            "erro"
+                        );
+                    }
+                }
+
+                escreverLog(
+                    "Importação finalizada."
+                );
+
+            } catch (erro) {
+
+                escreverLog(
+                    `Erro: ${erro.message}`,
+                    "erro"
+                );
+
+            } finally {
+
+                btnEnviar.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+</html>

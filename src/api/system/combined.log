@@ -375,3 +375,410 @@
 {"email":"admin@feira.com","idFuncionario":"6a975936b22c763383f16d96","level":"info","message":"✅ JwtMiddleware.validateToken - Token válido - renovado com sucesso","name":"Administrador da Feira","role":"ADMINISTRADOR","timestamp":"2026-09-02 17:10:51","url":"/api/v1/projetos"}
 {"idProjeto":"6a9882cb42dd0719a0e1788a","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-02 17:10:51"}
 {"idProjeto":"6a9882cb42dd0719a0e1788a","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Sistema de irrigacao inteligente","timestamp":"2026-09-02 17:10:51"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 13:47:11"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 13:47:11"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"✅ Server.#seedDatabase - Administrador inicial criado","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 13:47:11"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 13:47:11","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 13:47:11"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 13:49:18"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 13:49:18"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"✅ Server.#seedDatabase - Professores já cadastrados","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 13:49:18"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 13:49:18","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 13:49:18"}
+{"level":"info","message":"🛑 Recebido SIGINT - Encerrando aplicação...","timestamp":"2026-09-03 13:51:30"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 13:52:50"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 13:52:50"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"✅ Server.#seedDatabase - Professores já cadastrados","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 13:52:50"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 13:52:50","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 13:52:50"}
+{"level":"info","message":"🛑 Recebido SIGINT - Encerrando aplicação...","timestamp":"2026-09-03 13:53:25"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 13:54:08"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 13:54:08"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"✅ Server.#seedDatabase - Professores já cadastrados","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 13:54:08"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 13:54:08","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 13:54:08"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 13:58:17"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 13:58:17"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"✅ Server.#seedDatabase - Professores já cadastrados","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 13:58:17"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 13:58:17","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 13:58:17"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 13:58:17"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:02:06","type":"JWT"}
+{"level":"warn","message":"⚠️ MeuTokenJWT.validarToken - Token não fornecido","timestamp":"2026-09-03 14:02:06"}
+{"error":"Token não fornecido","hasToken":false,"ip":"::ffff:127.0.0.1","level":"warn","message":"⚠️ JwtMiddleware.validateToken - Token inválido ou expirado","method":"GET","timestamp":"2026-09-03 14:02:06","url":"/api/v1/projetos"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:02:10","type":"JWT"}
+{"level":"warn","message":"⚠️ MeuTokenJWT.validarToken - Token não fornecido","timestamp":"2026-09-03 14:02:10"}
+{"error":"Token não fornecido","hasToken":false,"ip":"::1","level":"warn","message":"⚠️ JwtMiddleware.validateToken - Token inválido ou expirado","method":"GET","timestamp":"2026-09-03 14:02:10","url":"/api/v1/projetos"}
+{"level":"info","message":"🛑 Recebido SIGINT - Encerrando aplicação...","timestamp":"2026-09-03 14:02:16"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 14:02:24"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 14:02:24"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"✅ Server.#seedDatabase - Professores já cadastrados","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 14:02:24"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 14:02:24","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 14:02:24"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 14:02:24"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:02:25","type":"JWT"}
+{"level":"warn","message":"⚠️ MeuTokenJWT.validarToken - Token não fornecido","timestamp":"2026-09-03 14:02:25"}
+{"error":"Token não fornecido","hasToken":false,"ip":"::1","level":"warn","message":"⚠️ JwtMiddleware.validateToken - Token inválido ou expirado","method":"GET","timestamp":"2026-09-03 14:02:25","url":"/api/v1/projetos"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:02:26","type":"JWT"}
+{"level":"warn","message":"⚠️ MeuTokenJWT.validarToken - Token não fornecido","timestamp":"2026-09-03 14:02:26"}
+{"error":"Token não fornecido","hasToken":false,"ip":"::ffff:127.0.0.1","level":"warn","message":"⚠️ JwtMiddleware.validateToken - Token inválido ou expirado","method":"GET","timestamp":"2026-09-03 14:02:26","url":"/api/v1/projetos"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:02:27","type":"JWT"}
+{"level":"warn","message":"⚠️ MeuTokenJWT.validarToken - Token não fornecido","timestamp":"2026-09-03 14:02:27"}
+{"error":"Token não fornecido","hasToken":false,"ip":"::1","level":"warn","message":"⚠️ JwtMiddleware.validateToken - Token inválido ou expirado","method":"GET","timestamp":"2026-09-03 14:02:27","url":"/api/v1/projetos"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:02:27","type":"JWT"}
+{"level":"warn","message":"⚠️ MeuTokenJWT.validarToken - Token não fornecido","timestamp":"2026-09-03 14:02:27"}
+{"error":"Token não fornecido","hasToken":false,"ip":"::ffff:127.0.0.1","level":"warn","message":"⚠️ JwtMiddleware.validateToken - Token inválido ou expirado","method":"GET","timestamp":"2026-09-03 14:02:27","url":"/api/v1/projetos"}
+{"error":{"message":"O campo 'projeto' é obrigatório."},"httpCode":400,"level":"error","message":"Erro na validação de dados","name":"ErrorResponse","stack":"ErrorResponse: Erro na validação de dados\n    at validateBody (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\middleware\\ProjetoMiddleware.js:136:17)\n    at Layer.handle [as handle_request] (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at Route.dispatch (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\route.js:119:3)\n    at Layer.handle [as handle_request] (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:284:15\n    at router.process_params (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at router.handle (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:47:12)","timestamp":"2026-09-03 14:02:55"}
+{"error":{"message":"O campo 'projeto' é obrigatório."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-03 14:02:55","url":"/api/v1/projetos"}
+{"error":{"message":"O campo 'projeto' é obrigatório."},"httpCode":400,"level":"error","message":"Erro na validação de dados","name":"ErrorResponse","stack":"ErrorResponse: Erro na validação de dados\n    at validateBody (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\middleware\\ProjetoMiddleware.js:136:17)\n    at Layer.handle [as handle_request] (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at Route.dispatch (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\route.js:119:3)\n    at Layer.handle [as handle_request] (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:284:15\n    at router.process_params (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at router.handle (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (E:\\feira-tecnica-main\\feira-tecnica-main\\node_modules\\express\\lib\\router\\index.js:47:12)","timestamp":"2026-09-03 14:06:19"}
+{"error":{"message":"O campo 'projeto' é obrigatório."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-03 14:06:19","url":"/api/v1/projetos"}
+{"idProjeto":"6a99a924dd138341acf7aa04","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:06:44"}
+{"idProjeto":"6a99a924dd138341acf7aa04","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Plataforma de Ensino Gamificado $(Get-Random)","timestamp":"2026-09-03 14:06:44"}
+{"error":{"message":"Matheus Oliveira já participa do projeto “Plataforma de Ensino Gamificado $(Get-Random)”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:13:08"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:13:08"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:13:08"}
+{"error":{"message":"Matheus Oliveira já participa do projeto “Plataforma de Ensino Gamificado $(Get-Random)”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:13:08","url":"/api/v1/projetos"}
+{"idProjeto":"6a99aaa4dd138341acf7aa05","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa05","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Aplicativo de Organização Escolar 102","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa06","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa06","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Sistema de Biblioteca Digital 103","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa07","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa07","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Jogo Educacional de Matemática 104","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa08","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa08","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Plataforma de Cursos Online 105","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa09","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa09","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Sistema de Controle de Presença 106","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa0a","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa0a","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Aplicativo de Quiz Interativo 107","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa0b","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa0b","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Plataforma de Tutoria Inteligente 108","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa0c","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa0c","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Sistema de Avaliação Online 109","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa0d","level":"info","message":"✅ ProjetoDAOMongo.create - Projeto criado","timestamp":"2026-09-03 14:13:08"}
+{"idProjeto":"6a99aaa4dd138341acf7aa0d","level":"info","message":"✅ ProjetoService.createProjeto - Projeto criado","tema":"Aplicativo de Desafios Tecnológicos 110","timestamp":"2026-09-03 14:13:08"}
+{"error":{"message":"Matheus Oliveira já participa do projeto “Plataforma de Ensino Gamificado $(Get-Random)”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"Matheus Oliveira já participa do projeto “Plataforma de Ensino Gamificado $(Get-Random)”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"Carlos Silva já participa do projeto “Aplicativo de Organização Escolar 102”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"Carlos Silva já participa do projeto “Aplicativo de Organização Escolar 102”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"João Santos já participa do projeto “Sistema de Biblioteca Digital 103”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"João Santos já participa do projeto “Sistema de Biblioteca Digital 103”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"Gabriel Costa já participa do projeto “Jogo Educacional de Matemática 104”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"Gabriel Costa já participa do projeto “Jogo Educacional de Matemática 104”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"Rafael Martins já participa do projeto “Plataforma de Cursos Online 105”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"Rafael Martins já participa do projeto “Plataforma de Cursos Online 105”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"Lucas Ferreira já participa do projeto “Sistema de Controle de Presença 106”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"Lucas Ferreira já participa do projeto “Sistema de Controle de Presença 106”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"Pedro Almeida já participa do projeto “Aplicativo de Quiz Interativo 107”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"Pedro Almeida já participa do projeto “Aplicativo de Quiz Interativo 107”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"Bruno Carvalho já participa do projeto “Plataforma de Tutoria Inteligente 108”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"Bruno Carvalho já participa do projeto “Plataforma de Tutoria Inteligente 108”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"André Barbosa já participa do projeto “Sistema de Avaliação Online 109”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"André Barbosa já participa do projeto “Sistema de Avaliação Online 109”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"error":{"message":"Felipe Rocha já participa do projeto “Aplicativo de Desafios Tecnológicos 110”"},"httpCode":400,"level":"error","message":"Estudante já cadastrado","name":"ErrorResponse","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoService.createProjeto - Erro ao criar projeto","stack":"ErrorResponse: Estudante já cadastrado\n    at #validarParticipacaoUnica (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:191:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async ProjetoService.createProjeto (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\services\\ProjetoService.js:20:13)\n    at async store (E:\\feira-tecnica-main\\feira-tecnica-main\\src\\api\\controllers\\ProjetoController.js:14:17)","timestamp":"2026-09-03 14:18:00"}
+{"error":"Estudante já cadastrado","level":"error","message":"❌ ProjetoController.store","timestamp":"2026-09-03 14:18:00"}
+{"error":{"message":"Felipe Rocha já participa do projeto “Aplicativo de Desafios Tecnológicos 110”"},"httpCode":400,"level":"warn","message":"Estudante já cadastrado","method":"POST","timestamp":"2026-09-03 14:18:00","url":"/api/v1/projetos"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 14:46:22"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 14:46:22"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"✅ Server.#seedDatabase - Professores já cadastrados","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 14:46:22"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 14:46:22","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 14:46:22"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 14:46:22"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:46:58","type":"JWT"}
+{"email":"admin@feira.com","expiracao":"2026-11-02T17:46:58.000Z","idFuncionario":"6a99a48f77f81fa616f90740","jti":"303d08c78d678641dfd097ca446822f7","level":"info","message":"✅ MeuTokenJWT.gerarToken - Token gerado com sucesso","timestamp":"2026-09-03 14:46:58"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:47:59","type":"JWT"}
+{"email":"admin@feira.com","expiracao":"2026-11-02T17:47:59.000Z","idFuncionario":"6a99a48f77f81fa616f90740","jti":"3184281035b8fb05a272c4a7a895bd05","level":"info","message":"✅ MeuTokenJWT.gerarToken - Token gerado com sucesso","timestamp":"2026-09-03 14:47:59"}
+{"level":"info","message":"🛑 Recebido SIGINT - Encerrando aplicação...","timestamp":"2026-09-03 14:54:17"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 14:56:00"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 14:56:00"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"✅ Server.#seedDatabase - Professores já cadastrados","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 14:56:00"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 14:56:00","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 14:56:00"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 14:56:00"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:56:13","type":"JWT"}
+{"level":"warn","message":"⚠️ MeuTokenJWT.validarToken - Token não fornecido","timestamp":"2026-09-03 14:56:13"}
+{"error":"Token não fornecido","hasToken":false,"ip":"::ffff:127.0.0.1","level":"warn","message":"⚠️ JwtMiddleware.validateToken - Token inválido ou expirado","method":"GET","timestamp":"2026-09-03 14:56:13","url":"/api/v1/projetos"}
+{"alg":"HS256","aud":"http://localhost","duracaoToken":5184000,"iss":"http://localhost","level":"info","message":"⬆️ MeuTokenJWT.constructor - Instância criada","sub":"acesso_sistema","timestamp":"2026-09-03 14:59:05","type":"JWT"}
+{"level":"warn","message":"⚠️ MeuTokenJWT.validarToken - Token não fornecido","timestamp":"2026-09-03 14:59:05"}
+{"error":"Token não fornecido","hasToken":false,"ip":"::1","level":"warn","message":"⚠️ JwtMiddleware.validateToken - Token inválido ou expirado","method":"GET","timestamp":"2026-09-03 14:59:05","url":"/api/v1/projetos"}
+{"level":"info","message":"🚀 Main - Iniciando aplicação","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ Server.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ Server.init - Iniciando servidor","timestamp":"2026-09-03 15:07:41"}
+{"database":"feira-tecnica2026","hasAuth":false,"host":"localhost","level":"info","message":"⬆️ MongoDatabase.constructor - Instância criada","port":27017,"timestamp":"2026-09-03 15:07:41"}
+{"database":"feira-tecnica2026","host":"localhost","level":"info","message":"✅ MongoDatabase.connect - Conectado ao MongoDB com sucesso!","port":27017,"timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"✅ Server.init - Conectado ao MongoDB com sucesso","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"✅ Server.#seedDatabase - Professores já cadastrados","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ Server.setupProfessor - Configurando módulo Professor","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ ProfessorDAOMongo.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ ProfessorService.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ ProfessorController.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ ProfessorRouter.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"basePath":"/api/v1/professores","level":"info","message":"✅ ProfessorRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProfessor","PUT /:idProfessor","DELETE /:idProfessor"],"publicRoutes":["POST /login"],"timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"✅ Server.setupProfessor - Rotas de Professor configuradas com sucesso","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ Server.setupProjeto - Configurando módulo Projeto","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ ProjetoDAOMongo.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ ProjetoService.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ ProjetoController.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ ProjetoRouter.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"basePath":"/api/v1/projetos","level":"info","message":"✅ ProjetoRouter.createRoutes - Rotas configuradas","protectedRoutes":["POST /","GET /","GET /:idProjeto","PUT /:idProjeto","DELETE /:idProjeto"],"publicRoutes":["GET /publico/:idProjeto"],"timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"✅ Server.setupProjeto - Rotas de Projeto configuradas com sucesso","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ Server.setupAvaliacao - Configurando módulo Avaliação","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ AvaliacaoDAOMongo.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ AvaliacaoService.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ AvaliacaoController.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.constructor()","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ AvaliacaoRouter.createRoutes - Configurando rotas de Avaliação","timestamp":"2026-09-03 15:07:41"}
+{"basePath":"/api/v1/avaliacoes","level":"info","message":"✅ AvaliacaoRouter.createRoutes - Rotas de Avaliação configuradas","timestamp":"2026-09-03 15:07:41","totalRoutes":6}
+{"level":"info","message":"✅ Server.setupAvaliacao - Rotas de Avaliação configuradas com sucesso","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"⬆️ Server.setupErrorMiddleware - Configurando middleware de tratamento de erros","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"✅ Server.init - Servidor inicializado com sucesso","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"✅ Main - Servidor iniciado com sucesso!","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-03 15:07:41"}
+{"level":"info","message":"🛑 Recebido SIGINT - Encerrando aplicação...","timestamp":"2026-09-03 15:10:05"}
