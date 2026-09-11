@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Crachás - Univap</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 30px 20px 50px;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef4fa;
+            color: #173f6d;
+        }
+
+        .container {
+            width: 1100px;
+            max-width: 100%;
+            margin: auto;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .cabecalho h1 {
+            margin: 8px 0;
+            color: #0759a8;
+        }
+
+        .cabecalho p {
+            margin: 0;
+            color: #68798b;
+        }
+
+        .dados {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0, 60, 120, 0.10);
+        }
+
+        .card h2 {
+            margin: 0 0 18px;
+            font-size: 18px;
+        }
+
+        .campo {
+            margin-bottom: 15px;
+        }
+
+        .campo label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #53677c;
+        }
+
+        .campo input[type="text"] {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d5e0eb;
+            border-radius: 9px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .campo input[type="text"]:focus {
+            border-color: #0867bd;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .botao-foto {
+            display: block;
+            padding: 12px;
+            text-align: center;
+            border: 2px dashed #72afe3;
+            border-radius: 10px;
+            background: #edf7ff;
+            color: #0759a8;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .botao-foto:hover {
+            background: #dcefff;
+        }
+
+        .preview {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 60, 120, 0.10);
+        }
+
+        .preview h2 {
+            text-align: center;
+            margin: 0 0 25px;
+        }
+
+        .crachas {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 35px;
+        }
+
+        .cracha {
+            position: relative;
+            width: 330px;
+            height: 481px;
+            overflow: hidden;
+            border-radius: 25px;
+            background: white;
+            box-shadow: 0 15px 35px rgba(0, 50, 100, 0.25);
+        }
+
+        .azul-topo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 145px;
+            background: #0764b8;
+            border-radius: 0 0 50% 50%;
+            transform: scaleX(1.25);
+        }
+
+        .azul-topo::after {
+            content: "";
+            position: absolute;
+            left: -5%;
+            bottom: -15px;
+            width: 110%;
+            height: 55px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .azul-baixo {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 145px;
+            background: #0764b8;
+            border-radius: 50% 50% 0 0;
+            transform: scaleX(1.25);
+        }
+
+        .faixa-baixo {
+            position: absolute;
+            left: -5%;
+            bottom: 75px;
+            width: 110%;
+            height: 55px;
+            background: #07559f;
+            border-radius: 50%;
+        }
+
+        .clipe {
+            position: absolute;
+            z-index: 20;
+            top: 18px;
+            left: calc(50% - 35px);
+            width: 70px;
+            height: 13px;
+            border-radius: 20px;
+            background: #47586a;
+            box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.25);
+        }
+
+        .logo {
+            position: absolute;
+            z-index: 10;
+            top: 58px;
+            left: calc(50% - 102.5px);
+            width: 205px;
+            height: 82px;
+            object-fit: contain;
+        }
+
+        /* MOLDURA DA FOTO CORRIGIDA (Calcula centro exato sem transform) */
+        .foto {
+            position: absolute;
+            z-index: 15;
+            top: 185px;
+            left: calc(50% - 77.5px); /* 155px / 2 = 77.5px */
+            width: 155px;
+            height: 205px;
+            border: 3px solid #c8cdd2;
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            background: #ffffff;
+            box-sizing: border-border-box;
+        }
+
+        /* Fundo quadriculado apenas quando sem foto */
+        .foto.sem-imagem {
+            background:
+                linear-gradient(45deg, #eeeeee 25%, transparent 25%),
+                linear-gradient(-45deg, #eeeeee 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #eeeeee 75%),
+                linear-gradient(-45deg, transparent 75%, #eeeeee 75%);
+            background-size: 22px 22px;
+            background-position: 0 0, 0 11px, 11px -11px, -11px 0;
+        }
+
+        /* TAG DA FOTO CORRIGIDA */
+        .foto img {
+            display: none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .silhueta {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .silhueta svg {
+            width: 75%;
+            height: 75%;
+            fill: none;
+            stroke: #c8cdd2;
+            stroke-width: 1.1;
+        }
+
+        .texto-foto {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+            background: rgba(7, 82, 155, 0.85);
+            color: white;
+            font-size: 9px;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        /* Oculta instrução de texto no momento do PDF */
+        .gerando-pdf .texto-foto {
+            display: none !important;
+        }
+
+        .informacoes {
+            position: absolute;
+            z-index: 30;
+            left: 0;
+            bottom: 22px;
+            width: 100%;
+            padding: 0 15px;
+            text-align: center;
+            color: white;
+        }
+
+        .nome {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.15;
+            overflow-wrap: anywhere;
+        }
+
+        .funcao {
+            margin: 8px 0 0;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1.15;
+            overflow-wrap: anywhere;
+        }
+
+        .acoes {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .gerar {
+            padding: 14px 25px;
+            border: 0;
+            border-radius: 11px;
+            background: #0867bd;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .gerar:hover {
+            background: #07529b;
+        }
+
+        .gerar:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .status {
+            min-height: 20px;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 800px) {
+            .dados {
+                grid-template-columns: 1fr;
+            }
+
+            .crachas {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="cabecalho">
+            <h1>Gerador de Crachás</h1>
+            <p>Preencha os dados dos alunos e gere os dois crachás em um único PDF.</p>
+        </div>
+
+        <div class="dados">
+            <!-- Funcionário 1 -->
+            <div class="card">
+                <h2>Aluno 1</h2>
+                <div class="campo">
+                    <label for="nome1">Nome do aluno</label>
+                    <input type="text" id="nome1" placeholder="Nome do aluno">
+                </div>
+                <div class="campo">
+                    <label for="funcao1">Função desempenhada</label>
+                    <input type="text" id="funcao1" placeholder="Função desempenhada">
+                </div>
+                <div class="campo">
+                    <label>Foto</label>
+                    <label class="botao-foto" for="foto1">📷 Escolher foto</label>
+                    <input type="file" id="foto1" accept="image/*">
+                </div>
+            </div>
+
+            <!-- Funcionário 2 -->
+            <div class="card">
+                <h2>Aluno 2</h2>
+                <div class="campo">
+                    <label for="nome2">Nome do aluno</label>
+                    <input type="text" id="nome2" placeholder="Nome do aluno">
+                </div>
+                <div class="campo">
+                    <label for="funcao2">Função desempenhada</label>
+                    <input type="text" id="funcao2" placeholder="Função desempenhada">
+                </div>
+                <div class="campo">
+                    <label>Foto</label>
+                    <label class="botao-foto" for="foto2">📷 Escolher foto</label>
+                    <input type="file" id="foto2" accept="image/*">
+                </div>
+            </div>
+        </div>
+
+        <div class="preview">
+            <h2>Pré-visualização</h2>
+
+            <div class="crachas">
+                <!-- CRACHÁ 1 -->
+                <div class="cracha" id="cracha1">
+                    <div class="azul-topo"></div>
+                    <div class="clipe"></div>
+                    <img src="imagens/logo.png" class="logo" alt="Logo Univap">
+
+                    <label class="foto sem-imagem" for="foto1">
+                        <div class="silhueta">
+                            <svg viewBox="0 0 100 120">
+                                <circle cx="50" cy="32" r="20"></circle>
+                                <path d="M18 110 C18 78 32 62 50 62 C68 62 82 78 82 110"></path>
+                            </svg>
+                        </div>
+                        <img id="previewFoto1" alt="Foto do aluno 1">
+                        <div class="texto-foto">Clique para escolher foto</div>
+                    </label>
+
+                    <div class="faixa-baixo"></div>
+                    <div class="azul-baixo"></div>
+
+                    <div class="informacoes">
+                        <p class="nome" id="previewNome1">Nome do aluno 1</p>
+                        <p class="funcao" id="previewFuncao1">Função desempenhada</p>
+                    </div>
+                </div>
+
+                <!-- CRACHÁ 2 -->
+                <div class="cracha" id="cracha2">
+                    <div class="azul-topo"></div>
+                    <div class="clipe"></div>
+                    <img src="imagens/logo.png" class="logo" alt="Logo Univap">
+
+                    <label class="foto sem-imagem" for="foto2">
+                        <div class="silhueta">
+                            <svg viewBox="0 0 100 120">
+                                <circle cx="50" cy="32" r="20"></circle>
+                                <path d="M18 110 C18 78 32 62 50 62 C68 62 82 78 82 110"></path>
+                            </svg>
+                        </div>
+                        <img id="previewFoto2" alt="Foto do funcionário 2">
+                        <div class="texto-foto">Clique para escolher foto</div>
+                    </label>
+
+                    <div class="faixa-baixo"></div>
+                    <div class="azul-baixo"></div>
+
+                    <div class="informacoes">
+                        <p class="nome" id="previewNome2">Nome do aluno 2</p>
+                        <p class="funcao" id="previewFuncao2">Função desempenhada</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acoes">
+                <button class="gerar" id="gerarPDF">📄 Gerar PDF com os 2 crachás</button>
+            </div>
+
+            <div class="status" id="status"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        function atualizarTexto(campo, preview, textoPadrao) {
+            campo.addEventListener("input", function () {
+                preview.textContent = campo.value.trim() === "" ? textoPadrao : campo.value;
+            });
+        }
+
+        atualizarTexto(document.getElementById("nome1"), document.getElementById("previewNome1"), "Nome do funcionário");
+        atualizarTexto(document.getElementById("funcao1"), document.getElementById("previewFuncao1"), "Função desempenhada");
+        atualizarTexto(document.getElementById("nome2"), document.getElementById("previewNome2"), "Nome do funcionário");
+        atualizarTexto(document.getElementById("funcao2"), document.getElementById("previewFuncao2"), "Função desempenhada");
+
+        function selecionarFoto(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const imagem = document.getElementById(previewId);
+            const areaFoto = imagem.parentElement;
+            const silhueta = areaFoto.querySelector(".silhueta");
+
+            input.addEventListener("change", function () {
+                const arquivo = input.files[0];
+                if (!arquivo) return;
+
+                if (!arquivo.type.startsWith("image/")) {
+                    alert("Escolha uma imagem válida.");
+                    return;
+                }
+
+                const leitor = new FileReader();
+                leitor.onload = function (evento) {
+                    imagem.src = evento.target.result;
+                    imagem.style.display = "block";
+                    silhueta.style.display = "none";
+                    areaFoto.classList.remove("sem-imagem");
+                };
+                leitor.readAsDataURL(arquivo);
+            });
+        }
+
+        selecionarFoto("foto1", "previewFoto1");
+        selecionarFoto("foto2", "previewFoto2");
+
+        document.getElementById("gerarPDF").addEventListener("click", async function () {
+            const botao = this;
+            const status = document.getElementById("status");
+
+            botao.disabled = true;
+            status.textContent = "Gerando PDF...";
+
+            document.body.classList.add("gerando-pdf");
+
+            try {
+                const configCanvas = {
+                    scale: 3,
+                    backgroundColor: "#ffffff",
+                    useCORS: true,
+                    allowTaint: true
+                };
+
+                const canvas1 = await html2canvas(document.getElementById("cracha1"), configCanvas);
+                const canvas2 = await html2canvas(document.getElementById("cracha2"), configCanvas);
+
+                const imagem1 = canvas1.toDataURL("image/png");
+                const imagem2 = canvas2.toDataURL("image/png");
+
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: "landscape",
+                    unit: "mm",
+                    format: "a4"
+                });
+
+                const paginaLargura = 297;
+                const paginaAltura = 210;
+                const crachaLargura = 105;
+                const crachaAltura = crachaLargura * (canvas1.height / canvas1.width);
+                const espaco = 12;
+
+                const larguraTotal = crachaLargura * 2 + espaco;
+                const x = (paginaLargura - larguraTotal) / 2;
+                const y = (paginaAltura - crachaAltura) / 2;
+
+                pdf.addImage(imagem1, "PNG", x, y, crachaLargura, crachaAltura);
+                pdf.addImage(imagem2, "PNG", x + crachaLargura + espaco, y, crachaLargura, crachaAltura);
+
+                pdf.setDrawColor(170);
+                pdf.setLineDashPattern([2, 2], 0);
+                pdf.rect(x, y, crachaLargura, crachaAltura);
+                pdf.rect(x + crachaLargura + espaco, y, crachaLargura, crachaAltura);
+
+                pdf.save("crachas-univap.pdf");
+                status.textContent = "✓ PDF gerado com os 2 crachás.";
+            } catch (erro) {
+                console.error(erro);
+                status.textContent = "Erro ao gerar o PDF.";
+                alert("Não foi possível gerar o PDF.");
+            } finally {
+                document.body.classList.remove("gerando-pdf");
+                botao.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

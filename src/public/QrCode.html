@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de QR Code</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef4fa;
+            color: #173f6d;
+        }
+
+        .card {
+            width: 420px;
+            max-width: 100%;
+            background: white;
+            border-radius: 18px;
+            padding: 32px 28px;
+            box-shadow: 0 10px 30px rgba(0, 60, 120, 0.10);
+            text-align: center;
+        }
+
+        .cabecalho h1 {
+            margin: 0 0 8px 0;
+            color: #0759a8;
+            font-size: 24px;
+        }
+
+        .cabecalho p {
+            margin: 0 0 24px 0;
+            color: #68798b;
+            font-size: 14px;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #dcefff;
+            border-radius: 11px;
+            background: #f8fbfe;
+            color: #173f6d;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #0867bd;
+            background: #ffffff;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: 0;
+            border-radius: 11px;
+            background: #0867bd;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #07529b;
+        }
+
+        /* ÁREA DO QR CODE */
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px;
+            padding: 16px;
+            background: #edf7ff;
+            border: 2px dashed #72afe3;
+            border-radius: 14px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto !important;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="cabecalho">
+            <h1>Gerar QR Code</h1>
+            <p>Insira um link ou texto para criar seu código</p>
+        </div>
+
+        <div class="campo-grupo">
+            <input id="texto" type="text" placeholder="Cole o link ou digite aqui...">
+            <button onclick="gerarQRCode()">Gerar QR Code</button>
+        </div>
+
+        <div class="qr-container">
+            <canvas id="qrcode"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+    <script>
+        function gerarQRCode() {
+            const texto = document.getElementById("texto").value;
+            const canvas = document.getElementById("qrcode");
+
+            if (!texto.trim()) return;
+
+            QRCode.toCanvas(canvas, texto, {
+                width: 230,
+                margin: 2,
+                color: {
+                    dark: "#173f6d", // Cor do QR Code combinando com o tema
+                    light: "#ffffff"
+                }
+            }, function (erro) {
+                if (erro) console.error(erro);
+            });
+        }
+    </script>
+
+</body>
+
+</html>
