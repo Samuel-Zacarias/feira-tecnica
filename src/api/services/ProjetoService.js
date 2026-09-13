@@ -47,6 +47,81 @@ module.exports = class ProjetoService {
         return await this.#projetoDAO.findAll();
     };
 
+  
+    buscarPorNomeAluno = async (nome) => {
+        const nomeBuscado = (nome || "").trim();
+
+        if (nomeBuscado.length < 3) {
+            throw new ErrorResponse(400, "Nome inválido", {
+            message: "Informe pelo menos 3 caracteres para buscar o aluno."
+        });
+    }
+
+        const projetosEncontrados =
+            await this.#projetoDAO.findByNomeAluno(nomeBuscado);
+
+        const normalizar = valor =>
+            String(valor || "")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+                .toLowerCase();
+
+        const nomeBuscadoNormalizado = normalizar(nomeBuscado);
+
+        const resultados = projetosEncontrados.map(projeto => {
+            const participantes = [
+                projeto.representante,
+                ...projeto.integrantes
+            ];
+
+            const participanteEncontrado = participantes.find(
+                participante =>
+                    normalizar(participante.nome).includes(
+                        nomeBuscadoNormalizado
+                    )
+            );
+
+            return {
+                projetoId: projeto.id,
+                tema: projeto.tema,
+                curso: projeto.curso,
+                nomeEncontrado:
+                    participanteEncontrado?.nome || null,
+                    turma: participanteEncontrado?.turma || null
+            };
+        });
+
+        return {
+            encontrado: resultados.length > 0,
+            projetos: resultados
+        };
+    };
+
+    buscarPorMatricula = async (matricula) => {
+        const matriculaBuscada = (matricula || "").trim();
+    
+        if (!matriculaBuscada) {
+            throw new ErrorResponse(400, "Matricula invalida", {
+                message: "Informe uma matricula."
+            });
+        }
+    
+        const projetosEncontrados =
+            await this.#projetoDAO.findByMatricula(
+                matriculaBuscada
+            );
+    
+        return {
+            encontrado: projetosEncontrados.length > 0,
+            projetos: projetosEncontrados.map(projeto => ({
+                projetoId: projeto.id,
+                tema: projeto.tema,
+                curso: projeto.curso
+            }))
+        };
+    };
+
     findById = async (idProjeto) => {
         const projeto = await this.#projetoDAO.findById(idProjeto);
 

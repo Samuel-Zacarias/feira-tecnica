@@ -41,10 +41,18 @@ module.exports = class ProjetoRouter {
             this.#projetoController.showPublic
         );
 
-        /*
-         * Rotas protegidas:
-         * somente professores com token poderão usar.
-         */
+        
+
+        this.#router.get(
+            "/buscar-aluno",
+            this.#projetoController.buscarPorNomeAluno
+        );
+
+        this.#router.get(
+            "/buscar-matricula",
+            this.#projetoController.buscarPorMatricula
+        );
+
 
         // Cadastrar projeto.
         this.#router.post(
@@ -93,7 +101,8 @@ module.exports = class ProjetoRouter {
                     "/api/v1/projetos",
 
                 publicRoutes: [
-                    "GET /publico/:idProjeto"
+                    "GET /publico/:idProjeto",
+                    "GET /buscar-aluno"
                 ],
 
                 protectedRoutes: [

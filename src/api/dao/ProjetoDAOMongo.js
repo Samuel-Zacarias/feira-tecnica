@@ -210,6 +210,40 @@ module.exports = class ProjetoDAOMongo {
         }
     }
 
+   
+    async findByNomeAluno(nome) {
+        const method = "ProjetoDAOMongo.findByNomeAluno";
+
+        try {
+            const collection = await this.#database.getCollection("projetos");
+
+            const nomeEscapado = String(nome)
+                .trim()
+                .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+            const regex = new RegExp(nomeEscapado, "i");
+
+            const documentos = await collection.find({
+                $or: [
+                    { "representante.nome": regex },
+                    { "integrantes.nome": regex }
+                ]
+            }).toArray();
+
+            return documentos.map(documento =>
+                this.#documentToObject(documento)
+            );
+        } catch (error) {
+            logger.error(`❌ ${method} - Erro ao buscar aluno pelo nome`, {
+                nome,
+                error: error.message,
+                stack: error.stack
+            });
+
+            throw error;
+        }
+    }
+
     async findByMatricula(matricula) {
         const method = "ProjetoDAOMongo.findByMatricula";
 

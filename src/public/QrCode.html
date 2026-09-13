@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Gerador de QR Code</title>
 
     <style>
@@ -61,7 +62,6 @@
             color: #173f6d;
             font-size: 15px;
             outline: none;
-            transition: border-color 0.2s, background 0.2s;
         }
 
         input[type="text"]:focus {
@@ -79,14 +79,19 @@
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s;
         }
 
         button:hover {
             background: #07529b;
         }
 
-        /* ÁREA DO QR CODE */
+        .mensagem {
+            min-height: 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         .qr-container {
             display: flex;
             justify-content: center;
@@ -109,41 +114,132 @@
 <body>
 
     <div class="card">
+
         <div class="cabecalho">
             <h1>Gerar QR Code</h1>
-            <p>Insira um link ou texto para criar seu código</p>
+            <p>Digite a matricula do aluno</p>
         </div>
 
         <div class="campo-grupo">
-            <input id="texto" type="text" placeholder="Cole o link ou digite aqui...">
-            <button onclick="gerarQRCode()">Gerar QR Code</button>
+
+            <input
+                id="matricula"
+                type="text"
+                placeholder="Digite a matricula"
+            >
+
+            <button onclick="gerarQRCode()">
+                Gerar QR Code
+            </button>
+
         </div>
+
+        <div id="mensagem" class="mensagem"></div>
 
         <div class="qr-container">
             <canvas id="qrcode"></canvas>
         </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
     <script>
-        function gerarQRCode() {
-            const texto = document.getElementById("texto").value;
-            const canvas = document.getElementById("qrcode");
 
-            if (!texto.trim()) return;
+        async function gerarQRCode() {
 
-            QRCode.toCanvas(canvas, texto, {
-                width: 230,
-                margin: 2,
-                color: {
-                    dark: "#173f6d", // Cor do QR Code combinando com o tema
-                    light: "#ffffff"
+            const matricula =
+                document.getElementById("matricula").value.trim();
+
+            const mensagem =
+                document.getElementById("mensagem");
+
+            const canvas =
+                document.getElementById("qrcode");
+
+            mensagem.textContent = "";
+
+            const contexto = canvas.getContext("2d");
+            contexto.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            if (!matricula) {
+                mensagem.textContent =
+                    "Digite uma matricula.";
+
+                return;
+            }
+
+            try {
+
+                const uri =
+                    `http://localhost:3000/api/v1/projetos/buscar-matricula?matricula=${encodeURIComponent(matricula)}`;
+
+                const response =
+                    await fetch(uri);
+
+                const dados =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !dados.data ||
+                    !dados.data.encontrado
+                ) {
+
+                    mensagem.textContent =
+                        "Matricula nao encontrada.";
+
+                    return;
                 }
-            }, function (erro) {
-                if (erro) console.error(erro);
-            });
+
+                const projeto =
+                    dados.data.projetos[0];
+
+                const urlProjeto =
+                    `http://localhost:3000/api/v1/projetos/publico/${projeto.projetoId}`;
+
+                QRCode.toCanvas(
+                    canvas,
+                    urlProjeto,
+                    {
+                        width: 230,
+                        margin: 2,
+                        color: {
+                            dark: "#173f6d",
+                            light: "#ffffff"
+                        }
+                    },
+                    function (erro) {
+
+                        if (erro) {
+                            console.error(erro);
+
+                            mensagem.textContent =
+                                "Erro ao gerar QR Code.";
+
+                            return;
+                        }
+
+                        mensagem.textContent =
+                            "QR Code gerado com sucesso.";
+                    }
+                );
+
+            } catch (erro) {
+
+                console.error(erro);
+
+                mensagem.textContent =
+                    "Erro ao consultar a matricula.";
+
+            }
         }
+
     </script>
 
 </body>

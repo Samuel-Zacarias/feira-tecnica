@@ -85,6 +85,41 @@
             border-color: #0867bd;
         }
 
+        .campo select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d5e0eb;
+            border-radius: 9px;
+            outline: none;
+            font-size: 14px;
+            background: white;
+            color: #173f6d;
+            font-family: inherit;
+        }
+
+        .campo select:focus {
+            border-color: #0867bd;
+        }
+
+        .verificacao-nome {
+            min-height: 16px;
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .verificacao-nome.ok {
+            color: #1a8f4c;
+        }
+
+        .verificacao-nome.alerta {
+            color: #b8860b;
+        }
+
+        .verificacao-nome.buscando {
+            color: #68798b;
+        }
+
         input[type="file"] {
             display: none;
         }
@@ -366,10 +401,15 @@
                 <div class="campo">
                     <label for="nome1">Nome do aluno</label>
                     <input type="text" id="nome1" placeholder="Nome do aluno">
+                    <div class="verificacao-nome" id="verificacaoNome1"></div>
                 </div>
                 <div class="campo">
                     <label for="funcao1">Função desempenhada</label>
-                    <input type="text" id="funcao1" placeholder="Função desempenhada">
+                    <select id="funcao1">
+                        <option value="" disabled selected>Selecione a função</option>
+                        <option value="Desenvolvedor">Desenvolvedor</option>
+                        <option value="Capitão">Capitão</option>
+                    </select>
                 </div>
                 <div class="campo">
                     <label>Foto</label>
@@ -384,10 +424,15 @@
                 <div class="campo">
                     <label for="nome2">Nome do aluno</label>
                     <input type="text" id="nome2" placeholder="Nome do aluno">
+                    <div class="verificacao-nome" id="verificacaoNome2"></div>
                 </div>
                 <div class="campo">
                     <label for="funcao2">Função desempenhada</label>
-                    <input type="text" id="funcao2" placeholder="Função desempenhada">
+                    <select id="funcao2">
+                        <option value="" disabled selected>Selecione a função</option>
+                        <option value="Desenvolvedor">Desenvolvedor</option>
+                        <option value="Capitão">Capitão</option>
+                    </select>
                 </div>
                 <div class="campo">
                     <label>Foto</label>
@@ -473,9 +518,90 @@
         }
 
         atualizarTexto(document.getElementById("nome1"), document.getElementById("previewNome1"), "Nome do funcionário");
-        atualizarTexto(document.getElementById("funcao1"), document.getElementById("previewFuncao1"), "Função desempenhada");
         atualizarTexto(document.getElementById("nome2"), document.getElementById("previewNome2"), "Nome do funcionário");
-        atualizarTexto(document.getElementById("funcao2"), document.getElementById("previewFuncao2"), "Função desempenhada");
+
+        // Função desempenhada agora é um <select>, então usamos "change" em vez de "input".
+        function atualizarSelectFuncao(campo, preview, textoPadrao) {
+            campo.addEventListener("change", function () {
+                preview.textContent = campo.value.trim() === "" ? textoPadrao : campo.value;
+            });
+        }
+
+        atualizarSelectFuncao(document.getElementById("funcao1"), document.getElementById("previewFuncao1"), "Função desempenhada");
+        atualizarSelectFuncao(document.getElementById("funcao2"), document.getElementById("previewFuncao2"), "Função desempenhada");
+
+        // ----------------------------------------------------------------
+        // Verificação do nome do aluno no banco de projetos cadastrados
+        // ----------------------------------------------------------------
+        const API_BUSCAR_ALUNO = "/api/v1/projetos/buscar-aluno";
+
+        async function buscarAlunoNoBanco(nome) {
+            const url = `${API_BUSCAR_ALUNO}?nome=${encodeURIComponent(nome)}`;
+            const resposta = await fetch(url);
+            const json = await resposta.json().catch(() => null);
+
+            if (!resposta.ok) {
+                throw new Error(json?.message || "Erro ao consultar o banco de projetos.");
+            }
+
+            return json.data; // { encontrado: boolean, projetos: [...] }
+        }
+
+        function configurarVerificacaoNome(inputId, statusId) {
+            const input = document.getElementById(inputId);
+            const status = document.getElementById(statusId);
+            let timeoutId = null;
+
+            // Guarda o resultado da última verificação para ser reaproveitado
+            // no momento de gerar o PDF (evita nova requisição repetida).
+            input.dataset.verificado = "";
+
+            const executarBusca = async () => {
+                const nome = input.value.trim();
+
+                if (nome.length < 3) {
+                    status.textContent = "";
+                    status.className = "verificacao-nome";
+                    input.dataset.verificado = "";
+                    return;
+                }
+
+                status.textContent = "Verificando aluno no banco...";
+                status.className = "verificacao-nome buscando";
+
+                try {
+                    const resultado = await buscarAlunoNoBanco(nome);
+
+                    if (resultado.encontrado) {
+                        const projeto = resultado.projetos[0];
+                        status.textContent = `✓ Aluno encontrado no projeto "${projeto.tema}"`;
+                        status.className = "verificacao-nome ok";
+                        input.dataset.verificado = "encontrado";
+                    } else {
+                        status.textContent = "⚠ Nenhum projeto cadastrado com esse nome.";
+                        status.className = "verificacao-nome alerta";
+                        input.dataset.verificado = "nao-encontrado";
+                    }
+                } catch (erro) {
+                    console.error(erro);
+                    status.textContent = "Não foi possível verificar o aluno agora.";
+                    status.className = "verificacao-nome alerta";
+                    input.dataset.verificado = "";
+                }
+            };
+
+            // Verifica ao sair do campo (blur) e também com debounce enquanto digita.
+            input.addEventListener("blur", executarBusca);
+
+            input.addEventListener("input", function () {
+                clearTimeout(timeoutId);
+                input.dataset.verificado = "";
+                timeoutId = setTimeout(executarBusca, 600);
+            });
+        }
+
+        configurarVerificacaoNome("nome1", "verificacaoNome1");
+        configurarVerificacaoNome("nome2", "verificacaoNome2");
 
         function selecionarFoto(inputId, previewId) {
             const input = document.getElementById(inputId);
@@ -506,11 +632,83 @@
         selecionarFoto("foto1", "previewFoto1");
         selecionarFoto("foto2", "previewFoto2");
 
+        // Garante que o nome tenha sido verificado no banco antes de gerar o PDF.
+        // Reaproveita o resultado já mostrado em tela; se ainda não foi
+        // verificado (ex: usuário colou o texto e clicou direto em gerar),
+        // faz a consulta agora.
+        async function garantirVerificacaoNome(inputId, statusId) {
+            const input = document.getElementById(inputId);
+            const status = document.getElementById(statusId);
+            const nome = input.value.trim();
+
+            if (nome.length < 3) {
+                return { nome, encontrado: false, verificado: false };
+            }
+
+            if (input.dataset.verificado === "") {
+                status.textContent = "Verificando aluno no banco...";
+                status.className = "verificacao-nome buscando";
+
+                try {
+                    const resultado = await buscarAlunoNoBanco(nome);
+
+                    if (resultado.encontrado) {
+                        const projeto = resultado.projetos[0];
+                        status.textContent = `✓ Aluno encontrado no projeto "${projeto.tema}"`;
+                        status.className = "verificacao-nome ok";
+                        input.dataset.verificado = "encontrado";
+                    } else {
+                        status.textContent = "⚠ Nenhum projeto cadastrado com esse nome.";
+                        status.className = "verificacao-nome alerta";
+                        input.dataset.verificado = "nao-encontrado";
+                    }
+                } catch (erro) {
+                    console.error(erro);
+                    return { nome, encontrado: false, verificado: false };
+                }
+            }
+
+            return {
+                nome,
+                encontrado: input.dataset.verificado === "encontrado",
+                verificado: true
+            };
+        }
+
         document.getElementById("gerarPDF").addEventListener("click", async function () {
             const botao = this;
             const status = document.getElementById("status");
 
             botao.disabled = true;
+            status.textContent = "Verificando alunos no banco...";
+
+            const verificacao1 = await garantirVerificacaoNome("nome1", "verificacaoNome1");
+            const verificacao2 = await garantirVerificacaoNome("nome2", "verificacaoNome2");
+
+            // Nomes vazios/curtos (menos de 3 caracteres) não puderam nem ser verificados.
+            const semNome = [verificacao1, verificacao2].filter(
+                v => !v.verificado
+            );
+
+            // Nomes verificados mas que não batem com nenhum projeto cadastrado.
+            const semProjeto = [verificacao1, verificacao2].filter(
+                v => v.verificado && !v.encontrado
+            );
+
+            if (semNome.length > 0) {
+                status.textContent = "Preencha o nome dos dois alunos (mínimo 3 caracteres).";
+                botao.disabled = false;
+                return;
+            }
+
+            if (semProjeto.length > 0) {
+                const nomes = semProjeto.map(v => `"${v.nome}"`).join(" e ");
+                status.textContent =
+                    `Não é possível gerar o crachá: nenhum projeto cadastrado foi encontrado para ${nomes}.`;
+                botao.disabled = false;
+                return;
+            }
+
             status.textContent = "Gerando PDF...";
 
             document.body.classList.add("gerando-pdf");
@@ -530,28 +728,45 @@
                 const imagem2 = canvas2.toDataURL("image/png");
 
                 const pdf = new window.jspdf.jsPDF({
-                    orientation: "landscape",
+                    orientation: "portrait",
                     unit: "mm",
                     format: "a4"
                 });
 
-                const paginaLargura = 297;
-                const paginaAltura = 210;
-                const crachaLargura = 105;
-                const crachaAltura = crachaLargura * (canvas1.height / canvas1.width);
-                const espaco = 12;
+                // Folha A4 em pé (210 x 297mm) dividida em 4 partes iguais.
+                // Cada crachá ocupa, no máximo, 1/4 da folha.
+                const paginaLargura = 210;
+                const paginaAltura = 297;
+                const quadranteLargura = paginaLargura / 2;  // 105mm
+                const quadranteAltura = paginaAltura / 2;    // 148.5mm
 
-                const larguraTotal = crachaLargura * 2 + espaco;
-                const x = (paginaLargura - larguraTotal) / 2;
-                const y = (paginaAltura - crachaAltura) / 2;
+                // Mantém a proporção original do crachá, encaixando-o
+                // dentro do quadrante (nunca ultrapassa 1/4 da folha).
+                // Reserva uma margem de segurança no topo para a impressora
+                // não cortar nada do crachá.
+                const razaoCracha = canvas1.width / canvas1.height;
+                const margemSuperior = 6; // mm
 
-                pdf.addImage(imagem1, "PNG", x, y, crachaLargura, crachaAltura);
-                pdf.addImage(imagem2, "PNG", x + crachaLargura + espaco, y, crachaLargura, crachaAltura);
+                const alturaDisponivel = quadranteAltura - margemSuperior;
 
-                pdf.setDrawColor(170);
-                pdf.setLineDashPattern([2, 2], 0);
-                pdf.rect(x, y, crachaLargura, crachaAltura);
-                pdf.rect(x + crachaLargura + espaco, y, crachaLargura, crachaAltura);
+                let crachaLargura = quadranteLargura;
+                let crachaAltura = crachaLargura / razaoCracha;
+
+                if (crachaAltura > alturaDisponivel) {
+                    crachaAltura = alturaDisponivel;
+                    crachaLargura = crachaAltura * razaoCracha;
+                }
+
+                // Centraliza cada crachá dentro do espaço restante do seu
+                // quadrante (já descontada a margem superior).
+                const x1 = (quadranteLargura - crachaLargura) / 2;
+                const y1 = margemSuperior + (alturaDisponivel - crachaAltura) / 2;
+
+                const x2 = quadranteLargura + (quadranteLargura - crachaLargura) / 2;
+                const y2 = y1;
+
+                pdf.addImage(imagem1, "PNG", x1, y1, crachaLargura, crachaAltura);
+                pdf.addImage(imagem2, "PNG", x2, y2, crachaLargura, crachaAltura);
 
                 pdf.save("crachas-univap.pdf");
                 status.textContent = "✓ PDF gerado com os 2 crachás.";

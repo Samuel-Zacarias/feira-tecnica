@@ -48,6 +48,44 @@ module.exports = class ProjetoController {
         }
     };
 
+    buscarPorNomeAluno = async (request, response, next) => {
+        try {
+            const resultado =
+                await this.#projetoService.buscarPorNomeAluno(
+                    request.query.nome
+                );
+
+            response.status(200).json({
+                success: true,
+                message: resultado.encontrado
+                    ? "Aluno encontrado em projeto cadastrado"
+                    : "Nenhum projeto encontrado com esse aluno",
+                data: resultado
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    buscarPorMatricula = async (request, response, next) => {
+        try {
+            const resultado =
+                await this.#projetoService.buscarPorMatricula(
+                    request.query.matricula
+                );
+    
+            response.status(200).json({
+                success: true,
+                message: resultado.encontrado
+                    ? "Matricula encontrada"
+                    : "Matricula nao encontrada",
+                data: resultado
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
     show = async (request, response, next) => {
         try {
             const projeto =
