@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Meu Crachá | Feira Técnica</title>
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#eef4fa;color:#173f6d;font-family:Arial,Helvetica,sans-serif}
+    .pagina{width:min(1040px,calc(100% - 32px));margin:32px auto 72px;display:grid;grid-template-columns:390px minmax(0,1fr);gap:28px;align-items:start}
+    .painel{background:#fff;border:1px solid #dbe6f0;border-radius:20px;padding:24px;box-shadow:0 10px 30px rgba(0,60,120,.08)}
+    .painel h2{margin:0;color:#0759a8;font-size:22px}.painel p{margin:8px 0 22px;color:#68798b;line-height:1.55;font-size:14px}
+    .campo{margin-top:18px}.campo label{display:block;margin-bottom:8px;font-size:12px;font-weight:800;color:#37536f;text-transform:uppercase;letter-spacing:.05em}
+    .campo select{width:100%;height:44px;border:1px solid #cddceb;border-radius:11px;padding:0 12px;background:#fff;color:#173f6d;font-weight:700;outline:none}
+    .botao-foto{display:flex!important;align-items:center;justify-content:center;min-height:46px;padding:11px 14px;border:2px dashed #72afe3;border-radius:11px;background:#edf7ff;color:#0759a8!important;font-size:13px!important;font-weight:800!important;text-transform:none!important;letter-spacing:0!important;cursor:pointer;transition:.18s ease}.botao-foto:hover{background:#dcefff}
+    input[type=file]{display:none}.acoes{display:grid;gap:10px;margin-top:22px}.acoes .btn{width:100%;justify-content:center}
+    .preview{background:#fff;border-radius:22px;padding:28px;box-shadow:0 10px 30px rgba(0,60,120,.10);display:flex;flex-direction:column;align-items:center}
+    .preview h2{margin:0 0 24px;color:#173f6d;font-size:20px}
+    .cracha{position:relative;width:330px;height:481px;overflow:hidden;border-radius:25px;background:#fff;box-shadow:0 15px 35px rgba(0,50,100,.25);flex:none}
+    .azul-topo{position:absolute;top:0;left:0;width:100%;height:145px;background:#0764b8;border-radius:0 0 50% 50%;transform:scaleX(1.25)}
+    .azul-topo::after{content:"";position:absolute;left:-5%;bottom:-15px;width:110%;height:55px;background:#fff;border-radius:50%}
+    .azul-baixo{position:absolute;left:0;bottom:0;width:100%;height:145px;background:#0764b8;border-radius:50% 50% 0 0;transform:scaleX(1.25)}
+    .faixa-baixo{position:absolute;left:-5%;bottom:75px;width:110%;height:55px;background:#07559f;border-radius:50%}
+    .clipe{position:absolute;z-index:20;top:18px;left:calc(50% - 35px);width:70px;height:13px;border-radius:20px;background:#47586a;box-shadow:inset 0 2px 3px rgba(255,255,255,.25)}
+    .logo{position:absolute;z-index:10;top:58px;left:calc(50% - 102.5px);width:205px;height:82px;object-fit:contain}
+    .foto{position:absolute;z-index:15;top:185px;left:calc(50% - 77.5px);width:155px;height:205px;border:3px solid #c8cdd2;border-radius:14px;overflow:hidden;cursor:pointer;background:#fff}
+    .foto.sem-imagem{background:linear-gradient(45deg,#eee 25%,transparent 25%),linear-gradient(-45deg,#eee 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eee 75%),linear-gradient(-45deg,transparent 75%,#eee 75%);background-size:22px 22px;background-position:0 0,0 11px,11px -11px,-11px 0}
+    .foto img{display:none;width:100%;height:100%;object-fit:cover;object-position:center}
+    .silhueta{position:absolute;inset:0;display:flex;justify-content:center;align-items:center}.silhueta svg{width:75%;height:75%;fill:none;stroke:#c8cdd2;stroke-width:1.1}
+    .texto-foto{position:absolute;bottom:0;left:0;width:100%;padding:5px;text-align:center;background:rgba(7,82,155,.85);color:#fff;font-size:9px;font-weight:800;z-index:2}
+    .informacoes{position:absolute;z-index:30;left:0;bottom:22px;width:100%;padding:0 15px;text-align:center;color:#fff}
+    .nome{margin:0;font-size:20px;font-weight:800;line-height:1.15;overflow-wrap:anywhere}.funcao{margin:8px 0 0;font-size:14px;font-weight:800;line-height:1.15;overflow-wrap:anywhere}
+    .dados-oficiais{margin-top:18px;width:330px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.dado{padding:10px 12px;background:#f4f8fc;border:1px solid #e0e8f1;border-radius:12px}.dado span{display:block;color:#7b8b9c;font-size:10px;text-transform:uppercase;font-weight:800;letter-spacing:.05em}.dado strong{display:block;margin-top:4px;color:#173f6d;font-size:12px;overflow-wrap:anywhere}.dado.projeto{grid-column:1/-1}
+    .alerta{margin-top:14px;color:#a23d3d;font-size:13px;font-weight:700;line-height:1.45}
+    @media(max-width:840px){.pagina{grid-template-columns:1fr}.painel{order:2}.preview{order:1}.cracha{transform-origin:top center}.dados-oficiais{max-width:100%}}
+    @media(max-width:390px){.preview{padding:20px 10px}.cracha{transform:scale(.88);margin-bottom:-58px}}
+    @media print{
+      @page{size:A4;margin:0}
+      body{background:#fff}.topbar,.painel,.preview>h2,.dados-oficiais,.bottom-nav{display:none!important}.pagina{display:block;width:100%;margin:0}.preview{box-shadow:none;padding:0;min-height:297mm;justify-content:center}.cracha{box-shadow:none;border-radius:25px;print-color-adjust:exact;-webkit-print-color-adjust:exact}.texto-foto{display:none!important}
+    }
+  </style>
+</head>
+<body>
+<header class="topbar" style="position:static"><div><h1>Meu crachá</h1><p>Monte e imprima seu crachá de expositor</p></div><div class="top-actions"><a class="btn ghost sm" href="aluno.html">Voltar</a><button class="btn sm" data-sair>Sair</button></div></header>
+
+<main class="pagina">
+  <aside class="painel">
+    <h2>Personalizar crachá</h2>
+    <p>Seus dados oficiais vêm da planilha. Escolha apenas a foto e a função que você exerce no projeto.</p>
+
+    <div class="campo">
+      <label>Foto do aluno</label>
+      <label class="botao-foto" for="fotoAluno">📷 Escolher foto</label>
+      <input type="file" id="fotoAluno" accept="image/*">
+    </div>
+
+    <div class="campo">
+      <label for="funcaoAluno">Função no projeto</label>
+      <select id="funcaoAluno">
+        <option value="Expositor">Expositor</option>
+        <option value="Capitão">Capitão</option>
+        <option value="Desenvolvedor">Desenvolvedor</option>
+        <option value="Pesquisador">Pesquisador</option>
+        <option value="Designer">Designer</option>
+        <option value="Apresentador">Apresentador</option>
+      </select>
+    </div>
+
+    <div id="aviso" class="alerta"></div>
+    <div class="acoes">
+      <button class="btn success" id="imprimir">Imprimir / Salvar em PDF</button>
+      <a class="btn ghost" href="aluno.html#qrcode">Ver QR Code do projeto</a>
+    </div>
+  </aside>
+
+  <section class="preview">
+    <h2>Pré-visualização</h2>
+
+    <div class="cracha" id="cracha">
+      <div class="azul-topo"></div>
+      <div class="clipe"></div>
+      <img src="imagens/logo.png" class="logo" alt="Logo Univap">
+
+      <label class="foto sem-imagem" id="molduraFoto" for="fotoAluno">
+        <div class="silhueta" id="silhueta">
+          <svg viewBox="0 0 100 120" aria-hidden="true">
+            <circle cx="50" cy="32" r="20"></circle>
+            <path d="M18 110 C18 78 32 62 50 62 C68 62 82 78 82 110"></path>
+          </svg>
+        </div>
+        <img id="previewFoto" alt="Foto do aluno">
+        <div class="texto-foto" id="textoFoto">Clique para escolher foto</div>
+      </label>
+
+      <div class="faixa-baixo"></div>
+      <div class="azul-baixo"></div>
+
+      <div class="informacoes">
+        <p class="nome" id="nome">Carregando...</p>
+        <p class="funcao" id="funcao">Expositor</p>
+      </div>
+    </div>
+
+    <div class="dados-oficiais">
+      <div class="dado"><span>Turma</span><strong id="turma">—</strong></div>
+      <div class="dado"><span>Matrícula</span><strong id="matricula">—</strong></div>
+      <div class="dado projeto"><span>Projeto</span><strong id="projeto">—</strong></div>
+    </div>
+  </section>
+</main>
+
+<script src="js/auth.js"></script>
+<script>
+if(SESSAO.role!=='ALUNO')location.replace('dashboard.html');
+const $=id=>document.getElementById(id);
+const chave=()=>`cracha:${SESSAO.usuario?.matricula||SESSAO.usuario?.email||'aluno'}`;
+
+function salvarPreferencias(){
+  try{localStorage.setItem(chave(),JSON.stringify({funcao:$('funcaoAluno').value,foto:$('previewFoto').src.startsWith('data:')?$('previewFoto').src:''}))}catch{}
+}
+
+function carregarPreferencias(){
+  try{
+    const dados=JSON.parse(localStorage.getItem(chave())||'{}');
+    if(dados.funcao){$('funcaoAluno').value=dados.funcao;$('funcao').textContent=dados.funcao}
+    if(dados.foto)aplicarFoto(dados.foto);
+  }catch{}
+}
+
+function aplicarFoto(src){
+  $('previewFoto').src=src;
+  $('previewFoto').style.display='block';
+  $('silhueta').style.display='none';
+  $('textoFoto').style.display='none';
+  $('molduraFoto').classList.remove('sem-imagem');
+}
+
+$('funcaoAluno').addEventListener('change',()=>{$('funcao').textContent=$('funcaoAluno').value;salvarPreferencias()});
+$('fotoAluno').addEventListener('change',e=>{
+  const arquivo=e.target.files?.[0];
+  if(!arquivo)return;
+  if(!arquivo.type.startsWith('image/')){$('aviso').textContent='Escolha um arquivo de imagem.';return}
+  const reader=new FileReader();
+  reader.onload=()=>{aplicarFoto(reader.result);$('aviso').textContent='';salvarPreferencias()};
+  reader.readAsDataURL(arquivo);
+});
+$('imprimir').addEventListener('click',()=>window.print());
+
+async function carregar(){
+  try{
+    const resposta=await api('/api/v1/projetos/meu');
+    const p=resposta.data.projeto;
+    if(!p)throw new Error('Seu projeto ainda não foi importado.');
+    const pessoas=[p.representante,...(p.integrantes||[])].filter(Boolean);
+    const pessoa=pessoas.find(x=>String(x.matricula||'')===String(SESSAO.usuario.matricula||''))||p.representante||pessoas[0]||SESSAO.usuario;
+    $('nome').textContent=pessoa.nome||SESSAO.usuario.nome||'Aluno';
+    $('turma').textContent=pessoa.turma||SESSAO.usuario.turma||'—';
+    $('matricula').textContent=pessoa.matricula||SESSAO.usuario.matricula||'—';
+    $('projeto').textContent=p.tema||'Projeto';
+    carregarPreferencias();
+  }catch(e){
+    $('aviso').textContent=e.message;
+    $('nome').textContent=SESSAO.usuario.nome||'Aluno';
+    carregarPreferencias();
+  }
+}
+carregar();
+</script>
+</body>
+</html>

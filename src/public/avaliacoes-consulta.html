@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Avaliações | Feira Técnica</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt=""><div>Feira Técnica<small>Avaliações</small></div></div>
+    <nav class="nav-list">
+      <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Visão geral</a>
+      <a class="nav-link" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
+      <a class="nav-link" href="avaliacoes-cadastro.html"><span class="ico">★</span>Nova avaliação</a>
+      <a class="nav-link active" href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="profile-mini">
+        <strong data-usuario>Usuário</strong>
+        <span id="roleMini">Acesso interno</span>
+        <button class="logout" data-sair>Sair</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="content">
+    <header class="topbar">
+      <div><h1>Avaliações registradas</h1><p>Histórico da banca avaliadora</p></div>
+      <div class="top-actions">
+        <a class="btn sm" href="avaliacoes-cadastro.html">＋ Nova avaliação</a>
+        <button class="btn ghost sm" data-sair>Sair</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="hero-panel">
+        <span class="eyebrow">Banca avaliadora</span>
+        <h2>Histórico organizado da avaliação.</h2>
+        <p>Consulte notas, projeto avaliado e feedback registrado pelos professores.</p>
+      </section>
+
+      <div class="section-title">
+        <div><h2>Avaliações</h2><p id="resumo">Carregando...</p></div>
+        <div class="field" style="min-width:min(360px,100%)">
+          <input id="busca" placeholder="Buscar projeto ou avaliador...">
+        </div>
+      </div>
+      <div id="lista" class="list"></div>
+    </main>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+if (SESSAO.role === "ALUNO") location.replace("aluno.html");
+
+document.getElementById("roleMini").textContent =
+  SESSAO.role === "ADMINISTRADOR" ? "Administrador" : "Professor avaliador";
+
+const busca = document.getElementById("busca");
+const resumo = document.getElementById("resumo");
+const lista = document.getElementById("lista");
+let avaliacoes = [];
+
+function render() {
+  const termo = normalizarTexto(busca.value);
+  const filtradas = avaliacoes.filter(avaliacao => {
+    if (!termo) return true;
+    return normalizarTexto(
+      `${avaliacao.projeto?.tema} ${avaliacao.avaliador} ${avaliacao.status}`
+    ).includes(termo);
+  });
+
+  resumo.textContent = `${filtradas.length} avaliação(ões)`;
+  lista.innerHTML = filtradas.map(avaliacao => `
+    <div class="list-item">
+      <div>
+        <div style="display:flex;gap:7px;margin-bottom:6px">
+          <span class="pill">${escapeHtml(avaliacao.status || "Em análise")}</span>
+          <span class="pill green">Nota ${Number(avaliacao.notaFinal || 0).toFixed(1)}</span>
+        </div>
+        <strong>${escapeHtml(avaliacao.projeto?.tema || "Projeto")}</strong>
+        <span>Avaliador: ${escapeHtml(avaliacao.avaliador)} · ${avaliacao.avaliacaoAlunos?.length || 0} avaliação(ões) individual(is)</span>
+      </div>
+      <a class="btn ghost sm" href="avaliacoes-editar.html?id=${encodeURIComponent(avaliacao.id)}">Ver / editar</a>
+    </div>
+  `).join("") || '<div class="card">Nenhuma avaliação encontrada.</div>';
+}
+
+busca.addEventListener("input", render);
+api("/api/v1/avaliacoes")
+  .then(response => {
+    avaliacoes = response.data.avaliacoes || [];
+    render();
+  })
+  .catch(error => {
+    lista.innerHTML = `<div class="alert show error">${escapeHtml(error.message)}</div>`;
+  });
+</script>
+</body>
+</html>

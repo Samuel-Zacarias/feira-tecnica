@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastrar Aluno | Feira Técnica</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="content">
+    <header class="topbar">
+      <div>
+        <h1>Cadastrar aluno</h1>
+        <p>Crie uma conta para o representante gerenciar o projeto da equipe.</p>
+      </div>
+      <div class="top-actions">
+        <a class="btn ghost sm" href="dashboard.html">Painel</a>
+        <a class="btn ghost sm" href="alunos-consulta.html">Ver alunos</a>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="hero-panel">
+        <span class="eyebrow">Administração</span>
+        <h2>Nova conta de aluno</h2>
+        <p>O aluno usa e-mail ou matrícula para entrar e edita somente o projeto vinculado à própria conta.</p>
+      </section>
+
+      <div class="section-title">
+        <div>
+          <h2>Dados do aluno</h2>
+          <p>Use uma senha temporária segura e entregue ao estudante.</p>
+        </div>
+      </div>
+
+      <div id="alerta" class="alert"></div>
+
+      <form id="form" class="panel">
+        <div class="form-grid">
+          <div class="field">
+            <label for="nome">Nome</label>
+            <input id="nome" required minlength="3">
+          </div>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" required>
+          </div>
+          <div class="field">
+            <label for="matricula">Matrícula</label>
+            <input id="matricula" required>
+          </div>
+          <div class="field">
+            <label for="turma">Turma</label>
+            <input id="turma" required placeholder="2INFO">
+          </div>
+          <div class="field">
+            <label for="curso">Curso</label>
+            <select id="curso">
+              <option>INFORMÁTICA</option>
+              <option>ADMINISTRAÇÃO</option>
+              <option>ANÁLISES CLÍNICAS</option>
+              <option>ELETRÔNICA</option>
+              <option>PUBLICIDADE</option>
+              <option>QUÍMICA</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="senha">Senha inicial</label>
+            <input id="senha" type="password" required value="Aluno@2026">
+            <small>Mínimo 8 caracteres, com maiúscula, minúscula, número e símbolo.</small>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn success" type="submit">Cadastrar aluno</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (SESSAO.role !== "ADMINISTRADOR") location.replace("dashboard.html");
+
+    const form = document.getElementById("form");
+    const alerta = document.getElementById("alerta");
+    const campos = {
+      nome: document.getElementById("nome"),
+      email: document.getElementById("email"),
+      matricula: document.getElementById("matricula"),
+      turma: document.getElementById("turma"),
+      curso: document.getElementById("curso"),
+      senha: document.getElementById("senha"),
+    };
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      try {
+        const aluno = {
+          nome: campos.nome.value.trim(),
+          email: campos.email.value.trim(),
+          matricula: campos.matricula.value.trim(),
+          turma: campos.turma.value.trim(),
+          curso: campos.curso.value,
+          senha: campos.senha.value,
+        };
+
+        const resposta = await api("/api/v1/alunos", {
+          method: "POST",
+          body: JSON.stringify({ aluno }),
+        });
+
+        mostrarAlerta(alerta, "ok", `✓ ${resposta.message}. O aluno já pode entrar com e-mail ou matrícula.`);
+        form.reset();
+        campos.senha.value = "Aluno@2026";
+      } catch (error) {
+        mostrarAlerta(alerta, "error", error.message);
+      }
+    });
+  </script>
+</body>
+</html>

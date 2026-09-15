@@ -1,34 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/css/bootstrap.min.css" rel="stylesheet" />
-    <title>Document</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Painel | Feira Técnica</title><link rel="stylesheet" href="css/app.css">
 </head>
+<body class="page-enter">
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt=""><div>Feira Técnica<small id="sideRole">Painel</small></div></div>
+    <nav class="nav-list">
+      <a class="nav-link active" href="dashboard.html"><span class="ico">⌂</span>Painel</a>
+      <a class="nav-link" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
+      <a class="nav-link" href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a>
+      <a class="nav-link" href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a>
+      <a class="nav-link" href="ranking.html"><span class="ico">↗</span>Ranking</a>
+      <a class="nav-link" data-admin href="receberExcel.html"><span class="ico">⇩</span>Importar planilha</a>
+      <a class="nav-link" data-admin href="professores-consulta.html"><span class="ico">♙</span>Professores</a>
+      <a class="nav-link" data-admin href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a>
+    </nav>
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span id="profileRole">—</span><button class="logout" data-sair>Sair</button></div></div>
+  </aside>
 
-<body>
-    <div id="divUsuario"></div>
-    <div>
-        <a href="Cargos.html">Cargos</a>
-    </div>
-    <div>
-        <a href="Funcionarios.html">Funcionarios</a>
-    </div>
-</body>
-<script type="module">
-    const divUsuario = document.getElementById("divUsuario");
-    let userData = localStorage.getItem("userData");
+  <div class="content">
+    <header class="topbar"><div><h1 id="topTitle">Painel</h1><p>Feira Técnica 2026</p></div><div class="top-actions"><a class="btn ghost sm" href="index.html">Vitrine</a><button class="btn sm" data-sair>Sair</button></div></header>
+    <main class="main">
+      <section class="hero-panel compact-hero">
+        <span class="eyebrow" id="heroTag">Avaliação</span>
+        <h2 id="hello">Olá.</h2>
+        <p id="heroText">Acompanhe os projetos e registre as avaliações da banca.</p>
+        <div class="hero-actions"><a class="btn primary" href="avaliacoes-cadastro.html">Avaliar projeto</a><a class="btn" style="background:rgba(255,255,255,.12)" href="projetos-consulta.html">Ver projetos</a></div>
+      </section>
 
-    if (userData) {
-        userData = JSON.parse(userData);
-        divUsuario.textContent = "Bem Vindo (" + userData.data.funcionario[0].nomeFuncionario + ")";
-        divUsuario.className = "alert alert-primary";
-    }else{
-         window.location.href = "login.html"; 
-    }
+      <div class="section-title tight"><div><h2>Resumo</h2></div></div>
+      <section class="grid">
+        <article class="card metric clean"><span>Projetos</span><strong id="mProjetos">—</strong><small>na feira</small></article>
+        <article class="card metric clean"><span>Avaliações</span><strong id="mAvaliacoes">—</strong><small>registradas</small></article>
+        <article class="card metric clean"><span>Minhas avaliações</span><strong id="mMinhas">—</strong><small>realizadas</small></article>
+      </section>
 
+      <div class="section-title tight"><div><h2>Projetos</h2></div><a class="btn ghost sm" href="projetos-consulta.html">Ver todos</a></div>
+      <section id="projetos" class="list project-queue"><div class="card">Carregando...</div></section>
+
+      <section data-admin class="hidden">
+        <div class="section-title tight"><div><h2>Administração</h2></div></div>
+        <div class="grid">
+          <article class="card clean-card"><h3>Planilha oficial</h3><p>Importe equipes e dados da feira.</p><div class="form-actions"><a class="btn sm" href="receberExcel.html">Importar</a></div></article>
+          <article class="card clean-card"><h3>Professores</h3><p>Gerencie contas da banca.</p><div class="form-actions"><a class="btn ghost sm" href="professores-consulta.html">Gerenciar</a></div></article>
+          <article class="card clean-card"><h3>Alunos</h3><p>Consulte os acessos cadastrados.</p><div class="form-actions"><a class="btn ghost sm" href="alunos-consulta.html">Gerenciar</a></div></article>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<nav class="mobile-nav" aria-label="Navegação rápida">
+  <a class="active" href="dashboard.html"><strong>⌂</strong><span>Painel</span></a>
+  <a href="projetos-consulta.html"><strong>◇</strong><span>Projetos</span></a>
+  <a href="avaliacoes-cadastro.html"><strong>★</strong><span>Avaliar</span></a>
+  <a href="ranking.html"><strong>↗</strong><span>Ranking</span></a>
+</nav>
+
+<script src="js/auth.js"></script>
+<script>
+(async()=>{
+  if(SESSAO.role==='ALUNO'){location.replace('aluno.html');return}
+  const admin=SESSAO.role==='ADMINISTRADOR';
+  document.querySelectorAll('[data-admin]').forEach(el=>el.classList.toggle('hidden',!admin));
+  document.getElementById('profileRole').textContent=admin?'Administrador':'Professor avaliador';
+  document.getElementById('sideRole').textContent=admin?'Administração':'Avaliação';
+  document.getElementById('topTitle').textContent=admin?'Painel administrativo':'Painel do avaliador';
+  document.getElementById('heroTag').textContent=admin?'Administração':'Banca avaliadora';
+  document.getElementById('hello').textContent=`Olá, ${(SESSAO.usuario.nome||'Professor').split(' ')[0]}.`;
+  if(admin) document.getElementById('heroText').textContent='Acompanhe a feira e gerencie os acessos.';
+  try{
+    const [rp,ra]=await Promise.all([api('/api/v1/projetos'),api('/api/v1/avaliacoes')]);
+    const projetos=rp.data.projetos||[], avs=ra.data.avaliacoes||[];
+    document.getElementById('mProjetos').textContent=projetos.length;
+    document.getElementById('mAvaliacoes').textContent=avs.length;
+    document.getElementById('mMinhas').textContent=avs.filter(a=>a.avaliador===SESSAO.usuario.nome).length;
+    document.getElementById('projetos').innerHTML=projetos.slice(0,7).map(p=>{
+      const minha=avs.find(a=>a.projeto?.id===p.id&&a.avaliador===SESSAO.usuario.nome);
+      return `<div class="list-item"><div><strong>${escapeHtml(p.tema)}</strong><span>${escapeHtml(p.curso)}${p.localizacao?` · ${escapeHtml(p.localizacao)}`:''}</span></div><div class="action-cluster"><span class="pill ${minha?'green':'amber'}">${minha?'Avaliado':'Pendente'}</span><a class="btn sm ${minha?'ghost':''}" href="${minha?`avaliacoes-editar.html?id=${encodeURIComponent(minha.id)}`:`avaliacoes-cadastro.html?projeto=${encodeURIComponent(p.id)}`}">${minha?'Revisar':'Avaliar'}</a></div></div>`
+    }).join('')||'<div class="card">Nenhum projeto cadastrado.</div>';
+  }catch(e){document.getElementById('projetos').innerHTML=`<div class="alert show error">${escapeHtml(e.message)}</div>`}
+})();
 </script>
-
+</body>
 </html>

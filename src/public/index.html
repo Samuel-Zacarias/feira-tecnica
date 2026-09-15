@@ -1,137 +1,179 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8" />
-    <title>CRUD Usuários com ApiService</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Meta tag para responsividade em dispositivos móveis -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Bootstrap para estilização rápida e responsiva -->
-    <style>
-        body {
-            padding: 2em;
-        }
-
-        table {
-            margin-top: 1em;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Feira Técnica 2026 | Projetos</title>
+  <link rel="stylesheet" href="css/publico.css">
 </head>
+<body>
+<header class="topo">
+  <div class="container topo-inner">
+    <a class="marca" href="index.html">
+      <img src="imagens/logo.png" alt="">
+      <div>Feira Técnica<small>Mostra de Projetos 2026</small></div>
+    </a>
+    <nav class="nav">
+      <a class="botao secundario" href="ranking.html">Ranking</a>
+      <a class="botao" href="login.html">Acesso interno</a>
+    </nav>
+  </div>
+</header>
 
-<body class="container">
-    <!-- Container Bootstrap para centralizar e limitar largura -->
-
-    <h1 class="mb-4">Login</h1>
-    <!-- Título principal da aplicação -->
-
-    <!-- Formulário para entrada de dados do usuário -->
-    <div class="mb-3">
-        <!-- Campo ID (somente leitura, usado para update e delete) -->
-        <input type="text" id="txtUsuario" class="form-control mb-2" placeholder="usuario" />
-        <!-- Campo para nome do usuário -->
-        <input type="password" id="txtSenha" class="form-control mb-2" placeholder="senha" />
-
-    </div>
-
+<section class="hero">
+  <div class="container hero-grid">
     <div>
-        "usuario": "helioesperidiao@gmail.com",<br>
-        "senha": "@Helio123456" <br>
-        posicione os arquivos na pasta htdocs.<br>
-        Não esqueça de inicar o servidor de banco de dados<br>
-        os arquivos de banco estão na pasta docs<br>
-        Acesse http://localhost:80/view/Login.html<br>
-        Troque a porta para 8080 caso seja necessário
-
+      <span class="selo">UNIVAP · Centro</span>
+      <h1>Conheça.<br>Explore.<br>Descubra.</h1>
+      <p>Projetos criados pelos alunos para a Feira Técnica 2026.</p>
+      <div class="hero-actions">
+        <a class="botao" style="background:white;color:#0d4e92" href="#projetos">Ver projetos</a>
+        <a class="botao secundario" href="ranking.html">Ranking ao vivo</a>
+      </div>
     </div>
-    <!-- Div onde os botões CRUD serão criados dinamicamente -->
-    <div class="mb-3" id="divBotoes"></div>
-    <!-- Div para mensagens de resposta/erro -->
-    <div id="divResposta"></div>
-    <!-- Div onde a tabela de usuários será renderizada -->
-    <div id="divTabela"></div>
+    <div class="stats">
+      <div class="stat"><strong id="total">—</strong><span>projetos</span></div>
+      <div class="stat"><strong id="cursos">—</strong><span>cursos</span></div>
+    </div>
+  </div>
+</section>
 
-    <script type="module">
-        // Importa a classe ApiService para comunicação com a API (abstrai fetch/axios)
-        import ApiService from './ApiService.js';
+<section class="home-ranking">
+  <div class="container">
+    <div class="home-ranking-head">
+      <div><h2>Destaques</h2><p>Classificação provisória da banca.</p></div>
+      <a class="botao secundario" href="ranking.html">Ver ranking</a>
+    </div>
+    <div id="miniRanking" class="mini-ranking">
+      <div class="mini-rank-empty">Aguardando avaliações.</div>
+    </div>
+  </div>
+</section>
 
-        const api = new ApiService("o token ainda será gerado");
+<main id="projetos" class="catalogo">
+  <div class="container">
+    <div class="catalogo-head">
+      <div><h2>Projetos</h2><p>Encontre uma equipe e abra a página do projeto.</p></div>
+      <div class="busca"><input id="busca" placeholder="Buscar projeto, curso ou tecnologia..."></div>
+    </div>
+    <div id="filtros" class="filtros"></div>
+    <section id="grade" class="grade"><div class="estado">Carregando projetos...</div></section>
+  </div>
+</main>
 
+<footer class="footer"><div class="container">Feira Técnica 2026 · UNIVAP</div></footer>
 
-        // Variável global que armazenará os dados da API para manipulação local
-        let API_DATA;
+<script src="js/public-utils.js"></script>
+<script>
+const { escapeHtml, normalizeText, formatScore } = PublicUtils;
+let projetos = [];
+let cursoSelecionado = "TODOS";
 
-        // Referências para elementos do formulário e divs
-        const txtUsuario = document.getElementById("txtUsuario");
-        const txtSenha = document.getElementById("txtSenha");
+function renderFiltros() {
+  const cursos = ["TODOS", ...new Set(projetos.map(p => p.curso).filter(Boolean))];
+  const container = document.getElementById("filtros");
 
-        const divBotoes = document.getElementById("divBotoes");
-        const divResposta = document.getElementById("divResposta");
+  container.innerHTML = cursos.map(curso => `
+    <button class="filtro ${cursoSelecionado === curso ? "ativo" : ""}" data-curso="${escapeHtml(curso)}">
+      ${curso === "TODOS" ? "Todos" : escapeHtml(curso)}
+    </button>
+  `).join("");
 
-        /**
-         * Função para criar um botão HTML com texto e classes CSS,
-         * retorna o elemento criado para ser manipulado.
-         * @param {string} text - Texto do botão.
-         * @param {string} className - Classes CSS para estilizar o botão.
-         * @returns {HTMLButtonElement} - Botão criado.
-         */
-        function createButton(text, className) {
-            const btn = document.createElement("button");
-            btn.textContent = text;
-            btn.className = `btn ${className} me-2 mb-2`; // Margem para espaçamento
-            return btn;
-        }
+  container.querySelectorAll("[data-curso]").forEach(button => {
+    button.addEventListener("click", () => {
+      cursoSelecionado = button.dataset.curso;
+      renderFiltros();
+      renderProjetos();
+    });
+  });
+}
 
-        // Criação dos botões principais dinamicamente, com eventos .onclick
+function renderProjetos() {
+  const busca = normalizeText(document.getElementById("busca").value);
+  const filtrados = projetos.filter(projeto => {
+    const mesmoCurso = cursoSelecionado === "TODOS" || projeto.curso === cursoSelecionado;
+    const texto = normalizeText([
+      projeto.tema,
+      projeto.curso,
+      projeto.descricao,
+      (projeto.tecnologias || []).join(" "),
+      projeto.representante?.nome,
+      ...(projeto.integrantes || []).map(integrante => integrante.nome),
+    ].join(" "));
+    return mesmoCurso && (!busca || texto.includes(busca));
+  });
 
-        // Botão Listar: atualiza a lista de usuários na tabela
-        const btnLogin = createButton("Login", "btn-primary");
-        btnLogin.onclick = async function btnListar_click() {
-            // Validação simples para campo nome obrigatório
+  const grade = document.getElementById("grade");
+  grade.innerHTML = filtrados.map(projeto => {
+    const imagem = projeto.imagens?.[0];
+    const totalAlunos = 1 + (projeto.integrantes?.length || 0);
 
-            if (txtUsuario.value.trim() == "") {
-                divResposta.textContent = "Usuário Inválido";
-                divResposta.className = "alert alert-danger";
-                return;
-            } else if (txtSenha.value.trim() == "") {
-                divResposta.textContent = "Senha Inválida";
-                divResposta.className = "alert alert-danger";
-                return;
-            }
-            // Monta o objeto a ser enviado na requisição POST
-            const dadosLogin = {
-                "funcionario": {
-                    "email": txtUsuario.value.trim(),
-                    "senha": txtSenha.value.trim()
-                }
-            }
+    return `
+      <article class="card-projeto">
+        <div class="cover">
+          ${imagem ? `<img src="${escapeHtml(imagem)}" alt="${escapeHtml(projeto.tema)}">` : ""}
+          <div class="cover-info">
+            <small>${escapeHtml(projeto.curso)}</small>
+            <strong>${escapeHtml(projeto.tema)}</strong>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="meta">
+            <span class="tag">${escapeHtml(projeto.statusProjeto || "PROJETO")}</span>
+            ${projeto.localizacao ? `<span class="tag">${escapeHtml(projeto.localizacao)}</span>` : ""}
+          </div>
+          <p>${escapeHtml(projeto.descricao || "Conheça a proposta desta equipe.")}</p>
+          <div class="card-foot">
+            <span class="team">${totalAlunos} ${totalAlunos === 1 ? "aluno" : "alunos"}</span>
+            <a class="botao" href="projeto.html?id=${encodeURIComponent(projeto.id)}">Abrir projeto</a>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("") || '<div class="estado"><strong>Nenhum projeto encontrado.</strong></div>';
+}
 
-            /*
-                const dadosLogin = {
-                "funcionario": {
-                    "email": "helioesperidiao@gmail.com",
-                    "senha": "@Helio123456"
-                }
-            }
-            */
+async function carregarMiniRanking() {
+  const container = document.getElementById("miniRanking");
+  try {
+    const response = await fetch("/api/v1/avaliacoes/ranking/publico", { cache: "no-store" });
+    const data = await response.json();
+    const top = (data?.data?.ranking || []).slice(0, 3);
 
-            // Chama a API validar o login
-            const respostaAPI = await api.post("/feira-tecnica/api/v1/funcionarios/login", dadosLogin);
-            console.log(respostaAPI)
-            if (respostaAPI.success == true) {
-                localStorage.setItem("userData", JSON.stringify(respostaAPI)); // converte a resposta para texto e armazena no local storage na variavel userData
-                window.location.href = "dashboard.html";
-            }
+    container.innerHTML = top.length
+      ? top.map(item => `
+          <a class="mini-rank-card" href="projeto.html?id=${encodeURIComponent(item.projetoId)}">
+            <span class="place">${item.posicao === 1 ? "🥇" : item.posicao === 2 ? "🥈" : "🥉"}</span>
+            <strong>${escapeHtml(item.tema)}</strong>
+            <span>${escapeHtml(item.curso)}</span>
+            <small>${formatScore(item.media)}</small>
+          </a>
+        `).join("")
+      : '<div class="mini-rank-empty">Aguardando avaliações.</div>';
+  } catch (_) {
+    container.innerHTML = '<div class="mini-rank-empty">Ranking indisponível.</div>';
+  }
+}
 
-            // Atualiza a lista após criar
-        };
-        divBotoes.appendChild(btnLogin);
+async function carregarProjetos() {
+  const grade = document.getElementById("grade");
+  try {
+    const response = await fetch("/api/v1/projetos/publicos");
+    const data = await response.json();
+    projetos = data?.data?.projetos || [];
+    document.getElementById("total").textContent = projetos.length;
+    document.getElementById("cursos").textContent = new Set(projetos.map(p => p.curso)).size;
+    renderFiltros();
+    renderProjetos();
+  } catch (_) {
+    grade.innerHTML = '<div class="estado">Não foi possível carregar os projetos.</div>';
+  }
+}
 
-
-
-    </script>
-
-
+document.getElementById("busca").addEventListener("input", renderProjetos);
+carregarProjetos();
+carregarMiniRanking();
+setInterval(carregarMiniRanking, 5000);
+</script>
 </body>
-
 </html>

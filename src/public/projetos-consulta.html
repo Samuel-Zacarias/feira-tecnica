@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Projetos | Feira Técnica</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt=""><div>Feira Técnica<small>Projetos</small></div></div>
+    <nav class="nav-list">
+      <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Visão geral</a>
+      <a class="nav-link active" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
+      <a class="nav-link" href="avaliacoes-cadastro.html"><span class="ico">★</span>Nova avaliação</a>
+      <a class="nav-link" href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a>
+      <a class="nav-link" href="index.html"><span class="ico">↗</span>Vitrine pública</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="profile-mini">
+        <strong data-usuario>Usuário</strong>
+        <span id="roleMini">Acesso interno</span>
+        <button class="logout" data-sair>Sair</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="content">
+    <header class="topbar">
+      <div><h1>Projetos da Feira</h1><p>Consulte as equipes e abra a avaliação com um clique.</p></div>
+      <div class="top-actions">
+        <a id="importarPlanilha" class="btn sm hidden" href="receberExcel.html">Importar planilha</a>
+        <button class="btn ghost sm" data-sair>Sair</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="hero-panel">
+        <span class="eyebrow">Catálogo interno</span>
+        <h2>Encontre a equipe que está apresentando.</h2>
+        <p>Pesquise por tema, curso, aluno ou tecnologia e abra a ficha de avaliação.</p>
+      </section>
+
+      <div class="section-title">
+        <div><h2>Todos os projetos</h2><p id="resumo">Carregando...</p></div>
+        <div class="field" style="min-width:min(360px,100%)">
+          <input id="busca" placeholder="Buscar projeto, curso ou aluno...">
+        </div>
+      </div>
+
+      <div id="filtros" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <div id="lista" class="list"><div class="card">Carregando projetos...</div></div>
+    </main>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+if (SESSAO.role === "ALUNO") location.replace("aluno.html");
+
+const admin = SESSAO.role === "ADMINISTRADOR";
+const busca = document.getElementById("busca");
+const filtros = document.getElementById("filtros");
+const resumo = document.getElementById("resumo");
+const lista = document.getElementById("lista");
+let projetos = [];
+let cursoSelecionado = "TODOS";
+
+document.getElementById("importarPlanilha").classList.toggle("hidden", !admin);
+document.getElementById("roleMini").textContent = admin ? "Administrador" : "Professor avaliador";
+
+function renderFiltros() {
+  const cursos = ["TODOS", ...new Set(projetos.map(projeto => projeto.curso).filter(Boolean))];
+  filtros.innerHTML = cursos.map(curso => `
+    <button class="btn ${cursoSelecionado === curso ? "" : "ghost"} sm" data-curso="${escapeHtml(curso)}">
+      ${curso === "TODOS" ? "Todos" : escapeHtml(curso)}
+    </button>
+  `).join("");
+
+  filtros.querySelectorAll("[data-curso]").forEach(button => {
+    button.addEventListener("click", () => {
+      cursoSelecionado = button.dataset.curso;
+      renderFiltros();
+      renderProjetos();
+    });
+  });
+}
+
+function renderProjetos() {
+  const termo = normalizarTexto(busca.value);
+  const filtrados = projetos.filter(projeto => {
+    if (cursoSelecionado !== "TODOS" && projeto.curso !== cursoSelecionado) return false;
+    if (!termo) return true;
+
+    const texto = normalizarTexto([
+      projeto.tema,
+      projeto.curso,
+      projeto.representante?.nome,
+      ...(projeto.integrantes || []).map(integrante => integrante.nome),
+      (projeto.tecnologias || []).join(" "),
+    ].join(" "));
+    return texto.includes(termo);
+  });
+
+  resumo.textContent = `${filtrados.length} de ${projetos.length} projeto(s)`;
+  lista.innerHTML = filtrados.map(projeto => `
+    <div class="list-item">
+      <div style="min-width:0">
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px">
+          <span class="pill">${escapeHtml(projeto.curso)}</span>
+          <span class="pill ${projeto.statusProjeto === "FINALIZADO" ? "green" : "amber"}">${escapeHtml(projeto.statusProjeto || "PLANEJAMENTO")}</span>
+        </div>
+        <strong>${escapeHtml(projeto.tema)}</strong>
+        <span>${escapeHtml(projeto.representante?.nome || "Equipe")} · ${1 + (projeto.integrantes?.length || 0)} aluno(s)${projeto.localizacao ? ` · ${escapeHtml(projeto.localizacao)}` : ""}</span>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
+        <a class="btn ghost sm" href="projeto.html?id=${encodeURIComponent(projeto.id)}">Página pública</a>
+        <a class="btn sm" href="avaliacoes-cadastro.html?projeto=${encodeURIComponent(projeto.id)}">★ Avaliar</a>
+        ${admin ? `<a class="btn ghost sm" href="projetos-editar.html?id=${encodeURIComponent(projeto.id)}">Editar</a>` : ""}
+      </div>
+    </div>
+  `).join("") || '<div class="card">Nenhum projeto encontrado.</div>';
+}
+
+busca.addEventListener("input", renderProjetos);
+api("/api/v1/projetos")
+  .then(response => {
+    projetos = response.data.projetos || [];
+    renderFiltros();
+    renderProjetos();
+  })
+  .catch(error => {
+    lista.innerHTML = `<div class="alert show error">${escapeHtml(error.message)}</div>`;
+  });
+</script>
+</body>
+</html>

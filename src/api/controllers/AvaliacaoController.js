@@ -1,110 +1,113 @@
-const logger = require('../utils/Logger');
+const ErrorResponse = require('../utils/ErrorResponse');
+const asyncHandler = require('../utils/AsyncHandler');
 
 module.exports = class AvaliacaoController {
     #avaliacaoService;
 
-    constructor(avaliacaoServiceDependency) {
-        logger.info('⬆️ AvaliacaoController.constructor()');
-        this.#avaliacaoService = avaliacaoServiceDependency;
+    constructor(avaliacaoService) {
+        this.#avaliacaoService = avaliacaoService;
     }
 
-    store = async (request, response, next) => {
-        const method = 'AvaliacaoController.store';
-        try {
-            const avaliacao = await this.#avaliacaoService.createAvaliacao(request.body.avaliacao);
-            response.status(201).json({
-                success: true,
-                message: 'Avaliação cadastrada com sucesso',
-                data: { avaliacao },
-            });
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao cadastrar avaliação`, { error: error.message });
-            next(error);
-        }
-    };
+    rankingPublico = asyncHandler(async (request, response) => {
+        const ranking = await this.#avaliacaoService.rankingPublico();
+        response.status(200).json({
+            success: true,
+            message: 'Ranking provisório atualizado',
+            data: { ranking, atualizadoEm: new Date().toISOString() },
+        });
+    });
 
-    index = async (request, response, next) => {
-        const method = 'AvaliacaoController.index';
-        try {
-            const avaliacoes = await this.#avaliacaoService.findAll();
-            response.status(200).json({
-                success: true,
-                message: 'Busca realizada com sucesso',
-                data: { avaliacoes },
-            });
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao listar avaliações`, { error: error.message });
-            next(error);
-        }
-    };
+    store = asyncHandler(async (request, response) => {
+        const avaliacao = await this.#avaliacaoService.createAvaliacao({
+            ...request.body.avaliacao,
+            avaliador: request.usuario.nome,
+        });
+        response.status(201).json({
+            success: true,
+            message: 'Avaliação cadastrada com sucesso',
+            data: { avaliacao },
+        });
+    });
 
-    indexByProjeto = async (request, response, next) => {
-        const method = 'AvaliacaoController.indexByProjeto';
-        try {
-            const avaliacoes = await this.#avaliacaoService.findByProjeto(request.params.idProjeto);
-            response.status(200).json({
-                success: true,
-                message: 'Avaliações do projeto encontradas',
-                data: { avaliacoes },
-            });
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao buscar avaliações do projeto`, { error: error.message });
-            next(error);
-        }
-    };
+    index = asyncHandler(async (request, response) => {
+        const avaliacoes = this.#filtrarDoUsuario(
+            request,
+            await this.#avaliacaoService.findAll()
+        );
+        response.status(200).json({
+            success: true,
+            message: 'Busca realizada com sucesso',
+            data: { avaliacoes },
+        });
+    });
 
-    show = async (request, response, next) => {
-        const method = 'AvaliacaoController.show';
-        try {
-            const avaliacao = await this.#avaliacaoService.findById(request.params.idAvaliacao);
-            response.status(200).json({
-                success: true,
-                message: 'Avaliação encontrada com sucesso',
-                data: { avaliacao },
-            });
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao buscar avaliação`, { error: error.message });
-            next(error);
-        }
-    };
+    indexByProjeto = asyncHandler(async (request, response) => {
+        const avaliacoes = this.#filtrarDoUsuario(
+            request,
+            await this.#avaliacaoService.findByProjeto(request.params.idProjeto)
+        );
+        response.status(200).json({
+            success: true,
+            message: 'Avaliações do projeto encontradas',
+            data: { avaliacoes },
+        });
+    });
 
-    update = async (request, response, next) => {
-        const method = 'AvaliacaoController.update';
-        try {
-            const atualizada = await this.#avaliacaoService.updateAvaliacao(
-                request.params.idAvaliacao,
-                request.body
-            );
-            response.status(200).json({
-                success: true,
-                message: atualizada ? 'Avaliação atualizada com sucesso' : 'Avaliação não alterada',
-                data: { atualizada },
-            });
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao atualizar avaliação`, { error: error.message });
-            next(error);
-        }
-    };
+    show = asyncHandler(async (request, response) => {
+        const avaliacao = await this.#avaliacaoService.findById(request.params.idAvaliacao);
+        this.#validarAcesso(request, avaliacao, 'acessar');
+        response.status(200).json({
+            success: true,
+            message: 'Avaliação encontrada com sucesso',
+            data: { avaliacao },
+        });
+    });
 
-    destroy = async (request, response, next) => {
-        const method = 'AvaliacaoController.destroy';
-        try {
-            const excluida = await this.#avaliacaoService.deleteAvaliacao(request.params.idAvaliacao);
-            if (!excluida) {
-                return response.status(404).json({
-                    success: false,
-                    message: 'Avaliação não encontrada',
-                    error: { message: 'Não foi possível excluir a avaliação' },
-                });
-            }
-            response.status(200).json({
-                success: true,
-                message: 'Avaliação excluída com sucesso',
-                data: null,
+    update = asyncHandler(async (request, response) => {
+        const atual = await this.#avaliacaoService.findById(request.params.idAvaliacao);
+        this.#validarAcesso(request, atual, 'editar');
+
+        const corpo = request.body.avaliacao;
+        const avaliador = request.usuario.role === 'ADMINISTRADOR'
+            ? (corpo.avaliador || atual.avaliador)
+            : request.usuario.nome;
+
+        const atualizada = await this.#avaliacaoService.updateAvaliacao(
+            request.params.idAvaliacao,
+            { avaliacao: { ...corpo, avaliador } }
+        );
+        response.status(200).json({
+            success: true,
+            message: atualizada ? 'Avaliação atualizada com sucesso' : 'Avaliação não alterada',
+            data: { atualizada },
+        });
+    });
+
+    destroy = asyncHandler(async (request, response) => {
+        const excluida = await this.#avaliacaoService.deleteAvaliacao(request.params.idAvaliacao);
+        if (!excluida) {
+            return response.status(404).json({
+                success: false,
+                message: 'Avaliação não encontrada',
             });
-        } catch (error) {
-            logger.error(`❌ ${method} - Erro ao excluir avaliação`, { error: error.message });
-            next(error);
         }
-    };
+        response.status(200).json({
+            success: true,
+            message: 'Avaliação excluída com sucesso',
+            data: null,
+        });
+    });
+
+    #filtrarDoUsuario(request, avaliacoes) {
+        if (request.usuario.role === 'ADMINISTRADOR') return avaliacoes;
+        return avaliacoes.filter(avaliacao => avaliacao.avaliador === request.usuario.nome);
+    }
+
+    #validarAcesso(request, avaliacao, acao) {
+        const permitido = request.usuario.role === 'ADMINISTRADOR' ||
+            avaliacao.avaliador === request.usuario.nome;
+        if (!permitido) {
+            throw new ErrorResponse(403, `Você não pode ${acao} a avaliação de outro professor`);
+        }
+    }
 };

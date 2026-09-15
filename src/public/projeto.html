@@ -1,98 +1,125 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Projeto - Feira Técnica</title>
-  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Projeto | Feira Técnica</title>
+  <link rel="stylesheet" href="css/publico.css">
 </head>
-<body class="bg-light">
-  <div class="container py-5" style="max-width: 700px;">
-    <div id="carregando" class="text-center text-muted">Carregando projeto...</div>
-    <div id="erro" class="alert alert-danger d-none"></div>
-
-    <div id="conteudo" class="card shadow-sm d-none">
-      <div class="card-body">
-        <h2 id="tema" class="card-title mb-3"></h2>
-
-        <p><strong>Curso:</strong> <span id="curso"></span></p>
-        <p><strong>Equipamento:</strong> <span id="equipamento"></span></p>
-
-        <hr>
-
-        <h5>Representante</h5>
-        <p id="representante" class="mb-3"></p>
-
-        <h5>Integrantes</h5>
-        <p id="integrantes" class="mb-3"></p>
-
-        <div id="outrosRecursosBox" class="d-none">
-          <h5>Outros recursos</h5>
-          <p id="outrosRecursos"></p>
-        </div>
-
-        <div id="observacoesBox" class="d-none">
-          <h5>Observações</h5>
-          <p id="observacoes"></p>
-        </div>
-      </div>
-    </div>
+<body>
+<header class="topo">
+  <div class="container topo-inner">
+    <a class="marca" href="index.html">
+      <img src="imagens/logo.png" alt="">
+      <div>Feira Técnica<small>Mostra de Projetos 2026</small></div>
+    </a>
+    <nav class="nav">
+      <a class="botao secundario" href="ranking.html">Ranking</a>
+      <a class="botao secundario" href="index.html">Todos os projetos</a>
+      <a class="botao" href="login.html">Entrar</a>
+    </nav>
   </div>
+</header>
 
-  <script>
-    const idProjeto = new URLSearchParams(window.location.search).get("id");
+<section class="detail-hero">
+  <div class="container">
+    <a class="breadcrumb" href="index.html">← Voltar para a vitrine</a>
+    <div id="hero"><span class="selo">Carregando projeto...</span><h1>Projeto</h1></div>
+  </div>
+</section>
 
-    const elCarregando = document.getElementById("carregando");
-    const elErro = document.getElementById("erro");
-    const elConteudo = document.getElementById("conteudo");
+<main class="container detail">
+  <section id="principal"><div class="block">Carregando informações...</div></section>
+  <aside id="lateral"></aside>
+</main>
 
-    const mostrarErro = (mensagem) => {
-      elCarregando.classList.add("d-none");
-      elErro.textContent = mensagem;
-      elErro.classList.remove("d-none");
-    };
+<footer class="footer"><div class="container">Feira Técnica 2026 · Página pública do projeto.</div></footer>
 
-    if (!idProjeto) {
-      mostrarErro("Nenhum projeto informado na URL.");
-    } else {
-      fetch(`/api/v1/projetos/publico/${idProjeto}`)
-        .then(async (resposta) => {
-          const json = await resposta.json();
+<script src="js/public-utils.js"></script>
+<script>
+const { escapeHtml } = PublicUtils;
+const idProjeto = new URLSearchParams(location.search).get("id");
 
-          if (!resposta.ok || !json.success) {
-            throw new Error(json.message || "Projeto não encontrado.");
-          }
+function bloco(titulo, conteudo) {
+  if (!conteudo) return "";
+  return `<article class="block"><h2>${titulo}</h2><p>${escapeHtml(conteudo)}</p></article>`;
+}
 
-          return json.data.projeto;
-        })
-        .then((projeto) => {
-          document.getElementById("tema").textContent = projeto.tema;
-          document.getElementById("curso").textContent = projeto.curso;
-          document.getElementById("equipamento").textContent = projeto.equipamento;
+function renderProjeto(projeto) {
+  document.title = `${projeto.tema} | Feira Técnica`;
 
-          document.getElementById("representante").textContent =
-            `${projeto.representante.nome} (${projeto.representante.turma})`;
+  document.getElementById("hero").innerHTML = `
+    <span class="selo">${escapeHtml(projeto.curso)} · ${escapeHtml(projeto.statusProjeto || "PROJETO")}</span>
+    <h1>${escapeHtml(projeto.tema)}</h1>
+    <p>${escapeHtml(projeto.descricao || "Conheça este projeto desenvolvido para a Feira Técnica.")}</p>
+  `;
 
-          document.getElementById("integrantes").textContent =
-            projeto.integrantes.length
-              ? projeto.integrantes.map(i => `${i.nome} (${i.turma})`).join(", ")
-              : "Nenhum integrante além do representante.";
+  const galeria = (projeto.imagens || []).length
+    ? `<article class="block"><h2>Galeria</h2><div class="gallery">${projeto.imagens.map(imagem => `<img src="${escapeHtml(imagem)}" alt="Foto do projeto">`).join("")}</div></article>`
+    : "";
 
-          if (projeto.outrosRecursos) {
-            document.getElementById("outrosRecursos").textContent = projeto.outrosRecursos;
-            document.getElementById("outrosRecursosBox").classList.remove("d-none");
-          }
+  document.getElementById("principal").innerHTML =
+    bloco("Sobre o projeto", projeto.descricao) +
+    bloco("Objetivo", projeto.objetivo) +
+    bloco("Problema que queremos resolver", projeto.problema) +
+    bloco("Nossa solução", projeto.solucao) +
+    bloco("Diferencial", projeto.diferencial) +
+    galeria;
 
-          if (projeto.observacoes) {
-            document.getElementById("observacoes").textContent = projeto.observacoes;
-            document.getElementById("observacoesBox").classList.remove("d-none");
-          }
+  const pessoas = [projeto.representante, ...(projeto.integrantes || [])].filter(Boolean);
+  const links = Object.entries(projeto.links || {}).filter(([, value]) => value);
 
-          elCarregando.classList.add("d-none");
-          elConteudo.classList.remove("d-none");
-        })
-        .catch((erro) => mostrarErro(erro.message));
+  document.getElementById("lateral").innerHTML = `
+    ${projeto.imagens?.[0] ? `<img class="mini-cover" src="${escapeHtml(projeto.imagens[0])}" alt="${escapeHtml(projeto.tema)}">` : ""}
+    <article class="block">
+      <h3>Equipe</h3>
+      <div class="people">
+        ${pessoas.map((pessoa, index) => `
+          <div class="person">
+            <strong>${escapeHtml(pessoa.nome)}</strong>
+            <span>${index === 0 ? "Representante" : "Integrante"} · ${escapeHtml(pessoa.turma || "")}</span>
+          </div>
+        `).join("")}
+      </div>
+    </article>
+    ${(projeto.tecnologias || []).length ? `
+      <article class="block">
+        <h3>Tecnologias e materiais</h3>
+        <div class="tags">${projeto.tecnologias.map(item => `<span class="tag">${escapeHtml(item)}</span>`).join("")}</div>
+      </article>
+    ` : ""}
+    <div class="highlight">
+      <strong>Onde encontrar</strong>
+      <span>${escapeHtml(projeto.localizacao || "Localização ainda não informada.")}</span>
+    </div>
+    ${links.length ? `
+      <article class="block" style="margin-top:16px">
+        <h3>Links do projeto</h3>
+        <div class="link-list">
+          ${links.map(([tipo, url]) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${tipo === "github" ? "GitHub" : tipo === "video" ? "Vídeo" : "Site"} ↗</a>`).join("")}
+        </div>
+      </article>
+    ` : ""}
+  `;
+}
+
+async function carregar() {
+  try {
+    const response = await fetch(`/api/v1/projetos/publico/${encodeURIComponent(idProjeto || "")}`);
+    const data = await response.json();
+    if (!response.ok || !data?.success) {
+      throw new Error(data?.message || "Projeto não encontrado");
     }
-  </script>
+    renderProjeto(data.data.projeto);
+  } catch (error) {
+    document.getElementById("principal").innerHTML = `
+      <div class="block"><h2>Não foi possível abrir o projeto</h2><p>${escapeHtml(error.message)}</p></div>
+    `;
+    document.getElementById("lateral").innerHTML = "";
+  }
+}
+
+carregar();
+</script>
 </body>
 </html>

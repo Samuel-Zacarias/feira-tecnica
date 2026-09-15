@@ -1,11 +1,11 @@
-const ROLES = ["ADMINISTRADOR", "AVALIADOR"];
-
-module.exports = class Professor {
+module.exports = class Aluno {
     #id;
     #nome;
     #email;
     #senha;
-    #role = "AVALIADOR";
+    #matricula;
+    #turma;
+    #curso;
 
     get id() { return this.#id; }
     set id(value) {
@@ -23,7 +23,8 @@ module.exports = class Professor {
 
     get email() { return this.#email; }
     set email(value) {
-        const email = typeof value === "string" ? value.trim().toLowerCase() : "";
+        if (typeof value !== "string") throw new Error("email deve ser uma string.");
+        const email = value.trim().toLowerCase();
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             throw new Error("email em formato inválido.");
         }
@@ -41,13 +42,24 @@ module.exports = class Professor {
         this.#senha = value;
     }
 
-    get role() { return this.#role; }
-    set role(value) {
-        const role = typeof value === "string" ? value.trim().toUpperCase() : "";
-        if (!ROLES.includes(role)) {
-            throw new Error(`role deve ser: ${ROLES.join(" ou ")}.`);
+    get matricula() { return this.#matricula; }
+    set matricula(value) {
+        if (typeof value !== "string" || value.trim().length < 3) {
+            throw new Error("matrícula inválida.");
         }
-        this.#role = role;
+        this.#matricula = value.trim();
+    }
+
+    get turma() { return this.#turma; }
+    set turma(value) {
+        if (typeof value !== "string" || !value.trim()) throw new Error("turma é obrigatória.");
+        this.#turma = value.trim().toUpperCase();
+    }
+
+    get curso() { return this.#curso; }
+    set curso(value) {
+        if (typeof value !== "string" || !value.trim()) throw new Error("curso é obrigatório.");
+        this.#curso = value.trim().toUpperCase();
     }
 
     toJSON() {
@@ -55,7 +67,10 @@ module.exports = class Professor {
             id: this.#id,
             nome: this.#nome,
             email: this.#email,
-            role: this.#role,
+            matricula: this.#matricula,
+            turma: this.#turma,
+            curso: this.#curso,
+            role: "ALUNO"
         };
     }
 };

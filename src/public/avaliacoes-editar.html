@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Avaliação | Feira Técnica</title>
+  <link rel="stylesheet" href="css/painel.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Editar Avaliação</h1>
+    <p>PUT protegido · Logado como <span data-professor>Professor</span></p>
+  </div>
+  <div class="top-actions">
+    <a href="dashboard.html">Painel</a>
+    <button type="button" data-sair>Sair</button>
+  </div>
+</header>
+<main>
+
+<section class="hero"><h2>Editar avaliação</h2><p>Carrega a avaliação completa e envia <strong>PUT /api/v1/avaliacoes/:id</strong>.</p></section>
+<div id="alerta" class="alert"></div>
+<form id="form">
+<fieldset><legend>Selecionar avaliação</legend><div class="field"><label for="avaliacaoId">Avaliação</label><select id="avaliacaoId" required><option value="">Carregando...</option></select></div></fieldset>
+
+<fieldset><legend>Dados da avaliação</legend>
+<div class="form-grid">
+  <div class="field"><label for="projetoId">Projeto</label><select id="projetoId" required><option value="">Carregando projetos...</option></select></div>
+  <div class="field"><label for="avaliador">Avaliador</label><input id="avaliador" required></div>
+  <div class="field"><label for="status">Status</label><select id="status"><option value="Classificado">Classificado · entra no ranking</option><option value="Em análise">Em análise · rascunho</option><option value="Aprovado">Aprovado</option><option value="Reprovado">Reprovado</option></select></div>
+  <div class="field full"><label for="comentario">Comentários</label><textarea id="comentario" placeholder="Opcional. Um comentário por linha."></textarea></div>
+</div>
+</fieldset>
+<fieldset><legend>Notas</legend><div class="form-grid"><div class="field"><label for="criatividade">Criatividade (0–10)</label><input id="criatividade" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="relevancia">Relevância (0–10)</label><input id="relevancia" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="viabilidade">Viabilidade (0–10)</label><input id="viabilidade" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="apresentacao">Apresentação (0–10)</label><input id="apresentacao" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="conhecimentoTecnico">Conhecimento técnico (0–10)</label><input id="conhecimentoTecnico" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="funcionalidade">Funcionalidade (0–10)</label><input id="funcionalidade" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="sustentabilidade">Sustentabilidade (0–10)</label><input id="sustentabilidade" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="trabalhoEquipe">Trabalho em equipe (0–10)</label><input id="trabalhoEquipe" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="originalidade">Originalidade (0–10)</label><input id="originalidade" type="number" min="0" max="10" step="0.1" required></div>
+<div class="field"><label for="potencialMercado">Potencial de mercado (0–10)</label><input id="potencialMercado" type="number" min="0" max="10" step="0.1" required></div></div></fieldset>
+
+<div class="form-actions"><button class="btn sec" type="submit">Salvar alterações</button></div>
+</form>
+
+</main>
+<script src="js/auth.js"></script>
+<script>
+
+const elProjetoId = document.getElementById("projetoId");
+const elAvaliador = document.getElementById("avaliador");
+const elStatus = document.getElementById("status");
+const elComentario = document.getElementById("comentario");
+
+function avaliacaoDoFormulario() {
+  return {
+    projetoId: elProjetoId.value,
+    avaliador: elAvaliador.value.trim(),
+    status: elStatus.value,
+    criatividade: Number(document.getElementById("criatividade").value),
+    relevancia: Number(document.getElementById("relevancia").value),
+    viabilidade: Number(document.getElementById("viabilidade").value),
+    apresentacao: Number(document.getElementById("apresentacao").value),
+    conhecimentoTecnico: Number(document.getElementById("conhecimentoTecnico").value),
+    funcionalidade: Number(document.getElementById("funcionalidade").value),
+    sustentabilidade: Number(document.getElementById("sustentabilidade").value),
+    trabalhoEquipe: Number(document.getElementById("trabalhoEquipe").value),
+    originalidade: Number(document.getElementById("originalidade").value),
+    potencialMercado: Number(document.getElementById("potencialMercado").value),
+    comentarios: elComentario.value.split("\n").map(x => x.trim()).filter(Boolean)
+  };
+}
+
+async function carregarProjetos() {
+  const r = await api("/api/v1/projetos");
+  const l = r.data.projetos || [];
+  elProjetoId.innerHTML = '<option value="">Selecione...</option>' + l.map(p =>
+    `<option value="${escapeHtml(p.id)}">${escapeHtml(p.tema)} — ${escapeHtml(p.curso)}</option>`
+  ).join("");
+}
+
+const alerta = document.getElementById("alerta");
+const sel = document.getElementById("avaliacaoId");
+let lista = [];
+
+function preencher() {
+  const a = lista.find(x => x.id === sel.value);
+  if (!a) return;
+
+  elProjetoId.value = a.projeto?.id || a.projetoId || "";
+  elAvaliador.value = a.avaliador || "";
+  elStatus.value = a.status || "Em análise";
+  elComentario.value = (a.comentarios || []).map(c => typeof c === "string" ? c : c.texto).filter(Boolean).join("\n");
+
+  ["criatividade","relevancia","viabilidade","apresentacao","conhecimentoTecnico","funcionalidade","sustentabilidade","trabalhoEquipe","originalidade","potencialMercado"]
+    .forEach(k => document.getElementById(k).value = a[k] ?? "");
+}
+
+async function carregarTudo() {
+  try {
+    await carregarProjetos();
+    const r = await api("/api/v1/avaliacoes");
+    lista = r.data.avaliacoes || [];
+    sel.innerHTML = '<option value="">Selecione...</option>' + lista.map(a => {
+      const projeto = a.projeto?.tema || a.projeto?.titulo || a.projeto?.id || "Projeto";
+      return `<option value="${escapeHtml(a.id)}">${escapeHtml(projeto)} — ${escapeHtml(a.avaliador)} — nota ${Number(a.notaFinal || 0).toFixed(2)}</option>`;
+    }).join("");
+
+    const q = new URLSearchParams(location.search).get("id");
+    if (q) {
+      sel.value = q;
+      preencher();
+    }
+  } catch (e) {
+    mostrarAlerta(alerta, "error", e.message);
+  }
+}
+
+sel.addEventListener("change", preencher);
+
+document.getElementById("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!sel.value) return mostrarAlerta(alerta, "error", "Selecione uma avaliação.");
+  try {
+    const r = await api(`/api/v1/avaliacoes/${sel.value}`, {
+      method: "PUT",
+      body: JSON.stringify({ avaliacao: avaliacaoDoFormulario() })
+    });
+    mostrarAlerta(alerta, "ok", `✓ ${r.message}`);
+    const idAtual = sel.value;
+    await carregarTudo();
+    sel.value = idAtual;
+    preencher();
+  } catch (e) {
+    mostrarAlerta(alerta, "error", e.message);
+  }
+});
+carregarTudo();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Avaliar Projeto | Feira Técnica</title><link rel="stylesheet" href="css/app.css">
+</head>
+<body class="page-enter">
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt=""><div>Feira Técnica<small>Avaliação</small></div></div>
+    <nav class="nav-list">
+      <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Painel</a>
+      <a class="nav-link" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
+      <a class="nav-link active" href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a>
+      <a class="nav-link" href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a>
+      <a class="nav-link" href="ranking.html"><span class="ico">↗</span>Ranking</a>
+    </nav>
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Professor</strong><span id="roleMini">Avaliador</span><button class="logout" data-sair>Sair</button></div></div>
+  </aside>
+
+  <div class="content">
+    <header class="topbar"><div><h1>Avaliar projeto</h1><p>Feira Técnica 2026</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
+    <main class="main">
+      <section class="hero-panel compact-hero"><span class="eyebrow">Banca avaliadora</span><h2>Avaliação</h2><p>Selecione o projeto, atribua as notas e finalize.</p></section>
+      <div id="alerta" class="alert"></div>
+
+      <form id="form">
+        <div class="section-title tight"><div><h2>Projeto</h2></div></div>
+        <section class="panel eval-top">
+          <div class="form-grid" style="grid-template-columns:1fr">
+            <div class="field"><label for="projetoId">Projeto</label><select id="projetoId" required><option value="">Carregando...</option></select></div>
+            <div class="field"><label for="avaliador">Avaliador</label><input id="avaliador" readonly></div>
+          </div>
+          <div id="projetoResumo" class="eval-summary" style="display:none"></div>
+        </section>
+
+        <div class="section-title tight"><div><h2>Critérios</h2></div></div>
+        <div class="evaluation-grid">
+          <section class="panel"><div id="criterios" class="score-list"></div></section>
+          <aside class="panel score-box">
+            <span class="pill">Média</span><div class="score-big" id="media">0,0</div>
+            <div class="field" style="text-align:left;margin-top:18px"><label for="status">Situação</label><select id="status"><option value="Classificado" selected>Finalizada · ranking</option><option value="Em análise">Rascunho</option><option value="Aprovado">Aprovado</option><option value="Reprovado">Reprovado</option></select></div>
+          </aside>
+        </div>
+
+        <div class="section-title tight"><div><h2>Equipe</h2></div></div>
+        <section class="panel"><div id="alunos" class="student-evals"><p class="small-muted">Selecione um projeto.</p></div></section>
+
+        <div class="section-title tight"><div><h2>Parecer do projeto</h2></div></div>
+        <section class="panel">
+          <div class="field"><label for="comentario">Feedback geral</label><textarea id="comentario" placeholder="Registre os principais pontos da apresentação."></textarea></div>
+          <div class="sticky-actions"><a class="btn ghost" href="dashboard.html">Cancelar</a><button class="btn success" type="submit">Finalizar avaliação</button></div>
+        </section>
+      </form>
+    </main>
+  </div>
+</div>
+
+<nav class="mobile-nav" aria-label="Navegação rápida">
+  <a href="dashboard.html"><strong>⌂</strong><span>Painel</span></a>
+  <a href="projetos-consulta.html"><strong>◇</strong><span>Projetos</span></a>
+  <a class="active" href="avaliacoes-cadastro.html"><strong>★</strong><span>Avaliar</span></a>
+  <a href="ranking.html"><strong>↗</strong><span>Ranking</span></a>
+</nav>
+
+<script src="js/auth.js"></script>
+<script>
+if(!['ADMINISTRADOR','AVALIADOR'].includes(SESSAO.role))location.replace('aluno.html');
+document.getElementById('roleMini').textContent=SESSAO.role==='ADMINISTRADOR'?'Administrador':'Professor avaliador';
+document.getElementById('avaliador').value=SESSAO.usuario.nome||SESSAO.usuario.email;
+const criterios=[['criatividade','Criatividade e inovação'],['relevancia','Relevância do problema'],['viabilidade','Viabilidade da solução'],['apresentacao','Qualidade da apresentação'],['conhecimentoTecnico','Domínio técnico'],['funcionalidade','Funcionamento / protótipo'],['sustentabilidade','Sustentabilidade / impacto'],['trabalhoEquipe','Trabalho em equipe'],['originalidade','Originalidade'],['potencialMercado','Potencial de aplicação']];
+const box=document.getElementById('criterios');
+box.innerHTML=criterios.map(([id,n])=>`<label class="score-row"><span>${n}</span><input id="${id}" type="number" min="0" max="10" step="0.1" required placeholder="0–10"></label>`).join('');
+function calc(){const vals=criterios.map(([id])=>Number(document.getElementById(id).value)).filter(v=>Number.isFinite(v)&&v>=0&&v<=10);document.getElementById('media').textContent=(vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0).toFixed(1).replace('.',',')}
+box.addEventListener('input',calc);
+let projetos=[];const sel=document.getElementById('projetoId');
+async function carregarProjetos(){const r=await api('/api/v1/projetos');projetos=r.data.projetos||[];sel.innerHTML='<option value="">Selecione um projeto...</option>'+projetos.map(p=>`<option value="${escapeHtml(p.id)}">${escapeHtml(p.tema)} — ${escapeHtml(p.curso)}</option>`).join('');const q=new URLSearchParams(location.search).get('projeto');if(q&&projetos.some(p=>p.id===q)){sel.value=q;renderProjeto()}}
+function renderProjeto(){
+  const p=projetos.find(x=>x.id===sel.value),res=document.getElementById('projetoResumo'),al=document.getElementById('alunos');
+  if(!p){res.style.display='none';al.innerHTML='<p class="small-muted">Selecione um projeto.</p>';return}
+  res.style.display='block';res.innerHTML=`<span class="pill">${escapeHtml(p.statusProjeto||'PROJETO')}</span><h3>${escapeHtml(p.tema)}</h3><p>${escapeHtml(p.curso)}${p.localizacao?` · ${escapeHtml(p.localizacao)}`:''}</p>`;
+  const pessoas=[p.representante,...(p.integrantes||[])].filter(Boolean);
+  al.innerHTML=pessoas.map((x,i)=>`<div class="student-eval" data-matricula="${escapeHtml(x.matricula||'')}" data-nome="${escapeHtml(x.nome||'')}"><h4>${escapeHtml(x.nome)} <span class="pill">${i===0?'Representante':'Integrante'}</span></h4><div class="student-score-grid"><label>Participação<input data-s="participacao" type="number" min="0" max="10" step="0.1" value="8"></label><label>Domínio<input data-s="dominio" type="number" min="0" max="10" step="0.1" value="8"></label><label>Comunicação<input data-s="comunicacao" type="number" min="0" max="10" step="0.1" value="8"></label><label>Comprometimento<input data-s="comprometimento" type="number" min="0" max="10" step="0.1" value="8"></label></div><div class="field" style="margin-top:10px"><label>Observação <span class="small-muted">(opcional)</span></label><textarea data-comentario placeholder="Comentário breve sobre o aluno"></textarea></div></div>`).join('');
+}
+sel.onchange=renderProjeto;
+function alunosPayload(){return [...document.querySelectorAll('.student-eval')].map(el=>({nome:el.dataset.nome,matricula:el.dataset.matricula,participacao:Number(el.querySelector('[data-s="participacao"]').value),dominio:Number(el.querySelector('[data-s="dominio"]').value),comunicacao:Number(el.querySelector('[data-s="comunicacao"]').value),comprometimento:Number(el.querySelector('[data-s="comprometimento"]').value),comentario:el.querySelector('[data-comentario]').value.trim()}))}
+document.getElementById('form').onsubmit=async e=>{e.preventDefault();const alerta=document.getElementById('alerta');try{const avaliacao={projetoId:sel.value,avaliador:SESSAO.usuario.nome,status:document.getElementById('status').value,comentarios:document.getElementById('comentario').value.trim()?[document.getElementById('comentario').value.trim()]:[],comentarioInterno:'',avaliacaoAlunos:alunosPayload()};criterios.forEach(([id])=>avaliacao[id]=Number(document.getElementById(id).value));const r=await api('/api/v1/avaliacoes',{method:'POST',body:JSON.stringify({avaliacao})});mostrarAlerta(alerta,'ok',`Avaliação salva · média ${Number(r.data.avaliacao.notaFinal||0).toFixed(1).replace('.',',')}`);window.scrollTo({top:0,behavior:'smooth'})}catch(err){mostrarAlerta(alerta,'error',err.message);window.scrollTo({top:0,behavior:'smooth'})}};
+carregarProjetos().catch(e=>mostrarAlerta(document.getElementById('alerta'),'error',e.message));
+</script>
+</body>
+</html>

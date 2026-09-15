@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultar Professores | Feira Técnica</title>
+  <link rel="stylesheet" href="css/painel.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Consultar Professores</h1>
+    <p>GET protegido · Logado como <span data-professor>Professor</span></p>
+  </div>
+  <div class="top-actions">
+    <a href="dashboard.html">Painel</a>
+    <a href="professores-cadastro.html">Cadastrar professor</a>
+    <button type="button" data-sair>Sair</button>
+  </div>
+</header>
+<main>
+
+<section class="hero"><h2>Consulta de professores</h2><p>Executa <strong>GET /api/v1/professores</strong> usando JWT.</p></section>
+<div id="alerta" class="alert show info">Carregando professores...</div>
+<div class="toolbar"><button class="btn" id="recarregar">Recarregar</button></div>
+<div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Função</th><th>ID MongoDB</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table></div>
+
+</main>
+<script src="js/auth.js"></script>
+<script>
+
+const alerta = document.getElementById("alerta"), tbody = document.getElementById("tbody");
+async function carregar() {
+  try {
+    mostrarAlerta(alerta,"info","Carregando professores...");
+    const r = await api("/api/v1/professores");
+    const itens = r.data.professores || [];
+    tbody.innerHTML = itens.map(p => `<tr>
+      <td>${escapeHtml(p.nome)}</td><td>${escapeHtml(p.email)}</td><td><span class="badge">${escapeHtml(p.role)}</span></td>
+      <td class="mono">${escapeHtml(p.id)}</td>
+      <td><a class="btn sec" href="professores-editar.html?id=${encodeURIComponent(p.id)}">Editar</a></td>
+    </tr>`).join("");
+    mostrarAlerta(alerta,"ok",`✓ ${itens.length} professor(es) encontrado(s).`);
+  } catch(e) { mostrarAlerta(alerta,"error",e.message); }
+}
+document.getElementById("recarregar").onclick = carregar; carregar();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alunos | Feira Técnica</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="content">
+    <header class="topbar">
+      <div>
+        <h1>Alunos cadastrados</h1>
+        <p>Contas com acesso à área “Meu Projeto”.</p>
+      </div>
+      <div class="top-actions">
+        <a class="btn ghost sm" href="dashboard.html">Painel</a>
+        <a class="btn sm" href="alunos-cadastro.html">＋ Cadastrar</a>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="hero-panel">
+        <span class="eyebrow">Administração</span>
+        <h2>Representantes e equipes</h2>
+        <p>Veja quem já possui uma conta para manter as informações do projeto atualizadas.</p>
+      </section>
+
+      <div class="section-title">
+        <div>
+          <h2>Alunos</h2>
+          <p id="contagem">Carregando...</p>
+        </div>
+      </div>
+
+      <div id="lista" class="list"></div>
+    </main>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (SESSAO.role !== "ADMINISTRADOR") location.replace("dashboard.html");
+
+    const contagem = document.getElementById("contagem");
+    const lista = document.getElementById("lista");
+
+    async function carregarAlunos() {
+      try {
+        const resposta = await api("/api/v1/alunos");
+        const alunos = resposta.data.alunos || [];
+        contagem.textContent = `${alunos.length} conta(s) cadastrada(s)`;
+
+        lista.innerHTML = alunos.length
+          ? alunos.map(aluno => `
+              <div class="list-item">
+                <div>
+                  <strong>${escapeHtml(aluno.nome)}</strong>
+                  <span>${escapeHtml(aluno.email)} · matrícula ${escapeHtml(aluno.matricula)} · ${escapeHtml(aluno.turma)}</span>
+                </div>
+                <span class="pill">${escapeHtml(aluno.curso)}</span>
+              </div>
+            `).join("")
+          : '<div class="card">Nenhum aluno cadastrado.</div>';
+      } catch (error) {
+        lista.innerHTML = `<div class="alert show error">${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    carregarAlunos();
+  </script>
+</body>
+</html>

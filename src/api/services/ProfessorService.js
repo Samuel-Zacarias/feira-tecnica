@@ -1,245 +1,115 @@
 const Professor = require("../models/Professor");
 const MeuTokenJWT = require("../http/MeuTokenJWT");
 const ErrorResponse = require("../utils/ErrorResponse");
-const logger = require("../utils/Logger");
 
 module.exports = class ProfessorService {
     #professorDAO;
 
-    constructor(professorDAODependency) {
-        logger.info(
-            "⬆️ ProfessorService.constructor()"
-        );
-
-        this.#professorDAO =
-            professorDAODependency;
+    constructor(professorDAO) {
+        this.#professorDAO = professorDAO;
     }
 
-    createProfessor = async (
-        jsonProfessor
-    ) => {
-        const professor = this.#criarModelo(
-            jsonProfessor,
-            true
-        );
-
-        const existentes =
-            await this.#professorDAO.findByField(
-                "email",
-                professor.email
-            );
-
-        if (existentes.length > 0) {
-            throw new ErrorResponse(
-                400,
-                "E-mail já cadastrado",
-                {
-                    message:
-                        `O e-mail ${professor.email} já está em uso.`
-                }
-            );
+    createProfessor = async data => {
+        const professor = this.#criarModelo(data, true);
+        const existentes = await this.#professorDAO.findByField("email", professor.email);
+        if (existentes.length) {
+            throw new ErrorResponse(400, "E-mail já cadastrado", {
+                message: `O e-mail ${professor.email} já está em uso.`,
+            });
         }
 
-        professor.id =
-            await this.#professorDAO.create(
-                professor
-            );
-
+        professor.id = await this.#professorDAO.create(professor);
         return professor.toJSON();
     };
 
-    loginProfessor = async (
-        jsonProfessor
-    ) => {
-        if (!jsonProfessor) {
-            throw new ErrorResponse(
-                400,
-                "Dados de login obrigatórios"
-            );
+    loginProfessor = async data => {
+        if (!data) throw new ErrorResponse(400, "Dados de login obrigatórios");
+
+        let professorLogin;
+        try {
+            professorLogin = new Professor();
+            professorLogin.email = data.email;
+            professorLogin.senha = data.senha;
+        } catch (error) {
+            throw new ErrorResponse(400, "Dados de login inválidos", { message: error.message });
         }
 
-        const professorLogin =
-            new Professor();
-
-        professorLogin.email =
-            jsonProfessor.email;
-
-        professorLogin.senha =
-            jsonProfessor.senha;
-
-        const encontrado =
-            await this.#professorDAO.login(
-                professorLogin.email,
-                professorLogin.senha
-            );
-
+        const encontrado = await this.#professorDAO.login(
+            professorLogin.email,
+            professorLogin.senha
+        );
         if (!encontrado) {
-            throw new ErrorResponse(
-                401,
-                "E-mail ou senha inválidos",
-                {
-                    message:
-                        "Não foi possível realizar o login."
-                }
-            );
+            throw new ErrorResponse(401, "E-mail ou senha inválidos", {
+                message: "Não foi possível realizar o login.",
+            });
         }
 
-        const jwt = new MeuTokenJWT();
-
-        const token = jwt.gerarToken({
+        const token = new MeuTokenJWT().gerarToken({
             email: encontrado.email,
             role: encontrado.role,
             name: encontrado.nome,
-
-            // Será ajustado depois para idProfessor.
-            idFuncionario: encontrado.id
+            idFuncionario: encontrado.id,
         });
 
-        return {
-            professor: encontrado,
-            token
-        };
+        return { professor: encontrado, token };
     };
 
-    findAll = async () => {
-        return await this.#professorDAO.findAll();
-    };
+    findAll = async () => this.#professorDAO.findAll();
 
-    findById = async (idProfessor) => {
-        const professor =
-            await this.#professorDAO.findById(
-                idProfessor
-            );
-
+    findById = async idProfessor => {
+        const professor = await this.#professorDAO.findById(idProfessor);
         if (!professor) {
-            throw new ErrorResponse(
-                404,
-                "Professor não encontrado",
-                {
-                    message:
-                        `Não existe professor com id ${idProfessor}.`
-                }
-            );
+            throw new ErrorResponse(404, "Professor não encontrado", {
+                message: `Não existe professor com id ${idProfessor}.`,
+            });
         }
-
         return professor;
     };
 
-    updateProfessor = async (
-        idProfessor,
-        requestBody
-    ) => {
-        const jsonProfessor =
-            requestBody.professor ||
-            requestBody.Professor ||
-            requestBody;
-
-        const atual =
-            await this.findById(idProfessor);
-
-        const professor =
-            this.#criarModelo(
-                {
-                    nome:
-                        jsonProfessor.nome ??
-                        atual.nome,
-
-                    email:
-                        jsonProfessor.email ??
-                        atual.email,
-
-                    senha:
-                        jsonProfessor.senha,
-
-                    role:
-                        jsonProfessor.role ??
-                        atual.role
-                },
-                false
-            );
-
+    updateProfessor = async (idProfessor, requestBody) => {
+        const data = requestBody.professor || requestBody.Professor || requestBody;
+        const atual = await this.findById(idProfessor);
+        const professor = this.#criarModelo({
+            nome: data.nome ?? atual.nome,
+            email: data.email ?? atual.email,
+            senha: data.senha,
+            role: data.role ?? atual.role,
+        }, false);
         professor.id = idProfessor;
 
-        const mesmoEmail =
-            await this.#professorDAO.findByField(
-                "email",
-                professor.email
-            );
-
-        const duplicado =
-            mesmoEmail.some(
-                item =>
-                    item.id !== idProfessor
-            );
-
-        if (duplicado) {
-            throw new ErrorResponse(
-                400,
-                "E-mail já cadastrado",
-                {
-                    message:
-                        `O e-mail ${professor.email} já está em uso.`
-                }
-            );
+        const mesmoEmail = await this.#professorDAO.findByField("email", professor.email);
+        if (mesmoEmail.some(item => item.id !== idProfessor)) {
+            throw new ErrorResponse(400, "E-mail já cadastrado", {
+                message: `O e-mail ${professor.email} já está em uso.`,
+            });
         }
 
-        const atualizado =
-            await this.#professorDAO.update(
-                professor
-            );
-
-        return atualizado
-            ? await this.#professorDAO.findById(
-                idProfessor
-            )
-            : null;
+        const atualizado = await this.#professorDAO.update(professor);
+        return atualizado ? this.#professorDAO.findById(idProfessor) : null;
     };
 
-    deleteProfessor = async (
-        idProfessor
-    ) => {
+    deleteProfessor = async idProfessor => {
         const professor = new Professor();
         professor.id = idProfessor;
-
-        return await this.#professorDAO.delete(
-            professor
-        );
+        return this.#professorDAO.delete(professor);
     };
 
-    #criarModelo(
-        jsonProfessor,
-        senhaObrigatoria
-    ) {
-        if (
-            !jsonProfessor ||
-            typeof jsonProfessor !== "object"
-        ) {
-            throw new ErrorResponse(
-                400,
-                "Dados do professor obrigatórios"
-            );
+    #criarModelo(data, senhaObrigatoria) {
+        if (!data || typeof data !== "object") {
+            throw new ErrorResponse(400, "Dados do professor obrigatórios");
         }
 
-        const professor = new Professor();
-
-        professor.nome =
-            jsonProfessor.nome;
-
-        professor.email =
-            jsonProfessor.email;
-
-        professor.role =
-            jsonProfessor.role ||
-            "AVALIADOR";
-
-        if (
-            senhaObrigatoria ||
-            jsonProfessor.senha
-        ) {
-            professor.senha =
-                jsonProfessor.senha;
+        try {
+            const professor = new Professor();
+            professor.nome = data.nome;
+            professor.email = data.email;
+            professor.role = data.role || "AVALIADOR";
+            if (senhaObrigatoria || data.senha) professor.senha = data.senha;
+            return professor;
+        } catch (error) {
+            throw new ErrorResponse(400, "Dados do professor inválidos", {
+                message: error.message,
+            });
         }
-
-        return professor;
     }
 };

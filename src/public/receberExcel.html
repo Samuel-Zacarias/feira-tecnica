@@ -203,7 +203,7 @@
     <div class="container">
         <div class="cabecalho">
             <h1>Importar Projetos</h1>
-            <p>Selecione a planilha no formato CSV contendo a relação dos trabalhos.</p>
+            <p>Selecione a planilha exportada do Excel em formato CSV contendo os dados oficiais das equipes e necessidades.</p>
         </div>
 
         <div class="card">
@@ -211,11 +211,13 @@
             <label class="upload-area" for="arquivoCsv">
                 <div class="upload-icone">📄</div>
                 <div class="upload-texto">Clique aqui para selecionar o arquivo CSV</div>
-                <div class="upload-subtexto">Formato aceito: .csv (separado por vírgulas)</div>
+                <div class="upload-subtexto">Formato aceito: .csv exportado do Excel (separado por vírgulas)</div>
                 <div class="arquivo-selecionado" id="nomeArquivo"></div>
             </label>
 
             <input type="file" id="arquivoCsv" accept=".csv">
+
+            <div style="margin-top:16px;text-align:center"><a href="modelo-planilha-feira.csv" download style="color:#0867bd;font-weight:bold;text-decoration:none">⬇ Baixar modelo da planilha (CSV)</a></div>
 
             <div class="acoes">
                 <button class="btn-importar" id="btnEnviar">
@@ -234,8 +236,14 @@
         </div>
     </div>
 
+    <script src="js/auth.js"></script>
     <script>
-        const API_URL = "http://localhost:3000/api/v1/projetos";
+        if (SESSAO.role !== "ADMINISTRADOR") {
+            alert("A importação da planilha é exclusiva da organização/administrador.");
+            location.replace("dashboard.html");
+        }
+
+        const API_URL = "/api/v1/projetos";
 
         const arquivoInput = document.getElementById("arquivoCsv");
         const btnEnviar = document.getElementById("btnEnviar");
@@ -332,11 +340,33 @@
          * Transforma uma linha do CSV no formato do JSON original.
          */
         function montarProjeto(linha) {
+            const integrantes = [];
+
+            // Compatibilidade com a planilha antiga (integrante_nome, integrante_matricula...).
+            if (linha.integrante_nome || linha.integrante_matricula || linha.integrante_turma) {
+                integrantes.push({
+                    nome: linha.integrante_nome,
+                    matricula: linha.integrante_matricula,
+                    turma: linha.integrante_turma
+                });
+            }
+
+            // Planilha nova: integrante1_nome ... integrante9_nome.
+            for (let i = 1; i <= 9; i++) {
+                const nome = linha[`integrante${i}_nome`] || linha[`integrante_${i}_nome`] || "";
+                const matricula = linha[`integrante${i}_matricula`] || linha[`integrante_${i}_matricula`] || "";
+                const turma = linha[`integrante${i}_turma`] || linha[`integrante_${i}_turma`] || "";
+                if (nome || matricula || turma) integrantes.push({ nome, matricula, turma });
+            }
+
             return {
                 projeto: {
                     tema: linha.tema,
                     curso: linha.curso,
-                    equipamento: linha.equipamento,
+                    equipamento: linha.equipamento || "EQUIPE TRAZ SEU COMPUTADOR",
+                    outrosRecursos: linha.outros_recursos || linha.necessidades || linha.recursos || "",
+                    observacoes: linha.observacoes || linha.observacao || "",
+                    localizacao: linha.localizacao || linha.stand || "",
 
                     representante: {
                         nome: linha.representante_nome,
@@ -345,13 +375,7 @@
                         turma: linha.representante_turma
                     },
 
-                    integrantes: [
-                        {
-                            nome: linha.integrante_nome,
-                            matricula: linha.integrante_matricula,
-                            turma: linha.integrante_turma
-                        }
-                    ]
+                    integrantes
                 }
             };
         }
@@ -360,26 +384,10 @@
          * Envia um projeto para a API.
          */
         async function enviarProjeto(projeto) {
-            const resposta = await fetch(API_URL, {
+            return await window.api(API_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 body: JSON.stringify(projeto)
             });
-
-            if (!resposta.ok) {
-                let detalhe = "";
-                try {
-                    detalhe = await resposta.text();
-                } catch (e) {
-                    // Ignora erro ao ler resposta
-                }
-
-                throw new Error(`HTTP ${resposta.status} - ${detalhe}`);
-            }
-
-            return resposta;
         }
 
         /*
