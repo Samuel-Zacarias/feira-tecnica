@@ -1,0 +1,458 @@
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prisma A4 - Avaliação de Projeto Univap</title>
+    
+    <!-- Biblioteca QR Code (Canvas) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+    <style>
+        /* Configurações Globais e de Impressão */
+        @page {
+        size: A4 landscape;
+        margin: 0;
+        }
+
+        * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        }
+
+        body {
+        background-color: #eef4fa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        }
+
+        /* Painel de Controle (Oculto na Impressão) */
+        .controls {
+        background: #fff;
+        padding: 18px 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 60, 120, 0.10);
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        max-width: 600px;
+        }
+
+        .input-group {
+        display: flex;
+        gap: 10px;
+        }
+
+        .controls input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 2px solid #dcefff;
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+        }
+
+        .controls input:focus {
+        border-color: #0867bd;
+        }
+
+        .btn-buscar {
+        padding: 10px 18px;
+        background-color: #0867bd;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s;
+        }
+
+        .btn-buscar:hover {
+        background-color: #07529b;
+        }
+
+        .btn-imprimir {
+        padding: 10px 18px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        }
+
+        .mensagem {
+        font-size: 13px;
+        font-weight: bold;
+        min-height: 18px;
+        }
+
+        /* Dimensões da Folha A4 Deitada (297mm x 210mm) */
+        .page-a4 {
+        width: 297mm;
+        height: 210mm;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        }
+
+        /* METADE SUPERIOR - Espaço para dobra / suporte do prisma */
+        .metade-superior {
+        height: 105mm;
+        width: 100%;
+        background-color: #fafafa;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        border-bottom: 2px dashed #b0b0b0;
+        padding-bottom: 8px;
+        }
+
+        .linha-dobra-tag {
+        font-size: 11px;
+        color: #777;
+        background: #fff;
+        padding: 3px 12px;
+        border: 1px dashed #aaa;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        }
+
+        /* METADE INFERIOR - Conteúdo visível do Prisma */
+        .metade-inferior {
+        height: 105mm;
+        width: 100%;
+        display: flex;
+        }
+
+        /* LADO ESQUERDO - Dados Univap e Aluno */
+        .univap-section {
+        width: 62%;
+        height: 100%;
+        background: linear-gradient(135deg, #002B5B 0%, #004080 100%) !important;
+        color: white !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px 30px;
+        position: relative;
+        overflow: hidden;
+        }
+
+        .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        }
+
+        .logo {
+        max-height: 50px;
+        max-width: 150px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        background-color: #ffffff !important;
+        padding: 6px 10px;
+        border-radius: 8px;
+        }
+
+        .brand-titles h1 {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #ffffff !important;
+        }
+
+        .brand-titles p {
+        font-size: 10px;
+        color: #b0c4de !important;
+        text-transform: uppercase;
+        }
+
+        .card-body {
+        margin-top: 4px;
+        margin-bottom: 4px;
+        z-index: 1;
+        }
+
+        .badge-tag {
+        display: inline-block;
+        background-color: #00a8ff !important;
+        color: #fff !important;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        }
+
+        .info-group {
+        margin-bottom: 6px;
+        }
+
+        .info-group label {
+        font-size: 9px;
+        color: #a0b2c6 !important;
+        text-transform: uppercase;
+        display: block;
+        }
+
+        .info-group span {
+        font-size: 16px;
+        font-weight: 600;
+        color: #ffffff !important;
+        }
+
+        .footer-univap {
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        padding-top: 8px;
+        font-size: 9px;
+        color: #a0b2c6 !important;
+        display: flex;
+        justify-content: space-between;
+        }
+
+        /* LADO DIREITO - QR Code gerado pelo Canvas */
+        .qrcode-section {
+        width: 38%;
+        height: 100%;
+        background-color: #ffffff !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        border-left: 2px dashed #e0e0e0;
+        }
+
+        .qr-card {
+        background: #ffffff !important;
+        border: 2px solid #003366;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        canvas {
+        margin: 6px 0;
+        max-width: 100%;
+        border-radius: 6px;
+        }
+
+        .qr-instruction {
+        font-size: 11px;
+        color: #555 !important;
+        text-align: center;
+        max-width: 170px;
+        line-height: 1.2;
+        }
+
+        .qr-code-id {
+        margin-top: 4px;
+        font-family: monospace;
+        font-size: 10px;
+        color: #888 !important;
+        }
+
+        /* Estilos de Impressão */
+        @media print {
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        body {
+            background: none;
+            padding: 0;
+        }
+        .controls {
+            display: none !important;
+        }
+        .page-a4 {
+            box-shadow: none;
+            page-break-after: always;
+        }
+        .metade-superior {
+            background-color: #ffffff !important;
+        }
+        .linha-dobra-tag {
+            display: none !important;
+        }
+        .univap-section {
+            background: linear-gradient(135deg, #002B5B 0%, #004080 100%) !important;
+        }
+        }
+    </style>
+    </head>
+    <body>
+
+    <!-- Painel de busca e ações -->
+    <div class="controls">
+        <div class="input-group">
+        <input id="matricula" type="text" placeholder="Digite a matrícula do aluno">
+        <button class="btn-buscar" onclick="gerarQRCode()">Gerar Prisma</button>
+        <button class="btn-imprimir" onclick="window.print()">Imprimir A4</button>
+        </div>
+        <div id="mensagem" class="mensagem"></div>
+    </div>
+
+    <!-- Folha A4 em Landscape -->
+    <div class="page-a4">
+        
+        <!-- Metade Superior (Espaço para vincar e dobrar) -->
+        <div class="metade-superior">
+        <span class="linha-dobra-tag">✂️ Linha de Dobra (Centro do Prisma)</span>
+        </div>
+
+        <!-- Metade Inferior (Conteúdo do Prisma) -->
+        <div class="metade-inferior">
+        <!-- Lado Esquerdo: Identidade Univap -->
+        <div class="univap-section">
+            <div class="header-logo">
+            <img src="imagens/logo.png" class="logo" alt="Logo Univap">
+            <div class="brand-titles">
+                <h1>UNIVAP</h1>
+                <p>Universidade do Vale do Paraíba</p>
+            </div>
+            </div>
+
+            <div class="card-body">
+            <span class="badge-tag">Avaliação de Projeto</span>
+            <div class="info-group">
+                <label>Matrícula do Aluno</label>
+                <span id="displayMatricula">---</span>
+            </div>
+            <div class="info-group">
+                <label>Campus</label>
+                <span>Urbanova — São José dos Campos</span>
+            </div>
+            </div>
+
+            <div class="footer-univap">
+            <span>Sistemas de Informação &copy; Univap</span>
+            <span>Documento Oficial</span>
+            </div>
+        </div>
+
+        <!-- Lado Direito: QR Code via Canvas -->
+        <div class="qrcode-section">
+            <div class="qr-card">
+            <p class="qr-instruction"><strong>Escaneie para Avaliar</strong></p>
+            
+            <canvas id="qrcode"></canvas>
+            
+            <p class="qr-instruction">Aponte a câmera para acessar a página do projeto.</p>
+            <span class="qr-code-id" id="qrLabel">ID PROJETO: ---</span>
+            </div>
+        </div>
+        </div>
+
+    </div>
+<script>
+    async function gerarQRCode() {
+      const matricula = document.getElementById("matricula").value.trim();
+      const mensagem = document.getElementById("mensagem");
+      const canvas = document.getElementById("qrcode");
+      const displayMatricula = document.getElementById("displayMatricula");
+      const qrLabel = document.getElementById("qrLabel");
+
+      mensagem.textContent = "";
+      mensagem.style.color = "#0759a8";
+
+      // Limpa o canvas antes de gerar um novo
+      const contexto = canvas.getContext("2d");
+      contexto.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!matricula) {
+        mensagem.textContent = "Digite uma matrícula válida.";
+        mensagem.style.color = "#d9534f";
+        return;
+      }
+
+      // Recupera o token de autenticação salvo no navegador após o login do aluno
+      // (Altere 'token' para o nome da chave que você utiliza no seu sistema, ex: 'user_token', 'jwt', etc.)
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+      if (!token) {
+        mensagem.textContent = "Sessão expirada ou usuário não autenticado. Faça login novamente.";
+        mensagem.style.color = "#d9534f";
+        return;
+      }
+
+      try {
+        mensagem.textContent = "Consultando API...";
+
+        const uri = `http://localhost:3000/api/v1/projetos/buscar-matricula?matricula=${encodeURIComponent(matricula)}`;
+        
+        // Adiciona o cabeçalho Authorization com o token do aluno
+        const response = await fetch(uri, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const dados = await response.json();
+
+        if (!response.ok || !dados.data || !dados.data.encontrado) {
+          mensagem.textContent = "Matrícula não encontrada ou sem permissão.";
+          mensagem.style.color = "#d9534f";
+          return;
+        }
+
+        const projeto = dados.data.projetos[0];
+        const urlProjeto = `http://localhost:3000/api/v1/projetos/publico/${projeto.projetoId}`;
+
+        // Renderiza o QR Code no <canvas>
+        QRCode.toCanvas(
+          canvas,
+          urlProjeto,
+          {
+            width: 120,
+            margin: 1,
+            color: {
+              dark: "#002B5B",
+              light: "#ffffff"
+            }
+          },
+          function (erro) {
+            if (erro) {
+              console.error(erro);
+              mensagem.textContent = "Erro ao renderizar o QR Code.";
+              mensagem.style.color = "#d9534f";
+              return;
+            }
+
+            // Atualiza os dados do crachá ao obter sucesso
+            displayMatricula.textContent = matricula;
+            qrLabel.textContent = "ID: " + projeto.projetoId;
+            mensagem.textContent = "Prisma gerado com sucesso! Pronto para impressão.";
+            mensagem.style.color = "#28a745";
+          }
+        );
+
+      } catch (erro) {
+        console.error(erro);
+        mensagem.textContent = "Erro ao consultar a API local.";
+        mensagem.style.color = "#d9534f";
+      }
+    }
+  </script>
+    </body>
+    </html>

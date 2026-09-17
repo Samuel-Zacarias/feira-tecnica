@@ -1,451 +1,223 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importar Projetos - Feira Técnica</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            padding: 40px 20px;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #eef4fa;
-            color: #173f6d;
-        }
-
-        .container {
-            width: 760px;
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        .cabecalho {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .cabecalho h1 {
-            margin: 0 0 8px 0;
-            color: #0759a8;
-            font-size: 28px;
-        }
-
-        .cabecalho p {
-            margin: 0;
-            color: #68798b;
-            font-size: 15px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 18px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 60, 120, 0.10);
-            margin-bottom: 25px;
-        }
-
-        /* ÁREA DE UPLOAD (DRAG & DROP / FILE INPUT) */
-        .upload-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 35px 20px;
-            border: 2px dashed #72afe3;
-            border-radius: 14px;
-            background: #edf7ff;
-            cursor: pointer;
-            transition: background 0.2s, border-color 0.2s;
-            text-align: center;
-        }
-
-        .upload-area:hover {
-            background: #dcefff;
-            border-color: #0867bd;
-        }
-
-        .upload-icone {
-            font-size: 38px;
-            margin-bottom: 10px;
-        }
-
-        .upload-texto {
-            font-size: 15px;
-            font-weight: bold;
-            color: #0759a8;
-            margin-bottom: 4px;
-        }
-
-        .upload-subtexto {
-            font-size: 12px;
-            color: #68798b;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .arquivo-selecionado {
-            margin-top: 15px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #0867bd;
-            display: none;
-            word-break: break-all;
-        }
-
-        /* BOTÃO DE AÇÃO */
-        .acoes {
-            margin-top: 25px;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .btn-importar {
-            width: 100%;
-            padding: 14px 25px;
-            border: 0;
-            border-radius: 11px;
-            background: #0867bd;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-importar:hover {
-            background: #07529b;
-        }
-
-        .btn-importar:disabled {
-            background: #a3c2e0;
-            cursor: not-allowed;
-        }
-
-        /* CONSOLE DE LOGS */
-        .log-container {
-            background: #101c2c;
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 60, 120, 0.15);
-        }
-
-        .log-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #20354d;
-            color: #8fa7c4;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        #log {
-            font-family: 'Consolas', 'Courier New', Courier, monospace;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #d1e4f8;
-            white-space: pre-wrap;
-            max-height: 320px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        /* Custom Scrollbar no Log */
-        #log::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #log::-webkit-scrollbar-thumb {
-            background: #20354d;
-            border-radius: 4px;
-        }
-
-        /* CORES DAS LINHAS DE LOG */
-        .log-linha {
-            margin-bottom: 4px;
-        }
-
-        .sucesso {
-            color: #4ade80;
-            font-weight: bold;
-        }
-
-        .erro {
-            color: #f87171;
-            font-weight: bold;
-        }
-
-        .info {
-            color: #38bdf8;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Importar Projetos | Feira Técnica</title>
+  <link rel="stylesheet" href="css/app.css">
 </head>
+<body class="page-enter">
+<div class="shell">
+  <!-- BARRA LATERAL (MENU) -->
+  <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt=""><div>Feira Técnica<small id="sideRole">Administração</small></div></div>
+    <nav class="nav-list">
+      <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Painel</a>
+      <a class="nav-link" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
+      <a class="nav-link" href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a>
+      <a class="nav-link" href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a>
+      <a class="nav-link" href="ranking.html"><span class="ico">↗</span>Ranking</a>
+      <a class="nav-link active" data-admin href="receberExcel.html"><span class="ico">⇩</span>Importar planilha</a>
+      <a class="nav-link" data-admin href="professores-consulta.html"><span class="ico">♙</span>Professores</a>
+      <a class="nav-link" data-admin href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a>
+    </nav>
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span id="profileRole">Administrador</span><button class="logout" data-sair>Sair</button></div></div>
+  </aside>
 
-<body>
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="content">
+    <header class="topbar">
+      <div><h1>Importar Projetos</h1><p>Feira Técnica 2026</p></div>
+      <div class="top-actions"><a class="btn ghost sm" href="index.html">Vitrine</a><button class="btn sm" data-sair>Sair</button></div>
+    </header>
 
-    <div class="container">
-        <div class="cabecalho">
-            <h1>Importar Projetos</h1>
-            <p>Selecione a planilha exportada do Excel em formato CSV contendo os dados oficiais das equipes e necessidades.</p>
+    <main class="main">
+      <div class="card" style="margin-bottom: 25px;">
+        <p style="margin-top: 0; color: #68798b; font-size: 15px;">
+          Selecione a planilha exportada do Excel em formato CSV contendo os dados oficiais das equipes e necessidades.
+        </p>
+
+        <!-- Área do Input com Gatilho Visual -->
+        <label class="upload-area" for="arquivoCsv" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 35px 20px; border: 2px dashed #72afe3; border-radius: 14px; background: #edf7ff; cursor: pointer; text-align: center;">
+          <div style="font-size: 38px; margin-bottom: 10px;">📄</div>
+          <div style="font-size: 15px; font-weight: bold; color: #0759a8; margin-bottom: 4px;">Clique aqui para selecionar o arquivo CSV</div>
+          <div style="font-size: 12px; color: #68798b;">Formato aceito: .csv exportado do Excel (separado por vírgulas)</div>
+          <div class="arquivo-selecionado" id="nomeArquivo" style="margin-top: 15px; font-size: 13px; font-weight: bold; color: #0867bd; display: none;"></div>
+        </label>
+
+        <input type="file" id="arquivoCsv" accept=".csv" style="display: none;">
+
+        <div style="margin-top:16px; text-align:center;">
+          <a href="modelo-planilha-feira.csv" download style="color:#0867bd; font-weight:bold; text-decoration:none;">⬇ Baixar modelo da planilha (CSV)</a>
         </div>
 
-        <div class="card">
-            <!-- Área do Input com Gatilho Visual -->
-            <label class="upload-area" for="arquivoCsv">
-                <div class="upload-icone">📄</div>
-                <div class="upload-texto">Clique aqui para selecionar o arquivo CSV</div>
-                <div class="upload-subtexto">Formato aceito: .csv exportado do Excel (separado por vírgulas)</div>
-                <div class="arquivo-selecionado" id="nomeArquivo"></div>
-            </label>
-
-            <input type="file" id="arquivoCsv" accept=".csv">
-
-            <div style="margin-top:16px;text-align:center"><a href="modelo-planilha-feira.csv" download style="color:#0867bd;font-weight:bold;text-decoration:none">⬇ Baixar modelo da planilha (CSV)</a></div>
-
-            <div class="acoes">
-                <button class="btn-importar" id="btnEnviar">
-                    <span>🚀</span> Iniciar Importação
-                </button>
-            </div>
+        <div style="margin-top: 25px; display: flex; justify-content: flex-end;">
+          <button class="bg primary" id="btnEnviar" style="width: 100%; padding: 14px 25px; font-size: 16px;">
+            <span>🚀</span> Iniciar Importação
+          </button>
         </div>
+      </div>
 
-        <!-- Terminal de Logs -->
-        <div class="log-container">
-            <div class="log-header">
-                <span>Console de Processamento</span>
-                <span id="statusContador">Aguardando arquivo...</span>
-            </div>
-            <div id="log">Aguardando o envio do arquivo para iniciar o processamento...</div>
+      <!-- Terminal de Logs -->
+      <div class="log-container" style="background: #101c2c; border-radius: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(0, 60, 120, 0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #20354d; color: #8fa7c4; font-size: 12px; font-weight: bold; text-transform: uppercase;">
+          <span>Console de Processamento</span>
+          <span id="statusContador">Aguardando arquivo...</span>
         </div>
-    </div>
+        <div id="log" style="font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; line-height: 1.6; color: #d1e4f8; white-space: pre-wrap; max-height: 320px; overflow-y: auto;">Aguardando o envio do arquivo para iniciar o processamento...</div>
+      </div>
+    </main>
+  </div>
+</div>
 
-    <script src="js/auth.js"></script>
-    <script>
-        if (SESSAO.role !== "ADMINISTRADOR") {
-            alert("A importação da planilha é exclusiva da organização/administrador.");
-            location.replace("dashboard.html");
-        }
+<script src="js/auth.js"></script>
+<script>
+  if (SESSAO.role !== "ADMINISTRADOR") {
+      alert("A importação da planilha é exclusiva da organização/administrador.");
+      location.replace("dashboard.html");
+  }
 
-        const API_URL = "/api/v1/projetos";
+  const API_URL = "/api/v1/projetos";
+  const arquivoInput = document.getElementById("arquivoCsv");
+  const btnEnviar = document.getElementById("btnEnviar");
+  const log = document.getElementById("log");
+  const nomeArquivoDiv = document.getElementById("nomeArquivo");
+  const statusContador = document.getElementById("statusContador");
 
-        const arquivoInput = document.getElementById("arquivoCsv");
-        const btnEnviar = document.getElementById("btnEnviar");
-        const log = document.getElementById("log");
-        const nomeArquivoDiv = document.getElementById("nomeArquivo");
-        const statusContador = document.getElementById("statusContador");
+  arquivoInput.addEventListener("change", () => {
+      if (arquivoInput.files.length > 0) {
+          nomeArquivoDiv.textContent = `📌 Arquivo selecionado: ${arquivoInput.files[0].name}`;
+          nomeArquivoDiv.style.display = "block";
+      } else {
+          nomeArquivoDiv.style.display = "none";
+      }
+  });
 
-        // Exibir o nome do arquivo selecionado na interface
-        arquivoInput.addEventListener("change", () => {
-            if (arquivoInput.files.length > 0) {
-                nomeArquivoDiv.textContent = `📌 Arquivo selecionado: ${arquivoInput.files[0].name}`;
-                nomeArquivoDiv.style.display = "block";
-            } else {
-                nomeArquivoDiv.style.display = "none";
-            }
-        });
+  function escreverLog(mensagem, tipo = "") {
+      if (log.innerHTML.includes("Aguardando o envio")) {
+          log.innerHTML = "";
+      }
+      const linha = document.createElement("div");
+      linha.style.marginBottom = "4px";
+      if (tipo === "sucesso") linha.style.color = "#4ade80", linha.style.fontWeight = "bold";
+      if (tipo === "erro") linha.style.color = "#f87171", linha.style.fontWeight = "bold";
+      if (tipo === "info") linha.style.color = "#38bdf8";
+      linha.textContent = mensagem;
+      log.appendChild(linha);
+      log.scrollTop = log.scrollHeight;
+  }
 
-        function escreverLog(mensagem, tipo = "") {
-            // Limpa o texto de boas-vindas inicial na primeira mensagem
-            if (log.innerHTML.includes("Aguardando o envio")) {
-                log.innerHTML = "";
-            }
+  function parseCSVLine(linha) {
+      const resultado = [];
+      let campo = "";
+      let dentroAspas = false;
+      for (let i = 0; i < linha.length; i++) {
+          const caractere = linha[i];
+          if (caractere === '"') {
+              if (dentroAspas && linha[i + 1] === '"') {
+                  campo += '"';
+                  i++;
+              } else {
+                  dentroAspas = !dentroAspas;
+              }
+          } else if (caractere === "," && !dentroAspas) {
+              resultado.push(campo.trim());
+              campo = "";
+          } else {
+              campo += caractere;
+          }
+      }
+      resultado.push(campo.trim());
+      return resultado;
+  }
 
-            const linha = document.createElement("div");
-            linha.classList.add("log-linha");
-            linha.textContent = mensagem;
+  function csvParaObjetos(csv) {
+      const linhas = csv.replace(/^\uFEFF/, "").split(/\r?\n/).filter(l => l.trim() !== "");
+      if (linhas.length < 2) throw new Error("CSV vazio ou sem dados.");
+      const cabecalho = parseCSVLine(linhas[0]);
+      return linhas.slice(1).map(linha => {
+          const valores = parseCSVLine(linha);
+          const objeto = {};
+          cabecalho.forEach((campo, index) => { objeto[campo] = valores[index] ?? ""; });
+          return objeto;
+      });
+  }
 
-            if (tipo) {
-                linha.classList.add(tipo);
-            }
+  function montarProjeto(linha) {
+      const integrantes = [];
+      if (linha.integrante_nome || linha.integrante_matricula || linha.integrante_turma) {
+          integrantes.push({ nome: linha.integrante_nome, matricula: linha.integrante_matricula, turma: linha.integrante_turma });
+      }
+      for (let i = 1; i <= 9; i++) {
+          const nome = linha[`integrante${i}_nome`] || linha[`integrante_${i}_nome`] || "";
+          const matricula = linha[`integrante${i}_matricula`] || linha[`integrante_${i}_matricula`] || "";
+          const turma = linha[`integrante${i}_turma`] || linha[`integrante_${i}_turma`] || "";
+          if (nome || matricula || turma) integrantes.push({ nome, matricula, turma });
+      }
+      return {
+          projeto: {
+              tema: linha.tema,
+              curso: linha.curso,
+              equipamento: linha.equipamento || "EQUIPE TRAZ SEU COMPUTADOR",
+              outrosRecursos: linha.outros_recursos || linha.necessidades || linha.recursos || "",
+              observacoes: linha.observacoes || linha.observacao || "",
+              localizacao: linha.localizacao || linha.stand || "",
+              representante: {
+                  nome: linha.representante_nome,
+                  matricula: linha.representante_matricula,
+                  email: linha.representante_email,
+                  turma: linha.representante_turma
+              },
+              integrantes
+          }
+      };
+  }
 
-            log.appendChild(linha);
-            log.scrollTop = log.scrollHeight; // Auto-scroll para acompanhar os logs
-        }
+  async function enviarProjeto(projeto) {
+      return await window.api(API_URL, {
+          method: "POST",
+          body: JSON.stringify(projeto)
+      });
+  }
 
-        /*
-         * Converte uma linha CSV respeitando campos entre aspas.
-         */
-        function parseCSVLine(linha) {
-            const resultado = [];
-            let campo = "";
-            let dentroAspas = false;
-
-            for (let i = 0; i < linha.length; i++) {
-                const caractere = linha[i];
-
-                if (caractere === '"') {
-                    if (dentroAspas && linha[i + 1] === '"') {
-                        campo += '"';
-                        i++;
-                    } else {
-                        dentroAspas = !dentroAspas;
-                    }
-                } else if (caractere === "," && !dentroAspas) {
-                    resultado.push(campo.trim());
-                    campo = "";
-                } else {
-                    campo += caractere;
-                }
-            }
-
-            resultado.push(campo.trim());
-            return resultado;
-        }
-
-        /*
-         * Converte o CSV inteiro em objetos.
-         */
-        function csvParaObjetos(csv) {
-            const linhas = csv
-                .replace(/^\uFEFF/, "")
-                .split(/\r?\n/)
-                .filter(linha => linha.trim() !== "");
-
-            if (linhas.length < 2) {
-                throw new Error("CSV vazio ou sem dados.");
-            }
-
-            const cabecalho = parseCSVLine(linhas[0]);
-
-            return linhas.slice(1).map(linha => {
-                const valores = parseCSVLine(linha);
-                const objeto = {};
-
-                cabecalho.forEach((campo, index) => {
-                    objeto[campo] = valores[index] ?? "";
-                });
-
-                return objeto;
-            });
-        }
-
-        /*
-         * Transforma uma linha do CSV no formato do JSON original.
-         */
-        function montarProjeto(linha) {
-            const integrantes = [];
-
-            // Compatibilidade com a planilha antiga (integrante_nome, integrante_matricula...).
-            if (linha.integrante_nome || linha.integrante_matricula || linha.integrante_turma) {
-                integrantes.push({
-                    nome: linha.integrante_nome,
-                    matricula: linha.integrante_matricula,
-                    turma: linha.integrante_turma
-                });
-            }
-
-            // Planilha nova: integrante1_nome ... integrante9_nome.
-            for (let i = 1; i <= 9; i++) {
-                const nome = linha[`integrante${i}_nome`] || linha[`integrante_${i}_nome`] || "";
-                const matricula = linha[`integrante${i}_matricula`] || linha[`integrante_${i}_matricula`] || "";
-                const turma = linha[`integrante${i}_turma`] || linha[`integrante_${i}_turma`] || "";
-                if (nome || matricula || turma) integrantes.push({ nome, matricula, turma });
-            }
-
-            return {
-                projeto: {
-                    tema: linha.tema,
-                    curso: linha.curso,
-                    equipamento: linha.equipamento || "EQUIPE TRAZ SEU COMPUTADOR",
-                    outrosRecursos: linha.outros_recursos || linha.necessidades || linha.recursos || "",
-                    observacoes: linha.observacoes || linha.observacao || "",
-                    localizacao: linha.localizacao || linha.stand || "",
-
-                    representante: {
-                        nome: linha.representante_nome,
-                        matricula: linha.representante_matricula,
-                        email: linha.representante_email,
-                        turma: linha.representante_turma
-                    },
-
-                    integrantes
-                }
-            };
-        }
-
-        /*
-         * Envia um projeto para a API.
-         */
-        async function enviarProjeto(projeto) {
-            return await window.api(API_URL, {
-                method: "POST",
-                body: JSON.stringify(projeto)
-            });
-        }
-
-        /*
-         * Evento principal.
-         */
-        btnEnviar.addEventListener("click", async () => {
-            const arquivo = arquivoInput.files[0];
-
-            if (!arquivo) {
-                log.innerHTML = "";
-                escreverLog("⚠ Selecione um arquivo CSV antes de continuar.", "erro");
-                return;
-            }
-
-            log.innerHTML = "";
-            btnEnviar.disabled = true;
-            statusContador.textContent = "Processando...";
-
-            try {
-                escreverLog(`Lendo arquivo: ${arquivo.name}`, "info");
-
-                const conteudo = await arquivo.text();
-                const linhas = csvParaObjetos(conteudo);
-
-                escreverLog(`Total de registros: ${linhas.length} projetos encontrados.\n`, "info");
-
-                let sucessos = 0;
-                let erros = 0;
-
-                for (let i = 0; i < linhas.length; i++) {
-                    const linha = linhas[i];
-                    const projeto = montarProjeto(linha);
-
-                    statusContador.textContent = `Enviando: ${i + 1}/${linhas.length}`;
-                    escreverLog(`Enviando [${i + 1}/${linhas.length}]: ${projeto.projeto.tema || 'Sem tema'}`);
-
-                    try {
-                        await enviarProjeto(projeto);
-                        escreverLog(`✓ Projeto ${i + 1} enviado com sucesso.`, "sucesso");
-                        sucessos++;
-                    } catch (erro) {
-                        escreverLog(`✗ Erro no projeto ${i + 1}: ${erro.message}`, "erro");
-                        erros++;
-                    }
-                }
-
-                escreverLog(`\nProcessamento finalizado: ${sucessos} com sucesso, ${erros} falhas.`, "info");
-                statusContador.textContent = "Concluído";
-
-            } catch (erro) {
-                escreverLog(`Erro no arquivo: ${erro.message}`, "erro");
-                statusContador.textContent = "Erro no arquivo";
-            } finally {
-                btnEnviar.disabled = false;
-            }
-        });
-    </script>
-
+  btnEnviar.addEventListener("click", async () => {
+      const arquivo = arquivoInput.files[0];
+      if (!arquivo) {
+          log.innerHTML = "";
+          escreverLog("⚠ Selecione um arquivo CSV antes de continuar.", "erro");
+          return;
+      }
+      log.innerHTML = "";
+      btnEnviar.disabled = true;
+      statusContador.textContent = "Processando...";
+      try {
+          escreverLog(`Lendo arquivo: ${arquivo.name}`, "info");
+          const conteudo = await arquivo.text();
+          const linhas = csvParaObjetos(conteudo);
+          escreverLog(`Total de registros: ${linhas.length} projetos encontrados.\n`, "info");
+          let sucessos = 0, erros = 0;
+          for (let i = 0; i < linhas.length; i++) {
+              const projeto = montarProjeto(linhas[i]);
+              statusContador.textContent = `Enviando: ${i + 1}/${linhas.length}`;
+              escreverLog(`Enviando [${i + 1}/${linhas.length}]: ${projeto.projeto.tema || 'Sem tema'}`);
+              try {
+                  await enviarProjeto(projeto);
+                  escreverLog(`✓ Projeto ${i + 1} enviado com sucesso.`, "sucesso");
+                  sucessos++;
+              } catch (erro) {
+                  escreverLog(`✗ Erro no projeto ${i + 1}: ${erro.message}`, "erro");
+                  erros++;
+              }
+          }
+          escreverLog(`\nProcessamento finalizado: ${sucessos} com sucesso, ${erros} falhas.`, "info");
+          statusContador.textContent = "Concluído";
+      } catch (erro) {
+          escreverLog(`Erro no arquivo: ${erro.message}`, "erro");
+          statusContador.textContent = "Erro no arquivo";
+      } finally {
+          btnEnviar.disabled = false;
+      }
+  });
+</script>
 </body>
-
 </html>

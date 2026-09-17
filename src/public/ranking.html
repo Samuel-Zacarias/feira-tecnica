@@ -5,14 +5,82 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Ranking ao Vivo | Feira Técnica 2026</title>
   <link rel="stylesheet" href="css/publico.css">
+
+  <style>
+    .ranking-filtros {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .ranking-filtros label {
+      font-weight: 600;
+    }
+
+    .ranking-filtros select {
+      min-width: 240px;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #fff;
+      font: inherit;
+    }
+
+    .ranking-subtitulo {
+      margin: 0 0 18px;
+      color: #666;
+    }
+
+    .curso-rankings {
+      display: grid;
+      gap: 32px;
+      margin-top: 32px;
+    }
+
+    .curso-ranking {
+      overflow: hidden;
+    }
+
+    .curso-ranking-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .curso-ranking-header h2 {
+      margin: 0;
+    }
+
+    .curso-ranking-header span {
+      color: #666;
+      font-size: .9rem;
+    }
+
+    .ranking-empty {
+      padding: 24px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
 </head>
+
 <body>
+
 <header class="topo">
   <div class="container topo-inner">
     <a class="marca" href="index.html">
       <img src="imagens/logo.png" alt="">
-      <div>Feira Técnica<small>Ranking ao vivo</small></div>
+      <div>
+        Feira Técnica
+        <small>Ranking ao vivo</small>
+      </div>
     </a>
+
     <nav class="nav">
       <a class="botao secundario" href="index.html">Projetos</a>
       <a class="botao" href="login.html">Acesso interno</a>
@@ -22,85 +90,301 @@
 
 <section class="ranking-hero">
   <div class="container ranking-hero-grid">
-    <div><span class="selo">AO VIVO</span><h1>Ranking.</h1><p>Classificação provisória dos projetos avaliados.</p></div>
+    <div>
+      <span class="selo">AO VIVO</span>
+      <h1>Ranking.</h1>
+      <p>Classificação provisória dos projetos avaliados.</p>
+    </div>
+
     <div class="live-box">
       <span class="live-dot"></span>
-      <div><strong>Atualização automática</strong><small id="ultima">Conectando...</small></div>
+
+      <div>
+        <strong>Atualização automática</strong>
+        <small id="ultima">Conectando...</small>
+      </div>
     </div>
   </div>
 </section>
 
 <main class="ranking-main">
   <div class="container">
-    <section id="podio" class="podium"><div class="estado">Aguardando avaliações...</div></section>
-    <section class="ranking-table-wrap">
-      <div class="ranking-title"><div><h2>Classificação</h2></div><span class="ranking-refresh">Atualiza a cada 5 s</span></div>
-      <div id="lista" class="ranking-list"><div class="estado">Carregando...</div></div>
+
+    <section id="podio" class="podium">
+      <div class="estado">Aguardando avaliações...</div>
     </section>
+
+    <section class="ranking-table-wrap">
+
+      <div class="ranking-title">
+        <div>
+          <h2>Classificação</h2>
+          <p class="ranking-subtitulo">
+            Ranking geral com todos os cursos
+          </p>
+        </div>
+
+        <span class="ranking-refresh">
+          Atualiza a cada 5 s
+        </span>
+      </div>
+
+      <div class="ranking-filtros">
+        <label for="filtroCurso">Ranking por curso:</label>
+
+        <select id="filtroCurso">
+          <option value="TODOS">Todos os cursos</option>
+        </select>
+      </div>
+
+      <div id="lista" class="ranking-list">
+        <div class="estado">Carregando...</div>
+      </div>
+
+    </section>
+
+    <section id="rankingsCursos" class="curso-rankings"></section>
+
   </div>
 </main>
 
-<footer class="footer"><div class="container">Feira Técnica 2026 · classificação provisória</div></footer>
+<footer class="footer">
+  <div class="container">
+    Feira Técnica 2026 · classificação provisória
+  </div>
+</footer>
 
 <script src="js/public-utils.js"></script>
+
 <script>
 const { escapeHtml, formatScore } = PublicUtils;
+
+let rankingAtual = [];
+let rankingPorCursoAtual = {};
 
 function medalha(posicao) {
   if (posicao === 1) return "🥇";
   if (posicao === 2) return "🥈";
   if (posicao === 3) return "🥉";
+
   return `#${posicao}`;
 }
 
-function render(ranking) {
+function renderPodio(ranking) {
   const top = ranking.slice(0, 3);
+
   document.getElementById("podio").innerHTML = top.length
     ? top.map(item => `
         <article class="podium-card pos-${item.posicao}">
           <div class="podium-medal">${medalha(item.posicao)}</div>
+
           <span>${escapeHtml(item.curso)}</span>
+
           <h2>${escapeHtml(item.tema)}</h2>
+
           <strong>${formatScore(item.media)}</strong>
-          <small>${item.avaliacoes} ${item.avaliacoes === 1 ? "avaliação" : "avaliações"}</small>
-          <a href="projeto.html?id=${encodeURIComponent(item.projetoId)}">Ver projeto →</a>
+
+          <small>
+            ${item.avaliacoes}
+            ${item.avaliacoes === 1 ? "avaliação" : "avaliações"}
+          </small>
+
+          <a href="projeto.html?id=${encodeURIComponent(item.projetoId)}">
+            Ver projeto →
+          </a>
         </article>
       `).join("")
     : '<div class="estado">Ainda não há projetos classificados.</div>';
+}
 
+function renderLista(ranking) {
   document.getElementById("lista").innerHTML = ranking.length
     ? ranking.map(item => `
-        <a class="ranking-row" href="projeto.html?id=${encodeURIComponent(item.projetoId)}">
-          <div class="ranking-pos">${medalha(item.posicao)}</div>
-          <div class="ranking-project"><strong>${escapeHtml(item.tema)}</strong><span>${escapeHtml(item.curso)}</span></div>
-          <div class="ranking-count">${item.avaliacoes}<small>avaliações</small></div>
-          <div class="ranking-score">${formatScore(item.media)}<small>média</small></div>
+        <a
+          class="ranking-row"
+          href="projeto.html?id=${encodeURIComponent(item.projetoId)}"
+        >
+          <div class="ranking-pos">
+            ${medalha(item.posicao)}
+          </div>
+
+          <div class="ranking-project">
+            <strong>${escapeHtml(item.tema)}</strong>
+            <span>${escapeHtml(item.curso)}</span>
+          </div>
+
+          <div class="ranking-count">
+            ${item.avaliacoes}
+            <small>
+              ${item.avaliacoes === 1 ? "avaliação" : "avaliações"}
+            </small>
+          </div>
+
+          <div class="ranking-score">
+            ${formatScore(item.media)}
+            <small>média</small>
+          </div>
         </a>
       `).join("")
     : '<div class="estado">Nenhum projeto classificado.</div>';
 }
 
-async function atualizar() {
-  try {
-    const response = await fetch("/api/v1/avaliacoes/ranking/publico", { cache: "no-store" });
-    const data = await response.json();
-    if (!response.ok) throw new Error();
+function renderRankingPorCurso(rankingPorCurso) {
+  const container = document.getElementById("rankingsCursos");
 
-    render(data?.data?.ranking || []);
-    document.getElementById("ultima").textContent = new Date(
-      data?.data?.atualizadoEm || Date.now()
-    ).toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  } catch (_) {
-    document.getElementById("ultima").textContent = "Reconectando...";
+  const cursos = Object.keys(rankingPorCurso)
+    .sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+  if (!cursos.length) {
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = cursos.map(curso => {
+    const ranking = rankingPorCurso[curso] || [];
+
+    return `
+      <section class="ranking-table-wrap curso-ranking">
+
+        <div class="curso-ranking-header">
+          <h2>${escapeHtml(curso)}</h2>
+
+          <span>
+            ${ranking.length}
+            ${ranking.length === 1 ? "projeto" : "projetos"}
+          </span>
+        </div>
+
+        <div class="ranking-list">
+          ${ranking.map(item => `
+            <a
+              class="ranking-row"
+              href="projeto.html?id=${encodeURIComponent(item.projetoId)}"
+            >
+              <div class="ranking-pos">
+                ${medalha(item.posicao)}
+              </div>
+
+              <div class="ranking-project">
+                <strong>${escapeHtml(item.tema)}</strong>
+                <span>${escapeHtml(item.curso)}</span>
+              </div>
+
+              <div class="ranking-count">
+                ${item.avaliacoes}
+                <small>
+                  ${item.avaliacoes === 1
+                    ? "avaliação"
+                    : "avaliações"}
+                </small>
+              </div>
+
+              <div class="ranking-score">
+                ${formatScore(item.media)}
+                <small>média</small>
+              </div>
+            </a>
+          `).join("")}
+        </div>
+
+      </section>
+    `;
+  }).join("");
+}
+
+function atualizarFiltroCursos(rankingPorCurso) {
+  const select = document.getElementById("filtroCurso");
+  const valorAtual = select.value;
+
+  const cursos = Object.keys(rankingPorCurso)
+    .sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+  select.innerHTML = `
+    <option value="TODOS">Todos os cursos</option>
+    ${cursos.map(curso => `
+      <option value="${escapeHtml(curso)}">
+        ${escapeHtml(curso)}
+      </option>
+    `).join("")}
+  `;
+
+  if (cursos.includes(valorAtual)) {
+    select.value = valorAtual;
+  } else {
+    select.value = "TODOS";
   }
 }
 
+function aplicarFiltro() {
+  const curso = document.getElementById("filtroCurso").value;
+
+  if (curso === "TODOS") {
+    renderPodio(rankingAtual);
+    renderLista(rankingAtual);
+
+    document.getElementById("rankingsCursos").style.display = "";
+    return;
+  }
+
+  const rankingCurso = rankingPorCursoAtual[curso] || [];
+
+  renderPodio(rankingCurso);
+  renderLista(rankingCurso);
+
+  document.getElementById("rankingsCursos").style.display = "none";
+}
+
+async function atualizar() {
+  try {
+    const response = await fetch(
+      "/api/v1/avaliacoes/ranking/publico",
+      {
+        cache: "no-store"
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error();
+    }
+
+    rankingAtual = data?.data?.ranking || [];
+
+    rankingPorCursoAtual =
+      data?.data?.rankingPorCurso || {};
+
+    atualizarFiltroCursos(rankingPorCursoAtual);
+
+    renderPodio(rankingAtual);
+    renderLista(rankingAtual);
+    renderRankingPorCurso(rankingPorCursoAtual);
+
+    aplicarFiltro();
+
+    document.getElementById("ultima").textContent =
+      new Date(
+        data?.data?.atualizadoEm || Date.now()
+      ).toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+
+  } catch (_) {
+    document.getElementById("ultima").textContent =
+      "Reconectando...";
+  }
+}
+
+document
+  .getElementById("filtroCurso")
+  .addEventListener("change", aplicarFiltro);
+
 atualizar();
+
 setInterval(atualizar, 5000);
 </script>
+
 </body>
 </html>

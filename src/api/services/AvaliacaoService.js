@@ -24,15 +24,18 @@ module.exports = class AvaliacaoService {
 
     findById = async (idAvaliacao) => {
         const avaliacao = await this.#avaliacaoDAO.findById(idAvaliacao);
+
         if (!avaliacao) {
             throw new ErrorResponse(404, 'Avaliação não encontrada', {
                 message: `Não existe avaliação com id ${idAvaliacao}`,
             });
         }
+
         return avaliacao;
     };
 
-    findByProjeto = (idProjeto) => this.#avaliacaoDAO.findByField('projetoId', idProjeto);
+    findByProjeto = (idProjeto) =>
+        this.#avaliacaoDAO.findByField('projetoId', idProjeto);
 
     updateAvaliacao = async (idAvaliacao, requestBody) => {
         const dados = requestBody.avaliacao || requestBody;
@@ -46,6 +49,7 @@ module.exports = class AvaliacaoService {
         }, projetoId);
 
         avaliacao.id = idAvaliacao;
+
         return this.#avaliacaoDAO.update(avaliacao);
     };
 
@@ -56,12 +60,19 @@ module.exports = class AvaliacaoService {
         for (const avaliacao of avaliacoes) {
             const nota = Number(avaliacao.notaFinal);
             const projeto = avaliacao.projeto;
-            if (!projeto?.id || !Number.isFinite(nota) || avaliacao.status === 'Em análise') continue;
+
+            if (
+                !projeto?.id ||
+                !Number.isFinite(nota) ||
+                avaliacao.status === 'Em análise'
+            ) {
+                continue;
+            }
 
             const item = grupos.get(projeto.id) || {
                 projetoId: projeto.id,
                 tema: projeto.tema || projeto.titulo || 'Projeto',
-                curso: projeto.curso || '',
+                curso: projeto.curso || 'Sem curso',
                 soma: 0,
                 avaliacoes: 0,
                 atualizadoEm: null,
@@ -71,13 +82,19 @@ module.exports = class AvaliacaoService {
             item.avaliacoes += 1;
 
             const data = avaliacao.dataAtualizacao || avaliacao.data;
-            if (data && (!item.atualizadoEm || new Date(data) > new Date(item.atualizadoEm))) {
+
+            if (
+                data &&
+                (!item.atualizadoEm ||
+                    new Date(data) > new Date(item.atualizadoEm))
+            ) {
                 item.atualizadoEm = data;
             }
+
             grupos.set(projeto.id, item);
         }
 
-        return [...grupos.values()]
+        const ranking = [...grupos.values()]
             .map(item => ({
                 projetoId: item.projetoId,
                 tema: item.tema,
@@ -86,17 +103,43 @@ module.exports = class AvaliacaoService {
                 avaliacoes: item.avaliacoes,
                 atualizadoEm: item.atualizadoEm,
             }))
-            .sort((a, b) =>
-                b.media - a.media ||
-                b.avaliacoes - a.avaliacoes ||
-                a.tema.localeCompare(b.tema, 'pt-BR')
-            )
-            .map((item, index) => ({ posicao: index + 1, ...item }));
+            .sort(this.#compararRanking)
+            .map((item, index) => ({
+                posicao: index + 1,
+                ...item,
+            }));
+
+        const rankingPorCurso = {};
+
+        for (const item of ranking) {
+            const curso = item.curso || 'Sem curso';
+
+            if (!rankingPorCurso[curso]) {
+                rankingPorCurso[curso] = [];
+            }
+
+            rankingPorCurso[curso].push(item);
+        }
+
+        for (const curso of Object.keys(rankingPorCurso)) {
+            rankingPorCurso[curso] = rankingPorCurso[curso]
+                .sort(this.#compararRanking)
+                .map((item, index) => ({
+                    ...item,
+                    posicao: index + 1,
+                }));
+        }
+
+        return {
+            ranking,
+            rankingPorCurso,
+        };
     };
 
     deleteAvaliacao = async (idAvaliacao) => {
         const avaliacao = new Avaliacao();
         avaliacao.id = idAvaliacao;
+
         return this.#avaliacaoDAO.delete(avaliacao);
     };
 
@@ -109,7 +152,9 @@ module.exports = class AvaliacaoService {
     }
 
     async #validarAvaliacaoDuplicada(projetoId, avaliador) {
-        const avaliacoes = await this.#avaliacaoDAO.findByField('projetoId', projetoId);
+        const avaliacoes =
+            await this.#avaliacaoDAO.findByField('projetoId', projetoId);
+
         if (avaliacoes.some(item => item.avaliador === avaliador?.trim())) {
             throw new ErrorResponse(400, 'Avaliação duplicada', {
                 message: 'Este avaliador já avaliou o projeto',
@@ -121,8 +166,14 @@ module.exports = class AvaliacaoService {
         return dados.projetoId || dados.projeto?.id || dados.projeto;
     }
 
+    #compararRanking = (a, b) =>
+        b.media - a.media ||
+        b.avaliacoes - a.avaliacoes ||
+        a.tema.localeCompare(b.tema, 'pt-BR');
+
     #createModel(dados, projetoId) {
         const avaliacao = new Avaliacao();
+
         avaliacao.projeto = projetoId;
         avaliacao.avaliador = dados.avaliador;
 
@@ -142,12 +193,20 @@ module.exports = class AvaliacaoService {
         }
 
         for (const comentario of dados.comentarios || []) {
-            avaliacao.addComentario(typeof comentario === 'string' ? comentario : comentario.texto);
+            avaliacao.addComentario(
+                typeof comentario === 'string'
+                    ? comentario
+                    : comentario.texto
+            );
         }
 
-        if (dados.status) avaliacao.status = dados.status;
+        if (dados.status) {
+            avaliacao.status = dados.status;
+        }
+
         avaliacao.avaliacaoAlunos = dados.avaliacaoAlunos;
         avaliacao.comentarioInterno = dados.comentarioInterno;
+
         return avaliacao;
     }
 };

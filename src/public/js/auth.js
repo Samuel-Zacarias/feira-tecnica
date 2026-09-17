@@ -138,6 +138,7 @@
         const nav = document.createElement("nav");
         nav.className = "mobile-nav";
         nav.setAttribute("aria-label", "Navegação rápida");
+        nav.style.gridTemplateColumns = `repeat(${items.length}, 1fr)`;
         nav.innerHTML = items.map(([href, icon, label]) => {
             const page = href.split("#")[0];
             const active = page === currentPage ? "active" : "";

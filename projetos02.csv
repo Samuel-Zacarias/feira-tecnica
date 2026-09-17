@@ -1,0 +1,11 @@
+projeto,tema,curso,equipamento,representante_nome,representante_matricula,representante_email,representante_turma,integrante_nome,integrante_matricula,integrante_turma
+1,Protótipo de Automação Residencial com IoT 201,ELETRÔNICA,EQUIPE TRAZ SEU COMPUTADOR,Rodrigo Mendonça,88101,rodrigo.mendonca@email.com,3E,Amanda Ribeiro,88201,3E
+2,Sistema de Monitoramento de Energia Solar 202,ELETRÔNICA,EQUIPE TRAZ SEU COMPUTADOR,Fernanda Lima,88102,fernanda.lima@email.com,3E,Thiago Ramos,88202,3E
+3,Plano de Negócios para Startup Sustentável 301,ADMINISTRAÇÃO,EQUIPE TRAZ SEU COMPUTADOR,Beatriz Nogueira,66101,beatriz.nogueira@email.com,2A,Lucas Silveira,66201,2A
+4,Sistema de Gestão Financeira para Pequenas Empresas 302,ADMINISTRAÇÃO,EQUIPE TRAZ SEU COMPUTADOR,Gabriel Fernandes,66102,gabriel.fernandes@email.com,2A,Mariana Cavalcanti,66202,2A
+5,Campanha de Marketing Digital para ONG Local 401,PUBLICIDADE,EQUIPE TRAZ SEU COMPUTADOR,Juliana Paes,55101,juliana.paes@email.com,1P,Diego Souza,55201,1P
+6,Rebranding e Identidade Visual para Comércio de Bairro 402,PUBLICIDADE,EQUIPE TRAZ SEU COMPUTADOR,Camila Torres,55102,camila.torres@email.com,1P,Vinicius Prado,55202,1P
+7,Triagem Automatizada de Amostras Biológicas 501,ANÁLISES CLÍNICAS,EQUIPE TRAZ SEU COMPUTADOR,Larissa Farias,44101,larissa.farias@email.com,3AC,Renan Batista,44201,3AC
+8,Estudo Comparativo de Métodos de Dosagem Bioquímica 502,ANÁLISES CLÍNICAS,EQUIPE TRAZ SEU COMPUTADOR,Patricia Carvalho,44102,patricia.carvalho@email.com,3AC,Gustavo Rocha,44202,3AC
+9,Desenvolvimento de Bioplástico a Partir de Resíduos Agrícolas 601,QUÍMICA,EQUIPE TRAZ SEU COMPUTADOR,Eduardo Freitas,33101,eduardo.freitas@email.com,2Q,Carolina Moreira,33201,2Q
+10,Purificação e Tratamento de Água por Coagulação Natural 602,QUÍMICA,EQUIPE TRAZ SEU COMPUTADOR,Vanessa Machado,33102,vanessa.machado@email.com,2Q,Marcelo Dias,33202,2Q

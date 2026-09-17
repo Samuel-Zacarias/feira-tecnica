@@ -1905,3 +1905,39 @@
 {"level":"info","message":"🌐 Main - Acesse http://localhost/feira-tecnica/Login.html","timestamp":"2026-09-13 10:15:56"}
 {"level":"info","message":"🚀 Server.run - Servidor rodando em http://localhost:3000/index.html","timestamp":"2026-09-13 10:15:56"}
 {"level":"info","message":"🛑 Recebido SIGINT - Encerrando aplicação...","timestamp":"2026-09-13 10:16:29"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-17 14:14:26"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-17 14:14:27"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-17 14:42:36"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-17 14:47:59"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-17 14:48:00"}
+{"error":{"message":"Matheus Oliveira já está no projeto “Plataforma de Ensino Gamificado 101”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"Carlos Silva já está no projeto “Aplicativo de Organização Escolar 102”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"João Santos já está no projeto “Sistema de Biblioteca Digital 103”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"Gabriel Costa já está no projeto “Jogo Educacional de Matemática 104”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"Rafael Martins já está no projeto “Plataforma de Cursos Online 105”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"Lucas Ferreira já está no projeto “Sistema de Controle de Presença 106”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"Pedro Almeida já está no projeto “Aplicativo de Quiz Interativo 107”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"Bruno Carvalho já está no projeto “Plataforma de Tutoria Inteligente 108”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"André Barbosa já está no projeto “Sistema de Avaliação Online 109”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"error":{"message":"Felipe Rocha já está no projeto “Aplicativo de Desafios Tecnológicos 110”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 14:53:43","url":"/api/v1/projetos"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-17 15:11:38"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-17 15:14:28"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-17 15:14:28"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-17 15:19:21"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-17 15:19:21"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-17 15:37:03"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-17 15:37:03"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-17 15:37:15"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-17 15:37:15"}
+{"error":{"message":"O equipamento informado é inválido."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-17 15:41:51","url":"/api/v1/projetos"}
+{"error":{"message":"O equipamento informado é inválido."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-17 15:41:51","url":"/api/v1/projetos"}
+{"error":{"message":"O equipamento informado é inválido."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-17 15:41:51","url":"/api/v1/projetos"}
+{"error":{"message":"O equipamento informado é inválido."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-17 15:41:51","url":"/api/v1/projetos"}
+{"error":{"message":"O equipamento informado é inválido."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-17 15:41:51","url":"/api/v1/projetos"}
+{"error":{"message":"O equipamento informado é inválido."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-17 15:41:51","url":"/api/v1/projetos"}
+{"error":{"message":"O equipamento informado é inválido."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-17 15:41:51","url":"/api/v1/projetos"}
+{"error":{"message":"O equipamento informado é inválido."},"httpCode":400,"level":"warn","message":"Erro na validação de dados","method":"POST","timestamp":"2026-09-17 15:41:51","url":"/api/v1/projetos"}
+{"error":{"message":"Beatriz Nogueira já está no projeto “Plano de Negócios para Startup Sustentável 301”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 15:42:38","url":"/api/v1/projetos"}
+{"error":{"message":"Gabriel Fernandes já está no projeto “Sistema de Gestão Financeira para Pequenas Empresas 302”."},"httpCode":400,"level":"warn","message":"Estudante já participa de outro projeto","method":"POST","timestamp":"2026-09-17 15:42:38","url":"/api/v1/projetos"}
+{"error":null,"httpCode":401,"level":"warn","message":"Matrícula/e-mail ou senha inválidos","method":"POST","timestamp":"2026-09-17 16:23:38","url":"/api/v1/alunos/login"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-17 16:28:21"}
