@@ -34,6 +34,13 @@ module.exports = class ProjetoRouter {
             this.#controller.qrMeu
         );
 
+        this.#router.get(
+            "/buscar-matricula",
+            this.#jwt.validateToken,
+            this.#jwt.permitirRoles("ADMINISTRADOR"),
+            this.#controller.qrPorMatricula
+        );
+
         this.#router.post(
             "/",
             this.#jwt.validateToken,

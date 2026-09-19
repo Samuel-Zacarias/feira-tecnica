@@ -40,6 +40,15 @@ module.exports = class ProjetoController {
         response.json({ success: true, data: dados });
     });
 
+    qrPorMatricula = asyncHandler(async (request, response) => {
+        const baseUrl = `${request.protocol}://${request.get('host')}`;
+        const dados = await this.#service.gerarQrCodePorMatricula(
+            request.query.matricula,
+            baseUrl
+        );
+        response.json({ success: true, data: dados });
+    });
+
     show = asyncHandler(async (request, response) => {
         const projeto = await this.#service.findById(request.params.idProjeto);
         response.json({ success: true, data: { projeto } });

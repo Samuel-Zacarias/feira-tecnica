@@ -1,10 +1,11 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="pt-BR">
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prisma A4 - Avaliação de Projeto Univap</title>
-    
+    <link rel="stylesheet" href="css/app.css">
+
     <!-- Biblioteca QR Code (Canvas) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
@@ -26,10 +27,14 @@
 
         body {
         background-color: #eef4fa;
+        }
+
+        .content {
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 20px;
+        width: 100%;
         }
 
         /* Painel de Controle (Oculto na Impressão) */
@@ -280,6 +285,19 @@
             background: none;
             padding: 0;
         }
+        .sidebar {
+            display: none !important;
+        }
+        .mobile-nav {
+            display: none !important;
+        }
+        .shell {
+            display: block !important;
+        }
+        .content {
+            padding: 0;
+            display: block;
+        }
         .controls {
             display: none !important;
         }
@@ -301,11 +319,43 @@
     </head>
     <body>
 
+    <div class="shell">
+    <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt=""><div>Feira Técnica<small id="brandSubtitle">Área do aluno</small></div></div>
+
+    <!-- Nav do aluno (some se o usuário logado for ADMINISTRADOR) -->
+    <nav class="nav-list" data-nav-aluno>
+      <a class="nav-link" href="aluno.html"><span class="ico">◇</span>Meu projeto</a>
+      <a class="nav-link" href="cracha-aluno.html"><span class="ico">▣</span>Meu crachá</a>
+      <a class="nav-link active" href="prisma.html"><span class="ico">⌗</span>QR Code</a>
+      <a class="nav-link" href="ranking.html"><span class="ico">★</span>Ranking</a>
+      <a class="nav-link" href="index.html"><span class="ico">↗</span>Vitrine</a>
+    </nav>
+
+    <!-- Nav do admin (some se o usuário logado NÃO for ADMINISTRADOR) -->
+    <nav class="nav-list hidden" data-nav-admin>
+      <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Painel</a>
+      <a class="nav-link" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
+      <a class="nav-link" href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a>
+      <a class="nav-link" href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a>
+      <a class="nav-link" href="ranking.html"><span class="ico">↗</span>Ranking</a>
+      <a class="nav-link" href="receberExcel.html"><span class="ico">⇩</span>Importar planilha</a>
+      <a class="nav-link" href="professores-consulta.html"><span class="ico">♙</span>Professores</a>
+      <a class="nav-link" href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a>
+      <a class="nav-link active" href="prisma.html"><span class="ico">⌗</span>Prisma / QR Code</a>
+    </nav>
+
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span id="turmaPerfil">Equipe</span><button class="logout" data-sair>Sair</button></div></div>
+  </aside>
+
+    <div class="content">
+
     <!-- Painel de busca e ações -->
     <div class="controls">
         <div class="input-group">
-        <input id="matricula" type="text" placeholder="Digite a matrícula do aluno">
-        <button class="btn-buscar" onclick="gerarQRCode()">Gerar Prisma</button>
+        <!-- Campo de matrícula: só aparece pro ADMINISTRADOR, que pode buscar qualquer aluno -->
+        <input id="matricula" type="text" placeholder="Digite a matrícula do aluno" data-admin-only class="hidden">
+        <button class="btn-buscar" id="btnGerar" onclick="gerarQRCode()">Gerar Prisma</button>
         <button class="btn-imprimir" onclick="window.print()">Imprimir A4</button>
         </div>
         <div id="mensagem" class="mensagem"></div>
@@ -327,19 +377,15 @@
             <img src="imagens/logo.png" class="logo" alt="Logo Univap">
             <div class="brand-titles">
                 <h1>UNIVAP</h1>
-                <p>Universidade do Vale do Paraíba</p>
+                <p>Colégio Univap — Unidade Centro</p>
             </div>
             </div>
 
             <div class="card-body">
             <span class="badge-tag">Avaliação de Projeto</span>
             <div class="info-group">
-                <label>Matrícula do Aluno</label>
-                <span id="displayMatricula">---</span>
-            </div>
-            <div class="info-group">
-                <label>Campus</label>
-                <span>Urbanova — São José dos Campos</span>
+                <label>Nome do Projeto</label>
+                <span id="displayTema">---</span>
             </div>
             </div>
 
@@ -363,12 +409,31 @@
         </div>
 
     </div>
+
+    </div><!-- /.content -->
+    </div><!-- /.shell -->
+
+<script src="js/auth.js"></script>
 <script>
-    async function gerarQRCode() {
+document.addEventListener("DOMContentLoaded", () => {
+  const role = window.SESSAO?.role;
+  const isAdmin = role === "ADMINISTRADOR";
+
+  document.querySelector("[data-nav-aluno]").classList.toggle("hidden", isAdmin);
+  document.querySelector("[data-nav-admin]").classList.toggle("hidden", !isAdmin);
+  document.getElementById("brandSubtitle").textContent = isAdmin ? "Administração" : "Área do aluno";
+  document.getElementById("matricula").classList.toggle("hidden", !isAdmin);
+  document.getElementById("turmaPerfil").textContent = isAdmin
+    ? "Administrador"
+    : [window.SESSAO?.usuario?.turma, window.SESSAO?.usuario?.curso].filter(Boolean).join(" · ") || "Equipe";
+});
+
+async function gerarQRCode() {
+      const isAdmin = window.SESSAO?.role === "ADMINISTRADOR";
       const matricula = document.getElementById("matricula").value.trim();
       const mensagem = document.getElementById("mensagem");
       const canvas = document.getElementById("qrcode");
-      const displayMatricula = document.getElementById("displayMatricula");
+      const displayTema = document.getElementById("displayTema");
       const qrLabel = document.getElementById("qrLabel");
 
       mensagem.textContent = "";
@@ -378,18 +443,8 @@
       const contexto = canvas.getContext("2d");
       contexto.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (!matricula) {
+      if (isAdmin && !matricula) {
         mensagem.textContent = "Digite uma matrícula válida.";
-        mensagem.style.color = "#d9534f";
-        return;
-      }
-
-      // Recupera o token de autenticação salvo no navegador após o login do aluno
-      // (Altere 'token' para o nome da chave que você utiliza no seu sistema, ex: 'user_token', 'jwt', etc.)
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-
-      if (!token) {
-        mensagem.textContent = "Sessão expirada ou usuário não autenticado. Faça login novamente.";
         mensagem.style.color = "#d9534f";
         return;
       }
@@ -397,59 +452,35 @@
       try {
         mensagem.textContent = "Consultando API...";
 
-        const uri = `http://localhost:3000/api/v1/projetos/buscar-matricula?matricula=${encodeURIComponent(matricula)}`;
-        
-        // Adiciona o cabeçalho Authorization com o token do aluno
-        const response = await fetch(uri, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
+        // Aluno: gera o QR do PRÓPRIO projeto (o servidor identifica pelo token).
+        // Administrador: busca o projeto de qualquer aluno pela matrícula informada.
+        // window.api() já cuida do cabeçalho Authorization e do redirecionamento caso a sessão expire.
+        const resposta = isAdmin
+          ? await window.api(`/api/v1/projetos/buscar-matricula?matricula=${encodeURIComponent(matricula)}`)
+          : await window.api("/api/v1/projetos/meu/qrcode");
+        const { projetoId, tema, qrCode } = resposta.data;
 
-        const dados = await response.json();
+        // O backend já retorna o QR Code pronto (imagem base64) — basta desenhá-lo no canvas
+        const imagem = new Image();
+        imagem.onload = () => {
+          canvas.width = imagem.width;
+          canvas.height = imagem.height;
+          contexto.drawImage(imagem, 0, 0);
 
-        if (!response.ok || !dados.data || !dados.data.encontrado) {
-          mensagem.textContent = "Matrícula não encontrada ou sem permissão.";
+          displayTema.textContent = tema || "---";
+          qrLabel.textContent = "ID: " + projetoId;
+          mensagem.textContent = "Prisma gerado com sucesso! Pronto para impressão.";
+          mensagem.style.color = "#28a745";
+        };
+        imagem.onerror = () => {
+          mensagem.textContent = "Erro ao renderizar o QR Code.";
           mensagem.style.color = "#d9534f";
-          return;
-        }
-
-        const projeto = dados.data.projetos[0];
-        const urlProjeto = `http://localhost:3000/api/v1/projetos/publico/${projeto.projetoId}`;
-
-        // Renderiza o QR Code no <canvas>
-        QRCode.toCanvas(
-          canvas,
-          urlProjeto,
-          {
-            width: 120,
-            margin: 1,
-            color: {
-              dark: "#002B5B",
-              light: "#ffffff"
-            }
-          },
-          function (erro) {
-            if (erro) {
-              console.error(erro);
-              mensagem.textContent = "Erro ao renderizar o QR Code.";
-              mensagem.style.color = "#d9534f";
-              return;
-            }
-
-            // Atualiza os dados do crachá ao obter sucesso
-            displayMatricula.textContent = matricula;
-            qrLabel.textContent = "ID: " + projeto.projetoId;
-            mensagem.textContent = "Prisma gerado com sucesso! Pronto para impressão.";
-            mensagem.style.color = "#28a745";
-          }
-        );
+        };
+        imagem.src = qrCode;
 
       } catch (erro) {
         console.error(erro);
-        mensagem.textContent = "Erro ao consultar a API local.";
+        mensagem.textContent = erro.message || "Não foi possível gerar o QR Code do seu projeto.";
         mensagem.style.color = "#d9534f";
       }
     }

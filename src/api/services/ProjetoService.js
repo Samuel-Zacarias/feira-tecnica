@@ -48,6 +48,26 @@ module.exports = class ProjetoService {
             );
         }
 
+        return this.#gerarQrCodeDeProjeto(projeto, baseUrl);
+    };
+
+    gerarQrCodePorMatricula = async (matricula, baseUrl) => {
+        const matriculaLimpa = String(matricula || "").trim();
+        if (!matriculaLimpa) {
+            throw new ErrorResponse(400, "Informe uma matrícula.");
+        }
+
+        const projetos = await this.#dao.findByMatricula(matriculaLimpa);
+        const projeto = projetos[0];
+
+        if (!projeto) {
+            throw new ErrorResponse(404, "Matrícula não encontrada ou sem permissão.");
+        }
+
+        return this.#gerarQrCodeDeProjeto(projeto, baseUrl, matriculaLimpa);
+    };
+
+    #gerarQrCodeDeProjeto = async (projeto, baseUrl, matricula = null) => {
         const origem = String(baseUrl || "http://localhost:3000").replace(/\/$/, "");
         const urlPublica = `${origem}/projeto.html?id=${projeto.id}`;
         const qrCode = await QrCodeGenerator.gerar(urlPublica);
@@ -57,6 +77,7 @@ module.exports = class ProjetoService {
             tema: projeto.tema,
             urlPublica,
             qrCode,
+            matricula,
         };
     };
 
