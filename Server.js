@@ -31,6 +31,7 @@ const ErrorResponse = require("./src/api/utils/ErrorResponse");
 const logger = require("./src/api/utils/Logger");
 
 const PAGINAS_PROTEGIDAS = new Map([
+    ["/qrcodes.html", ["ADMINISTRADOR", "ALUNO"]],
     ["/aluno.html", ["ALUNO"]],
     ["/cracha-aluno.html", ["ALUNO"]],
     ["/dashboard.html", ["ADMINISTRADOR", "AVALIADOR"]],

@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Projeto | Feira Técnica</title>
-  <link rel="stylesheet" href="css/publico.css">
+  <link rel="stylesheet" href="css/feira.css">
+  <link rel="stylesheet" href="css/school-refine.css">
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <header class="topo">
   <div class="container topo-inner">
     <a class="marca" href="index.html">
-      <img src="imagens/logo.png" alt="">
+      <img src="imagens/logo.png" alt="UNIVAP">
       <div>Feira Técnica<small>Mostra de Projetos 2026</small></div>
     </a>
     <nav class="nav">
@@ -28,7 +30,7 @@
   </div>
 </section>
 
-<main class="container detail">
+<main id="conteudo" class="container detail">
   <section id="principal"><div class="block">Carregando informações...</div></section>
   <aside id="lateral"></aside>
 </main>
@@ -37,7 +39,7 @@
 
 <script src="js/public-utils.js"></script>
 <script>
-const { escapeHtml } = PublicUtils;
+const { escapeHtml, repairDeep } = PublicUtils;
 const idProjeto = new URLSearchParams(location.search).get("id");
 
 function bloco(titulo, conteudo) {
@@ -59,7 +61,6 @@ function renderProjeto(projeto) {
     : "";
 
   document.getElementById("principal").innerHTML =
-    bloco("Sobre o projeto", projeto.descricao) +
     bloco("Objetivo", projeto.objetivo) +
     bloco("Problema que queremos resolver", projeto.problema) +
     bloco("Nossa solução", projeto.solucao) +
@@ -106,7 +107,7 @@ function renderProjeto(projeto) {
 async function carregar() {
   try {
     const response = await fetch(`/api/v1/projetos/publico/${encodeURIComponent(idProjeto || "")}`);
-    const data = await response.json();
+    const data = repairDeep(await response.json());
     if (!response.ok || !data?.success) {
       throw new Error(data?.message || "Projeto não encontrado");
     }
@@ -121,5 +122,7 @@ async function carregar() {
 
 carregar();
 </script>
+<script src="js/navigation.js"></script>
+<script src="js/ui-effects.js"></script>
 </body>
 </html>

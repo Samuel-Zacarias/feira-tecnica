@@ -2,39 +2,35 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editar Professor | Feira Técnica</title>
-  <link rel="stylesheet" href="css/painel.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Editar professor | Feira Técnica</title>
+  <link rel="stylesheet" href="css/feira.css">
+  <link rel="stylesheet" href="css/school-refine.css">
 </head>
 <body>
-<header>
-  <div>
-    <h1>Editar Professor</h1>
-    <p>PUT protegido · Logado como <span data-professor>Professor</span></p>
-  </div>
-  <div class="top-actions">
-    <a href="dashboard.html">Painel</a>
-    <button type="button" data-sair>Sair</button>
-  </div>
-</header>
-<main>
-
-<section class="hero"><h2>Editar professor</h2><p>Selecione um professor, altere os dados e envie <strong>PUT /api/v1/professores/:id</strong>.</p></section>
-<div id="alerta" class="alert"></div>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt="UNIVAP"><div>Feira Técnica<small>Área interna</small></div></div>
+    <nav class="nav-list"><a class="nav-link  " href="dashboard.html"><span class="ico">⌂</span>Painel</a><a class="nav-link  " href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a><a class="nav-link  " href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a><a class="nav-link  " href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a><a class="nav-link  " href="ranking.html"><span class="ico">↗</span>Ranking</a><a class="nav-link  admin-only" href="receberExcel.html"><span class="ico">⇩</span>Importar</a><a class="nav-link active admin-only" href="professores-consulta.html"><span class="ico">♙</span>Professores</a><a class="nav-link  admin-only" href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a></nav>
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span>Feira Técnica 2026</span><button class="logout" data-sair>Sair</button></div></div>
+  </aside>
+  <div class="content">
+    <header class="topbar"><div><h1>Editar professor</h1><p>Atualize os dados de um professor.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
+    <main id="conteudo" class="main"><div class="alert" id="alerta"></div>
 <form id="form">
-  <fieldset><legend>Selecionar</legend><div class="field"><label>Professor</label><select id="professorId" required><option value="">Carregando...</option></select></div></fieldset>
-  <div class="form-grid">
-    <div class="field"><label>Nome</label><input id="nome" required minlength="3"></div>
-    <div class="field"><label>E-mail</label><input id="email" type="email" required></div>
-    <div class="field"><label>Nova senha (opcional)</label><input id="senha" type="password" placeholder="Deixe vazio para manter"></div>
-    <div class="field"><label>Função</label><select id="role"><option>AVALIADOR</option><option>ADMINISTRADOR</option></select></div>
+<fieldset><legend>Selecionar</legend><div class="field"><label>Professor</label><select id="professorId" required=""><option value="">Carregando...</option></select></div></fieldset>
+<div class="form-grid">
+<div class="field"><label>Nome</label><input id="nome" minlength="3" required=""/></div>
+<div class="field"><label>E-mail</label><input id="email" required="" type="email"/></div>
+<div class="field"><label>Nova senha (opcional)</label><input id="senha" placeholder="Deixe vazio para manter" type="password"/></div>
+<div class="field"><label>Função</label><select id="role"><option>AVALIADOR</option><option>ADMINISTRADOR</option></select></div>
+</div>
+<div class="form-actions"><button class="btn sec" type="submit">Salvar alterações</button></div>
+</form></main>
   </div>
-  <div class="form-actions"><button class="btn sec" type="submit">Salvar alterações</button></div>
-</form>
-
-</main>
-<script src="js/auth.js"></script>
-<script>
+</div>
+<script src="js/auth.js"></script><script>
 
 const alerta=document.getElementById("alerta"), sel=document.getElementById("professorId");
 let lista=[];
@@ -63,6 +59,7 @@ document.getElementById("form").addEventListener("submit",async e=>{
 });
 carregarLista();
 
-</script>
+</script><script src="js/navigation.js"></script>
+<script src="js/ui-effects.js"></script>
 </body>
 </html>

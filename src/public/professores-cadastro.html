@@ -2,39 +2,35 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastrar Professor | Feira Técnica</title>
-  <link rel="stylesheet" href="css/painel.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cadastrar professor | Feira Técnica</title>
+  <link rel="stylesheet" href="css/feira.css">
+  <link rel="stylesheet" href="css/school-refine.css">
 </head>
 <body>
-<header>
-  <div>
-    <h1>Cadastrar Professor</h1>
-    <p>POST protegido · Logado como <span data-professor>Professor</span></p>
-  </div>
-  <div class="top-actions">
-    <a href="dashboard.html">Painel</a>
-    <button type="button" data-sair>Sair</button>
-  </div>
-</header>
-<main>
-
-<section class="hero"><h2>Novo professor</h2><p>Envia um <strong>POST /api/v1/professores</strong> com JWT e grava no MongoDB.</p></section>
-<div id="alerta" class="alert"></div>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt="UNIVAP"><div>Feira Técnica<small>Área interna</small></div></div>
+    <nav class="nav-list"><a class="nav-link  " href="dashboard.html"><span class="ico">⌂</span>Painel</a><a class="nav-link  " href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a><a class="nav-link  " href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a><a class="nav-link  " href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a><a class="nav-link  " href="ranking.html"><span class="ico">↗</span>Ranking</a><a class="nav-link  admin-only" href="receberExcel.html"><span class="ico">⇩</span>Importar</a><a class="nav-link active admin-only" href="professores-consulta.html"><span class="ico">♙</span>Professores</a><a class="nav-link  admin-only" href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a></nav>
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span>Feira Técnica 2026</span><button class="logout" data-sair>Sair</button></div></div>
+  </aside>
+  <div class="content">
+    <header class="topbar"><div><h1>Cadastrar professor</h1><p>Crie um acesso para a banca ou administração.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
+    <main id="conteudo" class="main"><div class="alert" id="alerta"></div>
 <form id="form">
-  <div class="form-grid">
-    <div class="field"><label>Nome</label><input id="nome" required minlength="3" placeholder="Nome do professor"></div>
-    <div class="field"><label>E-mail</label><input id="email" type="email" required placeholder="professor@escola.com"></div>
-    <div class="field"><label>Senha</label><input id="senha" type="password" required minlength="8" placeholder="Ex.: Professor@123"></div>
-    <div class="field"><label>Função</label><select id="role"><option>AVALIADOR</option><option>ADMINISTRADOR</option></select></div>
+<div class="form-grid">
+<div class="field"><label>Nome</label><input id="nome" minlength="3" placeholder="Nome do professor" required=""/></div>
+<div class="field"><label>E-mail</label><input id="email" placeholder="professor@escola.com" required="" type="email"/></div>
+<div class="field"><label>Senha</label><input id="senha" minlength="8" placeholder="Ex.: Professor@123" required="" type="password"/></div>
+<div class="field"><label>Função</label><select id="role"><option>AVALIADOR</option><option>ADMINISTRADOR</option></select></div>
+</div>
+<p class="help">A senha precisa ter 8+ caracteres, maiúscula, minúscula, número e caractere especial.</p>
+<div class="form-actions"><button class="btn ok" type="submit">Cadastrar professor</button><a class="btn light" href="professores-consulta.html">Ver professores</a></div>
+</form></main>
   </div>
-  <p class="help">A senha precisa ter 8+ caracteres, maiúscula, minúscula, número e caractere especial.</p>
-  <div class="form-actions"><button class="btn ok" type="submit">Cadastrar professor</button><a class="btn light" href="professores-consulta.html">Ver professores</a></div>
-</form>
-
-</main>
-<script src="js/auth.js"></script>
-<script>
+</div>
+<script src="js/auth.js"></script><script>
 
 const form = document.getElementById("form");
 const alerta = document.getElementById("alerta");
@@ -51,6 +47,7 @@ form.addEventListener("submit", async e => {
   } catch (e) { mostrarAlerta(alerta, "error", e.message); }
 });
 
-</script>
+</script><script src="js/navigation.js"></script>
+<script src="js/ui-effects.js"></script>
 </body>
 </html>

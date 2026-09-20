@@ -3,136 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071d38">
   <title>Projetos | Feira Técnica</title>
-  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/evaluator.css">
+  <link rel="stylesheet" href="css/feira.css">
+  <link rel="stylesheet" href="css/school-refine.css">
 </head>
-<body>
+<body class="evaluator-area">
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar">
-    <div class="brand"><img src="imagens/logo.png" alt=""><div>Feira Técnica<small>Projetos</small></div></div>
+    <div class="brand"><img src="imagens/logo.png" alt="UNIVAP"><div>Feira Técnica<small>Projetos</small></div></div>
     <nav class="nav-list">
-      <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Visão geral</a>
+      <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Painel</a>
       <a class="nav-link active" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
-      <a class="nav-link" href="avaliacoes-cadastro.html"><span class="ico">★</span>Nova avaliação</a>
+      <a class="nav-link" href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a>
       <a class="nav-link" href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a>
-      <a class="nav-link" href="index.html"><span class="ico">↗</span>Vitrine pública</a>
+      <a class="nav-link" href="ranking.html"><span class="ico">↗</span>Ranking</a>
+      <a class="nav-link admin-only" href="receberExcel.html"><span class="ico">⇩</span>Importar planilha</a>
+      <a class="nav-link admin-only" href="professores-consulta.html"><span class="ico">♙</span>Professores</a>
+      <a class="nav-link admin-only" href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a>
     </nav>
-    <div class="sidebar-foot">
-      <div class="profile-mini">
-        <strong data-usuario>Usuário</strong>
-        <span id="roleMini">Acesso interno</span>
-        <button class="logout" data-sair>Sair</button>
-      </div>
-    </div>
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span id="roleMini">Avaliador</span><button class="logout" type="button" data-sair>Sair</button></div></div>
   </aside>
 
   <div class="content">
-    <header class="topbar">
-      <div><h1>Projetos da Feira</h1><p>Consulte as equipes e abra a avaliação com um clique.</p></div>
-      <div class="top-actions">
-        <a id="importarPlanilha" class="btn sm hidden" href="receberExcel.html">Importar planilha</a>
-        <button class="btn ghost sm" data-sair>Sair</button>
-      </div>
-    </header>
+    <header class="topbar"><div><h1>Projetos</h1><p>Encontre uma equipe e abra a avaliação sem perder tempo.</p></div><div class="top-actions"><a class="btn sm" href="avaliacoes-cadastro.html">Nova avaliação</a></div></header>
+    <main id="conteudo" class="evaluator-main">
+      <div id="alerta" class="alert" role="status" aria-live="polite"></div>
+      <header class="eval-page-head"><div><h2>Projetos da feira</h2><p>Busque pelo projeto, curso ou integrante. Você pode filtrar pela situação da sua avaliação.</p></div><div class="eval-head-actions"><a class="btn ghost" href="index.html">Vitrine pública</a><a id="importarPlanilha" class="btn ghost admin-only" href="receberExcel.html">Importar planilha</a></div></header>
 
-    <main class="main">
-      <section class="hero-panel">
-        <span class="eyebrow">Catálogo interno</span>
-        <h2>Encontre a equipe que está apresentando.</h2>
-        <p>Pesquise por tema, curso, aluno ou tecnologia e abra a ficha de avaliação.</p>
-      </section>
-
-      <div class="section-title">
-        <div><h2>Todos os projetos</h2><p id="resumo">Carregando...</p></div>
-        <div class="field" style="min-width:min(360px,100%)">
-          <input id="busca" placeholder="Buscar projeto, curso ou aluno...">
+      <section class="eval-panel">
+        <div class="eval-toolbar">
+          <div class="field"><label for="busca">Buscar</label><input id="busca" placeholder="Projeto, curso ou aluno..."></div>
+          <div class="field"><label for="filtroCurso">Curso</label><select id="filtroCurso"><option value="TODOS">Todos os cursos</option></select></div>
+          <div class="field"><label for="filtroStatus">Avaliação</label><select id="filtroStatus"><option value="TODOS">Todos</option><option value="PENDENTE">Pendentes</option><option value="AVALIADO">Já avaliados</option></select></div>
         </div>
-      </div>
-
-      <div id="filtros" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
-      <div id="lista" class="list"><div class="card">Carregando projetos...</div></div>
+        <div class="eval-filter-summary"><span id="resumo">Carregando projetos...</span><span>Atalho: pressione <strong>/</strong> para buscar</span></div>
+        <div id="lista" class="eval-project-list"><div class="eval-empty">Carregando projetos...</div></div>
+      </section>
     </main>
   </div>
 </div>
 
+<nav class="mobile-nav" aria-label="Navegação rápida">
+  <a href="dashboard.html"><strong>⌂</strong><span>Painel</span></a>
+  <a class="active" href="projetos-consulta.html"><strong>◇</strong><span>Projetos</span></a>
+  <a href="avaliacoes-cadastro.html"><strong>★</strong><span>Avaliar</span></a>
+  <a href="avaliacoes-consulta.html"><strong>✓</strong><span>Histórico</span></a>
+</nav>
+
 <script src="js/auth.js"></script>
 <script>
-if (SESSAO.role === "ALUNO") location.replace("aluno.html");
+if(SESSAO.role==='ALUNO') location.replace('aluno.html');
+const admin=SESSAO.role==='ADMINISTRADOR';
+const nome=SESSAO.usuario.nome||'';
+document.getElementById('roleMini').textContent=admin?'Administrador':'Professor avaliador';
 
-const admin = SESSAO.role === "ADMINISTRADOR";
-const busca = document.getElementById("busca");
-const filtros = document.getElementById("filtros");
-const resumo = document.getElementById("resumo");
-const lista = document.getElementById("lista");
-let projetos = [];
-let cursoSelecionado = "TODOS";
+const busca=document.getElementById('busca');
+const filtroCurso=document.getElementById('filtroCurso');
+const filtroStatus=document.getElementById('filtroStatus');
+const resumo=document.getElementById('resumo');
+const lista=document.getElementById('lista');
+const alerta=document.getElementById('alerta');
+let projetos=[],avaliacoes=[];
 
-document.getElementById("importarPlanilha").classList.toggle("hidden", !admin);
-document.getElementById("roleMini").textContent = admin ? "Administrador" : "Professor avaliador";
+function avaliacaoMinha(projetoId){return avaliacoes.find(a=>(a.projeto?.id||a.projetoId)===projetoId&&a.avaliador===nome)}
+function avaliacaoQualquer(projetoId){return avaliacoes.find(a=>(a.projeto?.id||a.projetoId)===projetoId)}
 
-function renderFiltros() {
-  const cursos = ["TODOS", ...new Set(projetos.map(projeto => projeto.curso).filter(Boolean))];
-  filtros.innerHTML = cursos.map(curso => `
-    <button class="btn ${cursoSelecionado === curso ? "" : "ghost"} sm" data-curso="${escapeHtml(curso)}">
-      ${curso === "TODOS" ? "Todos" : escapeHtml(curso)}
-    </button>
-  `).join("");
-
-  filtros.querySelectorAll("[data-curso]").forEach(button => {
-    button.addEventListener("click", () => {
-      cursoSelecionado = button.dataset.curso;
-      renderFiltros();
-      renderProjetos();
-    });
-  });
+function carregarCursos(){
+  const cursos=[...new Set(projetos.map(p=>p.curso).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'));
+  filtroCurso.innerHTML='<option value="TODOS">Todos os cursos</option>'+cursos.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
 }
 
-function renderProjetos() {
-  const termo = normalizarTexto(busca.value);
-  const filtrados = projetos.filter(projeto => {
-    if (cursoSelecionado !== "TODOS" && projeto.curso !== cursoSelecionado) return false;
-    if (!termo) return true;
-
-    const texto = normalizarTexto([
-      projeto.tema,
-      projeto.curso,
-      projeto.representante?.nome,
-      ...(projeto.integrantes || []).map(integrante => integrante.nome),
-      (projeto.tecnologias || []).join(" "),
-    ].join(" "));
+function render(){
+  const termo=normalizarTexto(busca.value);
+  const curso=filtroCurso.value;
+  const status=filtroStatus.value;
+  const filtrados=projetos.filter(p=>{
+    if(curso!=='TODOS'&&p.curso!==curso)return false;
+    const minha=avaliacaoMinha(p.id);
+    if(status==='PENDENTE'&&minha)return false;
+    if(status==='AVALIADO'&&!minha)return false;
+    if(!termo)return true;
+    const texto=normalizarTexto([p.tema,p.curso,p.representante?.nome,...(p.integrantes||[]).map(i=>i.nome),(p.tecnologias||[]).join(' ')].join(' '));
     return texto.includes(termo);
   });
 
-  resumo.textContent = `${filtrados.length} de ${projetos.length} projeto(s)`;
-  lista.innerHTML = filtrados.map(projeto => `
-    <div class="list-item">
-      <div style="min-width:0">
-        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px">
-          <span class="pill">${escapeHtml(projeto.curso)}</span>
-          <span class="pill ${projeto.statusProjeto === "FINALIZADO" ? "green" : "amber"}">${escapeHtml(projeto.statusProjeto || "PLANEJAMENTO")}</span>
-        </div>
-        <strong>${escapeHtml(projeto.tema)}</strong>
-        <span>${escapeHtml(projeto.representante?.nome || "Equipe")} · ${1 + (projeto.integrantes?.length || 0)} aluno(s)${projeto.localizacao ? ` · ${escapeHtml(projeto.localizacao)}` : ""}</span>
-      </div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
-        <a class="btn ghost sm" href="projeto.html?id=${encodeURIComponent(projeto.id)}">Página pública</a>
-        <a class="btn sm" href="avaliacoes-cadastro.html?projeto=${encodeURIComponent(projeto.id)}">★ Avaliar</a>
-        ${admin ? `<a class="btn ghost sm" href="projetos-editar.html?id=${encodeURIComponent(projeto.id)}">Editar</a>` : ""}
-      </div>
-    </div>
-  `).join("") || '<div class="card">Nenhum projeto encontrado.</div>';
+  const pendentes=projetos.filter(p=>!avaliacaoMinha(p.id)).length;
+  resumo.textContent=`${filtrados.length} de ${projetos.length} projeto(s) · ${pendentes} pendente(s) para você`;
+  lista.innerHTML=filtrados.map(p=>{
+    const minha=avaliacaoMinha(p.id);
+    const outra=admin?avaliacaoQualquer(p.id):null;
+    const pessoas=[p.representante,...(p.integrantes||[])].filter(Boolean);
+    const estado=minha?'done':(outra?'done':'pending');
+    const textoEstado=minha?'Avaliado por você':(outra?'Avaliado pela banca':'Pendente');
+    const acao=minha
+      ?`<a class="btn ghost sm" href="avaliacoes-editar.html?id=${encodeURIComponent(minha.id)}">Revisar</a>`
+      :`<a class="btn sm" href="avaliacoes-cadastro.html?projeto=${encodeURIComponent(p.id)}">Avaliar</a>`;
+    return `<article class="eval-project-row"><div class="eval-project-main"><div class="eval-row-top"><span class="eval-state ${estado}">${textoEstado}</span><span class="pill">${escapeHtml(p.curso||'Curso')}</span></div><h3>${escapeHtml(p.tema)}</h3><p>${escapeHtml(p.representante?.nome||'Equipe')} · ${pessoas.length} ${pessoas.length===1?'integrante':'integrantes'}${p.localizacao?` · ${escapeHtml(p.localizacao)}`:''}</p></div><div class="eval-row-actions"><a class="btn ghost sm" href="projeto.html?id=${encodeURIComponent(p.id)}">Ver projeto</a>${acao}${admin?`<a class="btn ghost sm" href="projetos-editar.html?id=${encodeURIComponent(p.id)}">Editar</a>`:''}</div></article>`;
+  }).join('')||'<div class="eval-empty">Nenhum projeto encontrado com esses filtros.</div>';
 }
 
-busca.addEventListener("input", renderProjetos);
-api("/api/v1/projetos")
-  .then(response => {
-    projetos = response.data.projetos || [];
-    renderFiltros();
-    renderProjetos();
-  })
-  .catch(error => {
-    lista.innerHTML = `<div class="alert show error">${escapeHtml(error.message)}</div>`;
-  });
+[busca,filtroCurso,filtroStatus].forEach(el=>el.addEventListener(el===busca?'input':'change',render));
+Promise.all([api('/api/v1/projetos'),api('/api/v1/avaliacoes')]).then(([rp,ra])=>{
+  projetos=rp.data.projetos||[];
+  avaliacoes=ra.data.avaliacoes||[];
+  carregarCursos();
+  render();
+}).catch(e=>{mostrarAlerta(alerta,'error',e.message);lista.innerHTML='<div class="eval-empty">Não foi possível carregar os projetos.</div>'});
 </script>
+<script src="js/navigation.js"></script>
+<script src="js/ui-effects.js"></script>
 </body>
 </html>

@@ -3,9 +3,7 @@ const ErrorResponse = require("../utils/ErrorResponse");
 const QrCodeGenerator = require("../utils/QrCodeGenerator");
 
 const CAMPOS_EDITAVEIS_ALUNO = [
-    "tema",
     "statusProjeto",
-    "localizacao",
     "descricao",
     "objetivo",
     "problema",

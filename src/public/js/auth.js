@@ -46,7 +46,8 @@
             );
         }
 
-        const data = await response.json().catch(() => null);
+        const rawData = await response.json().catch(() => null);
+        const data = repararObjeto(rawData);
         if (response.status === 401) {
             alert("Sua sessão expirou. Entre novamente.");
             await window.sair();
@@ -77,8 +78,41 @@
         element.textContent = "";
     };
 
+
+    window.repararTexto = function repararTexto(value) {
+        let text = String(value ?? "");
+
+        // Corrige sequências clássicas de UTF-8 lidas como Latin-1/Windows-1252.
+        if (/[ÃÂ]/.test(text)) {
+            try {
+                const bytes = Uint8Array.from([...text].map(char => char.charCodeAt(0) & 0xff));
+                const decoded = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+                if (decoded && !decoded.includes("�")) text = decoded;
+            } catch (_) {}
+        }
+
+        // Registros antigos que já perderam o byte original não são reversíveis;
+        // estas substituições cobrem os termos mais comuns do sistema.
+        const repairs = [
+            [/T�cnica/g,"Técnica"],[/t�cnica/g,"técnica"],
+            [/T�cnico/g,"Técnico"],[/t�cnico/g,"técnico"],
+            [/Inform�tica/g,"Informática"],[/inform�tica/g,"informática"],
+            [/Jo�o/g,"João"],[/jo�o/g,"joão"],
+            [/El�trica/g,"Elétrica"],[/el�trica/g,"elétrica"],
+            [/Matr�cula/g,"Matrícula"],[/matr�cula/g,"matrícula"],
+            [/Avalia��o/g,"Avaliação"],[/avalia��o/g,"avaliação"],
+            [/Apresenta��o/g,"Apresentação"],[/apresenta��o/g,"apresentação"],
+            [/Solu��o/g,"Solução"],[/solu��o/g,"solução"],
+            [/Informa��o/g,"Informação"],[/informa��o/g,"informação"],
+            [/Educa��o/g,"Educação"],[/educa��o/g,"educação"],
+            [/Configura��o/g,"Configuração"],[/configura��o/g,"configuração"]
+        ];
+        for (const [pattern,replacement] of repairs) text = text.replace(pattern,replacement);
+        return text;
+    };
+
     window.escapeHtml = function escapeHtml(value) {
-        return String(value ?? "")
+        return window.repararTexto(value)
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
@@ -87,7 +121,7 @@
     };
 
     window.normalizarTexto = function normalizarTexto(value) {
-        return String(value || "")
+        return window.repararTexto(value)
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")
             .toLowerCase();
@@ -95,7 +129,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll("[data-professor], [data-usuario]").forEach(element => {
-            element.textContent = usuario.nome || usuario.email || "Usuário";
+            element.textContent = window.repararTexto(usuario.nome || usuario.email || "Usuário");
         });
 
         document.querySelectorAll("[data-sair]").forEach(element => {
@@ -104,6 +138,17 @@
 
         adicionarNavegacaoMobile();
     });
+
+    function repararObjeto(value) {
+        if (typeof value === "string") {
+            return /[�ÃÂ]/.test(value) ? window.repararTexto(value) : value;
+        }
+        if (Array.isArray(value)) return value.map(repararObjeto);
+        if (value && typeof value === "object") {
+            for (const key of Object.keys(value)) value[key] = repararObjeto(value[key]);
+        }
+        return value;
+    }
 
     function parseJson(value) {
         try {
@@ -124,7 +169,7 @@
             ? [
                 ["aluno.html", "◇", "Projeto"],
                 ["cracha-aluno.html", "▣", "Crachá"],
-                ["aluno.html#qrcode", "⌗", "QR Code"],
+                ["index.html", "↗", "Vitrine"],
                 ["ranking.html", "★", "Ranking"],
             ]
             : [

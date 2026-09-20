@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Importar Projetos | Feira Técnica</title>
-  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/feira.css">
+  <link rel="stylesheet" href="css/school-refine.css">
 </head>
 <body class="page-enter">
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <!-- BARRA LATERAL (MENU) -->
   <aside class="sidebar">
-    <div class="brand"><img src="imagens/logo.png" alt=""><div>Feira Técnica<small id="sideRole">Administração</small></div></div>
+    <div class="brand"><img src="imagens/logo.png" alt="UNIVAP"><div>Feira Técnica<small id="sideRole">Administração</small></div></div>
     <nav class="nav-list">
       <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Painel</a>
       <a class="nav-link" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
@@ -31,46 +33,20 @@
       <div class="top-actions"><a class="btn ghost sm" href="index.html">Vitrine</a><button class="btn sm" data-sair>Sair</button></div>
     </header>
 
-    <main class="main">
-      <div class="card" style="margin-bottom: 25px;">
-        <p style="margin-top: 0; color: #68798b; font-size: 15px;">
-          Selecione a planilha exportada do Excel em formato CSV contendo os dados oficiais das equipes e necessidades.
-        </p>
-
-        <!-- Área do Input com Gatilho Visual -->
-        <label class="upload-area" for="arquivoCsv" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 35px 20px; border: 2px dashed #72afe3; border-radius: 14px; background: #edf7ff; cursor: pointer; text-align: center;">
-          <div style="font-size: 38px; margin-bottom: 10px;">📄</div>
-          <div style="font-size: 15px; font-weight: bold; color: #0759a8; margin-bottom: 4px;">Clique aqui para selecionar o arquivo CSV</div>
-          <div style="font-size: 12px; color: #68798b;">Formato aceito: .csv exportado do Excel (separado por vírgulas)</div>
-          <div class="arquivo-selecionado" id="nomeArquivo" style="margin-top: 15px; font-size: 13px; font-weight: bold; color: #0867bd; display: none;"></div>
-        </label>
-
-        <input type="file" id="arquivoCsv" accept=".csv" style="display: none;">
-
-        <div style="margin-top:16px; text-align:center;">
-          <a href="modelo-planilha-feira.csv" download style="color:#0867bd; font-weight:bold; text-decoration:none;">⬇ Baixar modelo da planilha (CSV)</a>
-        </div>
-
-        <div style="margin-top: 25px; display: flex; justify-content: flex-end;">
-          <button class="bg primary" id="btnEnviar" style="width: 100%; padding: 14px 25px; font-size: 16px;">
-            <span>🚀</span> Iniciar Importação
-          </button>
-        </div>
+    <main id="conteudo" class="main">
+      <div class="section-title"><div><span class="eyebrow">Organização da feira</span><h2>Do formulário para a feira.</h2><p>Importe os dados oficiais uma vez. As equipes completam a apresentação depois.</p></div></div>
+      <div class="card">
+        <label class="upload-area" for="arquivoCsv"><strong>Selecione a planilha de projetos</strong><span>Arquivo CSV exportado do Excel, separado por vírgulas ou ponto e vírgula.</span><small>Confira o modelo antes de importar.</small><span id="nomeArquivo" hidden></span></label>
+        <input type="file" id="arquivoCsv" accept=".csv" aria-label="Selecionar planilha CSV">
+        <div class="import-actions"><a href="modelo-planilha-feira.csv" download>Baixar modelo da planilha ↓</a><button class="btn" id="btnEnviar">Importar projetos</button></div>
       </div>
-
-      <!-- Terminal de Logs -->
-      <div class="log-container" style="background: #101c2c; border-radius: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(0, 60, 120, 0.15);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #20354d; color: #8fa7c4; font-size: 12px; font-weight: bold; text-transform: uppercase;">
-          <span>Console de Processamento</span>
-          <span id="statusContador">Aguardando arquivo...</span>
-        </div>
-        <div id="log" style="font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; line-height: 1.6; color: #d1e4f8; white-space: pre-wrap; max-height: 320px; overflow-y: auto;">Aguardando o envio do arquivo para iniciar o processamento...</div>
-      </div>
+      <section class="log-container" aria-label="Resultado da importação"><div class="log-heading"><span>Resultado da importação</span><span id="statusContador">Aguardando arquivo</span></div><div id="log" class="import-log" role="log" aria-live="polite">Aguardando o envio do arquivo para iniciar o processamento...</div></section>
     </main>
   </div>
 </div>
 
 <script src="js/auth.js"></script>
+<script src="js/csv.js"></script>
 <script>
   if (SESSAO.role !== "ADMINISTRADOR") {
       alert("A importação da planilha é exclusiva da organização/administrador.");
@@ -87,9 +63,9 @@
   arquivoInput.addEventListener("change", () => {
       if (arquivoInput.files.length > 0) {
           nomeArquivoDiv.textContent = `📌 Arquivo selecionado: ${arquivoInput.files[0].name}`;
-          nomeArquivoDiv.style.display = "block";
+          nomeArquivoDiv.hidden = false;
       } else {
-          nomeArquivoDiv.style.display = "none";
+          nomeArquivoDiv.hidden = true;
       }
   });
 
@@ -99,49 +75,15 @@
       }
       const linha = document.createElement("div");
       linha.style.marginBottom = "4px";
-      if (tipo === "sucesso") linha.style.color = "#4ade80", linha.style.fontWeight = "bold";
-      if (tipo === "erro") linha.style.color = "#f87171", linha.style.fontWeight = "bold";
-      if (tipo === "info") linha.style.color = "#38bdf8";
+      if (tipo === "sucesso") linha.style.color = "#216448", linha.style.fontWeight = "bold";
+      if (tipo === "erro") linha.style.color = "#a01829", linha.style.fontWeight = "bold";
+      if (tipo === "info") linha.style.color = "#00549d";
       linha.textContent = mensagem;
       log.appendChild(linha);
       log.scrollTop = log.scrollHeight;
   }
 
-  function parseCSVLine(linha) {
-      const resultado = [];
-      let campo = "";
-      let dentroAspas = false;
-      for (let i = 0; i < linha.length; i++) {
-          const caractere = linha[i];
-          if (caractere === '"') {
-              if (dentroAspas && linha[i + 1] === '"') {
-                  campo += '"';
-                  i++;
-              } else {
-                  dentroAspas = !dentroAspas;
-              }
-          } else if (caractere === "," && !dentroAspas) {
-              resultado.push(campo.trim());
-              campo = "";
-          } else {
-              campo += caractere;
-          }
-      }
-      resultado.push(campo.trim());
-      return resultado;
-  }
-
-  function csvParaObjetos(csv) {
-      const linhas = csv.replace(/^\uFEFF/, "").split(/\r?\n/).filter(l => l.trim() !== "");
-      if (linhas.length < 2) throw new Error("CSV vazio ou sem dados.");
-      const cabecalho = parseCSVLine(linhas[0]);
-      return linhas.slice(1).map(linha => {
-          const valores = parseCSVLine(linha);
-          const objeto = {};
-          cabecalho.forEach((campo, index) => { objeto[campo] = valores[index] ?? ""; });
-          return objeto;
-      });
-  }
+  const csvParaObjetos = FeiraCSV.parseCSV;
 
   function montarProjeto(linha) {
       const integrantes = [];
@@ -180,6 +122,17 @@
       });
   }
 
+  async function lerCsvComEncoding(arquivo) {
+      const buffer = await arquivo.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      try {
+          return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+      } catch (_) {
+          // CSVs exportados por versões do Excel no Windows podem vir em Windows-1252.
+          return new TextDecoder("windows-1252").decode(bytes);
+      }
+  }
+
   btnEnviar.addEventListener("click", async () => {
       const arquivo = arquivoInput.files[0];
       if (!arquivo) {
@@ -192,7 +145,7 @@
       statusContador.textContent = "Processando...";
       try {
           escreverLog(`Lendo arquivo: ${arquivo.name}`, "info");
-          const conteudo = await arquivo.text();
+          const conteudo = await lerCsvComEncoding(arquivo);
           const linhas = csvParaObjetos(conteudo);
           escreverLog(`Total de registros: ${linhas.length} projetos encontrados.\n`, "info");
           let sucessos = 0, erros = 0;
@@ -219,5 +172,7 @@
       }
   });
 </script>
+<script src="js/navigation.js"></script>
+<script src="js/ui-effects.js"></script>
 </body>
 </html>

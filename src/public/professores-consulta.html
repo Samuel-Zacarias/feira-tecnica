@@ -2,32 +2,27 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consultar Professores | Feira Técnica</title>
-  <link rel="stylesheet" href="css/painel.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Professores | Feira Técnica</title>
+  <link rel="stylesheet" href="css/feira.css">
+  <link rel="stylesheet" href="css/school-refine.css">
 </head>
 <body>
-<header>
-  <div>
-    <h1>Consultar Professores</h1>
-    <p>GET protegido · Logado como <span data-professor>Professor</span></p>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><img src="imagens/logo.png" alt="UNIVAP"><div>Feira Técnica<small>Área interna</small></div></div>
+    <nav class="nav-list"><a class="nav-link  " href="dashboard.html"><span class="ico">⌂</span>Painel</a><a class="nav-link  " href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a><a class="nav-link  " href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a><a class="nav-link  " href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a><a class="nav-link  " href="ranking.html"><span class="ico">↗</span>Ranking</a><a class="nav-link  admin-only" href="receberExcel.html"><span class="ico">⇩</span>Importar</a><a class="nav-link active admin-only" href="professores-consulta.html"><span class="ico">♙</span>Professores</a><a class="nav-link  admin-only" href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a></nav>
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span>Feira Técnica 2026</span><button class="logout" data-sair>Sair</button></div></div>
+  </aside>
+  <div class="content">
+    <header class="topbar"><div><h1>Professores</h1><p>Contas de professores cadastradas.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
+    <main id="conteudo" class="main"><div class="alert show info" id="alerta">Carregando professores...</div>
+<div class="toolbar"><a class="btn" href="professores-cadastro.html">Cadastrar professor</a><button class="btn" id="recarregar">Recarregar</button></div>
+<div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Função</th><th>Identificador</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table></div></main>
   </div>
-  <div class="top-actions">
-    <a href="dashboard.html">Painel</a>
-    <a href="professores-cadastro.html">Cadastrar professor</a>
-    <button type="button" data-sair>Sair</button>
-  </div>
-</header>
-<main>
-
-<section class="hero"><h2>Consulta de professores</h2><p>Executa <strong>GET /api/v1/professores</strong> usando JWT.</p></section>
-<div id="alerta" class="alert show info">Carregando professores...</div>
-<div class="toolbar"><button class="btn" id="recarregar">Recarregar</button></div>
-<div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Função</th><th>ID MongoDB</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table></div>
-
-</main>
-<script src="js/auth.js"></script>
-<script>
+</div>
+<script src="js/auth.js"></script><script>
 
 const alerta = document.getElementById("alerta"), tbody = document.getElementById("tbody");
 async function carregar() {
@@ -45,6 +40,7 @@ async function carregar() {
 }
 document.getElementById("recarregar").onclick = carregar; carregar();
 
-</script>
+</script><script src="js/navigation.js"></script>
+<script src="js/ui-effects.js"></script>
 </body>
 </html>
