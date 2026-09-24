@@ -486,8 +486,8 @@ a {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #41e49c;
-  box-shadow: 0 0 0 6px rgba(65,228,156,.13);
+  background: #9d9078;
+  box-shadow: 0 0 0 6px rgba(157,144,120,.13);
   animation: pulse 1.6s infinite;
 }
 
@@ -502,7 +502,7 @@ a {
 
 @keyframes pulse {
   50% {
-    box-shadow: 0 0 0 11px rgba(65,228,156,0);
+    box-shadow: 0 0 0 11px rgba(157,144,120,0);
   }
 }
 
@@ -594,8 +594,8 @@ a {
 .ranking-refresh {
   padding: 7px 10px;
   border-radius: 999px;
-  background: #e8f7f1;
-  color: #116247;
+  background: #f3f1ec;
+  color: #424e5d;
   font-weight: 800;
   font-size: .75rem;
 }

@@ -6,8 +6,12 @@
   <title>Projeto | Feira Técnica</title>
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body>
+<body class="experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <header class="topo">
   <div class="container topo-inner">
@@ -27,102 +31,20 @@
   <div class="container">
     <a class="breadcrumb" href="index.html">← Voltar para a vitrine</a>
     <div id="hero"><span class="selo">Carregando projeto...</span><h1>Projeto</h1></div>
-  </div>
+  <div class="public-tools"><button id="shareProject" class="btn" type="button" hidden>Compartilhar projeto ↗</button><a class="btn" href="#principal">Conhecer a ideia ↓</a><a class="btn" href="#avaliacao-publico">Avaliar como visitante ↓</a><span id="shareStatus" role="status" aria-live="polite"></span></div></div>
 </section>
 
 <main id="conteudo" class="container detail">
-  <section id="principal"><div class="block">Carregando informações...</div></section>
+  <section id="principal" aria-live="polite" aria-busy="true"><div class="block">Carregando informações...</div></section>
   <aside id="lateral"></aside>
 </main>
 
 <footer class="footer"><div class="container">Feira Técnica 2026 · Página pública do projeto.</div></footer>
 
 <script src="js/public-utils.js"></script>
-<script>
-const { escapeHtml, repairDeep } = PublicUtils;
-const idProjeto = new URLSearchParams(location.search).get("id");
-
-function bloco(titulo, conteudo) {
-  if (!conteudo) return "";
-  return `<article class="block"><h2>${titulo}</h2><p>${escapeHtml(conteudo)}</p></article>`;
-}
-
-function renderProjeto(projeto) {
-  document.title = `${projeto.tema} | Feira Técnica`;
-
-  document.getElementById("hero").innerHTML = `
-    <span class="selo">${escapeHtml(projeto.curso)} · ${escapeHtml(projeto.statusProjeto || "PROJETO")}</span>
-    <h1>${escapeHtml(projeto.tema)}</h1>
-    <p>${escapeHtml(projeto.descricao || "Conheça este projeto desenvolvido para a Feira Técnica.")}</p>
-  `;
-
-  const galeria = (projeto.imagens || []).length
-    ? `<article class="block"><h2>Galeria</h2><div class="gallery">${projeto.imagens.map(imagem => `<img src="${escapeHtml(imagem)}" alt="Foto do projeto">`).join("")}</div></article>`
-    : "";
-
-  document.getElementById("principal").innerHTML =
-    bloco("Objetivo", projeto.objetivo) +
-    bloco("Problema que queremos resolver", projeto.problema) +
-    bloco("Nossa solução", projeto.solucao) +
-    bloco("Diferencial", projeto.diferencial) +
-    galeria;
-
-  const pessoas = [projeto.representante, ...(projeto.integrantes || [])].filter(Boolean);
-  const links = Object.entries(projeto.links || {}).filter(([, value]) => value);
-
-  document.getElementById("lateral").innerHTML = `
-    ${projeto.imagens?.[0] ? `<img class="mini-cover" src="${escapeHtml(projeto.imagens[0])}" alt="${escapeHtml(projeto.tema)}">` : ""}
-    <article class="block">
-      <h3>Equipe</h3>
-      <div class="people">
-        ${pessoas.map((pessoa, index) => `
-          <div class="person">
-            <strong>${escapeHtml(pessoa.nome)}</strong>
-            <span>${index === 0 ? "Representante" : "Integrante"} · ${escapeHtml(pessoa.turma || "")}</span>
-          </div>
-        `).join("")}
-      </div>
-    </article>
-    ${(projeto.tecnologias || []).length ? `
-      <article class="block">
-        <h3>Tecnologias e materiais</h3>
-        <div class="tags">${projeto.tecnologias.map(item => `<span class="tag">${escapeHtml(item)}</span>`).join("")}</div>
-      </article>
-    ` : ""}
-    <div class="highlight">
-      <strong>Onde encontrar</strong>
-      <span>${escapeHtml(projeto.localizacao || "Localização ainda não informada.")}</span>
-    </div>
-    ${links.length ? `
-      <article class="block" style="margin-top:16px">
-        <h3>Links do projeto</h3>
-        <div class="link-list">
-          ${links.map(([tipo, url]) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${tipo === "github" ? "GitHub" : tipo === "video" ? "Vídeo" : "Site"} ↗</a>`).join("")}
-        </div>
-      </article>
-    ` : ""}
-  `;
-}
-
-async function carregar() {
-  try {
-    const response = await fetch(`/api/v1/projetos/publico/${encodeURIComponent(idProjeto || "")}`);
-    const data = repairDeep(await response.json());
-    if (!response.ok || !data?.success) {
-      throw new Error(data?.message || "Projeto não encontrado");
-    }
-    renderProjeto(data.data.projeto);
-  } catch (error) {
-    document.getElementById("principal").innerHTML = `
-      <div class="block"><h2>Não foi possível abrir o projeto</h2><p>${escapeHtml(error.message)}</p></div>
-    `;
-    document.getElementById("lateral").innerHTML = "";
-  }
-}
-
-carregar();
-</script>
+<script src="js/visitor-rating.js"></script><script src="js/projeto-publico.js"></script>
 <script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

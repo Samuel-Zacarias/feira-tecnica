@@ -62,7 +62,8 @@ module.exports = class AvaliacaoService {
             const projeto = avaliacao.projeto;
 
             if (
-                !projeto?.id ||
+                  !projeto?.id ||
+                  avaliacao.notaFinal == null || avaliacao.notaFinal === '' ||
                 !Number.isFinite(nota) ||
                 avaliacao.status === 'Em análise'
             ) {

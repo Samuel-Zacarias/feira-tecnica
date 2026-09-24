@@ -448,9 +448,9 @@ input::file-selector-button {
     background:#fff2f4
 }
 .alert.ok {
-    color:#216448;
-    border-color:#bce0cb;
-    background:#eff8f3
+    color:#424e5d;
+    border-color:#ddd6ca;
+    background:#f3f1ec
 }
 .table-wrap {
     overflow-x:auto
@@ -498,8 +498,8 @@ td {
     line-height:1.4
 }
 .pill.green {
-    background:#eaf5ee;
-    color:#216448
+    background:#f3f1ec;
+    color:#424e5d
 }
 .pill.amber {
     background:#fcf4e5;

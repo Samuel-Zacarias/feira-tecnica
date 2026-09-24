@@ -41,10 +41,12 @@
       menuButton.setAttribute('aria-label', 'Abrir menu');
       overlay.setAttribute('aria-hidden', 'true');
       body.style.removeProperty('overflow');
-      if (sidebar.contains(document.activeElement)) menuButton.focus();
+      if (sidebar.contains(document.activeElement) && window.innerWidth <= 1000) menuButton.focus();
+      sidebar.inert = window.innerWidth <= 1000;
     };
 
     const openSidebar = () => {
+      sidebar.inert = false;
       sidebar.classList.add('mobile-open');
       overlay.classList.add('open');
       menuButton.setAttribute('aria-expanded', 'true');
@@ -54,6 +56,7 @@
       sidebar.querySelector('a')?.focus();
     };
 
+    sidebar.inert = window.innerWidth <= 1000;
     menuButton.addEventListener('click', () => {
       sidebar.classList.contains('mobile-open') ? closeSidebar() : openSidebar();
     });
@@ -72,6 +75,7 @@
     });
     window.addEventListener('resize', () => {
       if (window.innerWidth > 1000) closeSidebar();
+      else sidebar.inert = !sidebar.classList.contains('mobile-open');
     }, { passive: true });
   }
 

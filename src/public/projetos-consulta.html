@@ -8,8 +8,12 @@
   <link rel="stylesheet" href="css/evaluator.css">
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body class="evaluator-area">
+<body class="evaluator-area experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar">
@@ -29,7 +33,7 @@
 
   <div class="content">
     <header class="topbar"><div><h1>Projetos</h1><p>Encontre uma equipe e abra a avaliação sem perder tempo.</p></div><div class="top-actions"><a class="btn sm" href="avaliacoes-cadastro.html">Nova avaliação</a></div></header>
-    <main id="conteudo" class="evaluator-main">
+    <main id="conteudo" class="evaluator-main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">02 / EXPLORAR · UNIVAP CENTRO</span><h2>Encontre a próxima <em>grande ideia.</em></h2><p>Busque por equipe ou curso e acesse o projeto certo para avaliar.</p></div></section>
       <div id="alerta" class="alert" role="status" aria-live="polite"></div>
       <header class="eval-page-head"><div><h2>Projetos da feira</h2><p>Busque pelo projeto, curso ou integrante. Você pode filtrar pela situação da sua avaliação.</p></div><div class="eval-head-actions"><a class="btn ghost" href="index.html">Vitrine pública</a><a id="importarPlanilha" class="btn ghost admin-only" href="receberExcel.html">Importar planilha</a></div></header>
 
@@ -115,5 +119,6 @@ Promise.all([api('/api/v1/projetos'),api('/api/v1/avaliacoes')]).then(([rp,ra])=
 </script>
 <script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

@@ -6,8 +6,12 @@
   <title>Professores | Feira Técnica</title>
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body>
+<body class="experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar">
@@ -17,7 +21,7 @@
   </aside>
   <div class="content">
     <header class="topbar"><div><h1>Professores</h1><p>Contas de professores cadastradas.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
-    <main id="conteudo" class="main"><div class="alert show info" id="alerta">Carregando professores...</div>
+    <main id="conteudo" class="main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">ORGANIZAÇÃO / BANCA · UNIVAP CENTRO</span><h2>Quem ajuda as ideias <em>a crescer.</em></h2><p>Encontre professores, confira suas funções e gerencie os acessos da banca.</p></div></section><div class="alert show info" id="alerta">Carregando professores...</div>
 <div class="toolbar"><a class="btn" href="professores-cadastro.html">Cadastrar professor</a><button class="btn" id="recarregar">Recarregar</button></div>
 <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Função</th><th>Identificador</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table></div></main>
   </div>
@@ -42,5 +46,6 @@ document.getElementById("recarregar").onclick = carregar; carregar();
 
 </script><script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

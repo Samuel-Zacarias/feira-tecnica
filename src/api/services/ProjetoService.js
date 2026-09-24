@@ -56,6 +56,7 @@ module.exports = class ProjetoService {
         }
 
         const projetos = await this.#dao.findByMatricula(matriculaLimpa);
+        if(projetos.length>1) throw new ErrorResponse(409,'Esta matrícula aparece em mais de um projeto. Confira o cadastro antes de gerar o QR Code.');
         const projeto = projetos[0];
 
         if (!projeto) {
@@ -93,6 +94,20 @@ module.exports = class ProjetoService {
             throw new ErrorResponse(403, "Você só pode editar o seu próprio projeto");
         }
 
+        if (usuario?.role === 'ALUNO' && Array.isArray(atual.alunosAutorizados)) {
+            // Pendências do cadastro oficial não impedem a edição da apresentação.
+            const model = new Projeto(), values = {};
+            try {
+                for (const field of CAMPOS_EDITAVEIS_ALUNO) {
+                    if(Object.prototype.hasOwnProperty.call(recebidoOriginal,field)) {
+                        model[field]=recebidoOriginal[field]; values[field]=model[field];
+                    }
+                }
+            } catch(error) { throw new ErrorResponse(400,'Dados da apresentação inválidos',{message:error.message}); }
+            await this.#dao.updatePresentation(id,values);
+            return this.#dao.findById(id);
+        }
+
         const recebido = usuario?.role === "ALUNO"
             ? this.#filtrarCamposAluno(recebidoOriginal)
             : recebidoOriginal;
@@ -113,6 +128,7 @@ module.exports = class ProjetoService {
     };
 
     #pertenceAoAluno(projeto, usuario) {
+        if(Array.isArray(projeto.alunosAutorizados)) return projeto.alunosAutorizados.includes(String(usuario.idAluno));
         if (projeto.alunoId === usuario.idAluno) return true;
         if (projeto.representante?.matricula === usuario.matricula) return true;
         return (projeto.integrantes || []).some(

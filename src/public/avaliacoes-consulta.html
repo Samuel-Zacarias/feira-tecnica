@@ -8,8 +8,12 @@
   <link rel="stylesheet" href="css/evaluator.css">
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body class="evaluator-area">
+<body class="evaluator-area experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar">
@@ -29,7 +33,7 @@
 
   <div class="content">
     <header class="topbar"><div><h1>Avaliações</h1><p>Consulte rascunhos e avaliações já concluídas.</p></div><div class="top-actions"><a class="btn sm" href="avaliacoes-cadastro.html">Nova avaliação</a></div></header>
-    <main id="conteudo" class="evaluator-main">
+    <main id="conteudo" class="evaluator-main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">SEU PERCURSO / AVALIAÇÕES · UNIVAP CENTRO</span><h2>Cada olhar <em>faz diferença.</em></h2><p>Encontre registros concluídos e continue os rascunhos que ainda precisam da sua atenção.</p></div></section>
       <div id="alerta" class="alert" role="status" aria-live="polite"></div>
       <header class="eval-page-head"><div><h2 id="tituloLista">Minhas avaliações</h2><p id="descricaoLista">Revise uma avaliação, continue um rascunho ou confira a nota registrada.</p></div></header>
 
@@ -98,5 +102,6 @@ api('/api/v1/avaliacoes').then(r=>{avaliacoes=r.data.avaliacoes||[];render()}).c
 </script>
 <script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

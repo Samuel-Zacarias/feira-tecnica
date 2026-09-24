@@ -8,8 +8,12 @@
   <link rel="stylesheet" href="css/evaluator.css">
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body class="evaluator-area">
+<body class="evaluator-area experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar">
@@ -30,7 +34,7 @@
   <div class="content">
     <header class="topbar"><div><h1>Nova avaliação</h1><p>Avalie o projeto com critérios claros e finalize quando estiver pronto.</p></div><div class="top-actions"><a class="btn ghost sm" href="projetos-consulta.html">Projetos</a><a class="btn ghost sm" href="avaliacoes-consulta.html">Histórico</a></div></header>
 
-    <main id="conteudo" class="evaluator-main">
+    <main id="conteudo" class="evaluator-main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">03 / RECONHECER · UNIVAP CENTRO</span><h2>Um olhar atento. <em>Novas possibilidades.</em></h2><p>Avalie com os mesmos critérios e ofereça um retorno que ajude cada equipe a ir além.</p></div></section>
       <div id="alerta" class="alert" role="status" aria-live="polite"></div>
       <header class="eval-page-head"><div><h2>Avaliação da banca</h2><p>Selecione o projeto, atribua as notas e registre um parecer. Você pode salvar como rascunho antes de finalizar.</p></div></header>
 
@@ -128,7 +132,7 @@ let projetos=[];
 
 function estrelas(name,prefix=''){
   const idBase=`${prefix}${name}`;
-  return `<div class="star-rating" data-rating="${idBase}">${[5,4,3,2,1].map(star=>`<input type="radio" id="${idBase}-${star}" name="${idBase}" value="${star*2}"><label for="${idBase}-${star}" title="${star*2} pontos">★</label>`).join('')}</div>`;
+  return `<div class="star-rating" data-rating="${idBase}" role="group" aria-label="${escapeHtml((criterios.find(c=>c[0]===name)||criterioAluno.find(c=>c[0]===name)||[name,name])[1])}">${[5,4,3,2,1].map(star=>`<input type="radio" id="${idBase}-${star}" name="${idBase}" value="${star*2}" aria-label="${star*2} pontos"><label for="${idBase}-${star}" title="${star*2} pontos">★</label>`).join('')}</div>`;
 }
 
 box.innerHTML=criterios.map(([id,nome])=>`<article class="criterion-card"><div class="criterion-head"><strong>${nome}</strong><span class="criterion-score" id="score-${id}">—</span></div>${estrelas(id)}<div class="criterion-scale"><span>2 pts</span><span>10 pts</span></div></article>`).join('');
@@ -230,5 +234,6 @@ atualizarResumo();
 </script>
 <script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

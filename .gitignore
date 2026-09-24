@@ -12,3 +12,7 @@ src/api/system/*.log
 
 .DS_Store
 Thumbs.db
+
+# Cadastro privado e credenciais de alunos: não publicar em repositórios.
+data/
+*acessos*privado*

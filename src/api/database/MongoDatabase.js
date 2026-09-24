@@ -11,19 +11,21 @@ module.exports = class MongoDatabase {
     constructor(config = {}) {
         const host = config.host || 'localhost';
         const port = config.port || 27017;
-        this.#database = config.database || 'feira-tecnica2026';
+        this.#database = process.env.MONGODB_DATABASE || config.database || 'feira-tecnica2026';
 
         const credentials = config.user && config.password
             ? `${config.user}:${config.password}@`
             : '';
-        this.#url = `mongodb://${credentials}${host}:${port}`;
+        this.#url = process.env.MONGODB_URI || `mongodb://${credentials}${host}:${port}`;
     }
 
     async connect() {
         if (!MongoDatabase.#client) {
-            MongoDatabase.#client = new MongoClient(this.#url);
-            await MongoDatabase.#client.connect();
-            MongoDatabase.#db = MongoDatabase.#client.db(this.#database);
+            const client = new MongoClient(this.#url, {serverSelectionTimeoutMS:5000});
+            try { await client.connect(); }
+            catch(error) { await client.close(); throw new Error('Não foi possível conectar ao MongoDB. Inicie o banco ou configure MONGODB_URI.', {cause:error}); }
+            MongoDatabase.#client = client;
+            MongoDatabase.#db = client.db(this.#database);
             logger.info(`MongoDB conectado: ${this.#database}`);
         }
         return MongoDatabase.#db;

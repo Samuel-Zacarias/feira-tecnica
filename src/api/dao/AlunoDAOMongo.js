@@ -33,7 +33,7 @@ module.exports = class AlunoDAOMongo {
             ],
         });
 
-        if (!documento || !await bcrypt.compare(senha, documento.senha)) return null;
+        if (!documento || typeof senha !== 'string' || typeof documento.senha !== 'string' || !await bcrypt.compare(senha, documento.senha)) return null;
         return this.#documentToObject(documento);
     }
 

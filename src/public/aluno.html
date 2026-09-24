@@ -8,8 +8,12 @@
   <link rel="stylesheet" href="css/student.css">
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body class="student-area">
+<body class="student-area experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar" aria-label="Navegação da área do aluno">
@@ -33,7 +37,7 @@
       </div>
     </header>
 
-    <main id="conteudo" class="student-main">
+    <main id="conteudo" class="student-main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">01 / CONSTRUIR · UNIVAP CENTRO</span><h2>Sua ideia tem <em>uma história.</em></h2><p>Conte o que motivou a equipe, mostre a solução e prepare a página que os visitantes vão conhecer.</p></div></section>
       <div id="alerta" class="alert" role="status" aria-live="polite"></div>
 
       <section id="semProjeto" class="student-card student-empty" hidden>
@@ -205,7 +209,7 @@ async function salvar(){
 }
 $('formProjeto').onsubmit=e=>{e.preventDefault();salvar()};
 
-async function carregarQr(){try{const r=await api('/api/v1/projetos/meu/qrcode'),q=r.data;$('qrImg').src=q.qrCode;$('qrImg').style.display='block';$('qrLoading').style.display='none';$('abrirQrPagina').href=q.urlPublica;$('baixarQr').href=q.qrCode;$('qrUrl').textContent=q.urlPublica}catch(_){$('qrLoading').textContent='Indisponível'}}
+async function carregarQr(){try{const r=await api('/api/v1/projetos/meu/qrcode'),q=r.data;$('qrImg').src=q.qrCode;$('qrImg').style.display='block';$('qrLoading').style.display='none';$('abrirQrPagina').href=q.urlPublica;$('baixarQr').href=q.qrCode;$('qrUrl').textContent=q.urlPublica}catch(error){$('qrLoading').textContent=error.message||'QR Code indisponível'}}
 async function carregar(){try{const r=await api('/api/v1/projetos/meu'),p=r.data.projeto;if(!p){$('semProjeto').hidden=false;$('areaProjeto').hidden=true;return}$('semProjeto').hidden=true;$('areaProjeto').hidden=false;preencher(p);await carregarQr()}catch(e){mostrarAlerta(alerta,'error',e.message)}}
 
 ['statusProjeto','descricao','objetivo','problema','solucao','diferencial','tecnologias','github','video','site'].forEach(id=>{const el=$(id);const change=()=>{setDirty(true);atualizarProgresso();if(id==='statusProjeto'){$('heroEtapa').textContent=el.value;$('statusPill').textContent=el.value}};el.addEventListener('input',change);el.addEventListener('change',change)});
@@ -214,5 +218,6 @@ carregar();
 </script>
 <script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

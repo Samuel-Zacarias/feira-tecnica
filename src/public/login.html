@@ -8,8 +8,13 @@
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/login.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="stylesheet" href="css/login-centered.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body>
+<body class="experience login-centered">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <main id="conteudo" class="login-page">
   <section class="login-shell" aria-label="Acesso à Feira Técnica">
@@ -24,7 +29,7 @@
     <div class="login-card">
       <header class="login-head">
         <span class="login-kicker">Ambiente oficial UNIVAP</span>
-        <h1>Entrar no sistema</h1>
+        <h1>Conecte-se ao que vem <em>depois.</em></h1>
         <p>Selecione seu perfil e informe seus dados de acesso.</p>
       </header>
 
@@ -49,19 +54,20 @@
             <input id="identificacao" autocomplete="username" inputmode="email" placeholder="nome@escola.com" required>
           </div>
           <div class="field">
-            <label for="senha">Senha</label>
+            <label for="senha">Senha do sistema da feira</label>
             <div class="login-password">
-              <input id="senha" type="password" autocomplete="current-password" placeholder="Sua senha" required>
+              <input id="senha" type="password" autocomplete="current-password" placeholder="Senha fornecida pela organização" required aria-describedby="senhaAjuda">
               <button type="button" id="mostrarSenha" aria-label="Mostrar senha">Mostrar</button>
             </div>
           </div>
+          <p id="senhaAjuda" style="font-size:12px;color:var(--text-muted)">Use a senha de acesso da feira. Ela não é a senha do seu Gmail.</p>
           <button class="btn login-submit" type="submit" id="entrar"><span>Entrar</span><span aria-hidden="true">→</span></button>
         </form>
       </div>
 
       <div id="visitorPanel" class="profile-panel" aria-hidden="true">
         <div class="visitor-minimal">
-          <div><strong>Acesso para visitantes</strong><span>Explore os projetos, o ranking e as equipes sem precisar fazer login.</span></div>
+          <div><strong>Acesso para visitantes</strong><span>Conheça os projetos e deixe sua avaliação do público sem login. As notas dos professores ficam separadas.</span></div>
           <a class="btn login-submit" href="index.html"><span>Explorar a feira</span><span aria-hidden="true">→</span></a>
         </div>
       </div>
@@ -69,7 +75,7 @@
       <p class="login-foot">Feira Técnica 2026 · Ambiente acadêmico UNIVAP</p>
     </div>
 
-    <p class="login-note">Sistema de apresentação, organização e avaliação de projetos.</p>
+    <a class="login-back" href="index.html">← Voltar para a experiência</a>
   </section>
 </main>
 
@@ -89,26 +95,31 @@ function setPerfil(p){
   perfil=p;
   const visitante=p==='Visitante';
   tabs.forEach(b=>{
-    const ativo=b.dataset.role===p;
+    const ativo=b.dataset.role===p; b.id='perfil-'+b.dataset.role.toLowerCase(); b.setAttribute('aria-controls',b.dataset.role==='Visitante'?'visitorPanel':'loginPanel');
     b.classList.toggle('active',ativo);
-    b.setAttribute('aria-selected',String(ativo));
+    b.setAttribute('aria-selected',String(ativo)); b.tabIndex=ativo?0:-1;
   });
   alerta.className='alert';
   alerta.textContent='';
+  loginPanel.setAttribute('role','tabpanel'); loginPanel.setAttribute('aria-labelledby','perfil-'+p.toLowerCase()); visitorPanel.setAttribute('role','tabpanel'); visitorPanel.setAttribute('aria-labelledby','perfil-visitante');
   loginPanel.classList.toggle('active',!visitante);
   visitorPanel.classList.toggle('active',visitante);
-  visitorPanel.setAttribute('aria-hidden',String(!visitante));
+  visitorPanel.setAttribute('aria-hidden',String(!visitante)); loginPanel.hidden=visitante; visitorPanel.hidden=!visitante;
   if(visitante)return;
   if(p==='Aluno'){
     label.textContent='Matrícula ou e-mail';
     ident.placeholder='Matrícula ou e-mail';
     ident.inputMode='text';
+    senha.placeholder='Sua turma (ex.: 2J)';
+    document.getElementById('senhaAjuda').textContent='A senha inicial é sua turma em letras maiúsculas, como no cadastro. Não use a senha do Gmail.';
   }else{
     label.textContent='E-mail institucional';
     ident.placeholder='nome@escola.com';
     ident.inputMode='email';
+    senha.placeholder='Senha fornecida pela organização';
+    document.getElementById('senhaAjuda').textContent='Use a senha de acesso da feira. Ela não é a senha do seu Gmail.';
   }
-  setTimeout(()=>ident.focus(),80);
+  
 }
 
 tabs.forEach(b=>b.addEventListener('click',()=>setPerfil(b.dataset.role)));
@@ -116,7 +127,7 @@ tabs.forEach(b=>b.addEventListener('click',()=>setPerfil(b.dataset.role)));
 document.getElementById('mostrarSenha').addEventListener('click',e=>{
   const visivel=senha.type==='text';
   senha.type=visivel?'password':'text';
-  e.currentTarget.textContent=visivel?'Mostrar':'Ocultar';
+  e.currentTarget.textContent=visivel?'Mostrar':'Ocultar'; e.currentTarget.setAttribute('aria-label',visivel?'Mostrar senha':'Ocultar senha'); e.currentTarget.setAttribute('aria-pressed',String(!visivel));
 });
 
 form.addEventListener('submit',async e=>{
@@ -148,9 +159,11 @@ form.addEventListener('submit',async e=>{
   }
 });
 
-setPerfil('Professor');
+setPerfil(new URLSearchParams(location.search).get('perfil')==='aluno'?'Aluno':'Professor');
 </script>
 <script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>
+

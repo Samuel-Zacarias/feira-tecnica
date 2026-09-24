@@ -35,13 +35,13 @@ module.exports = class ProjetoController {
     });
 
     qrMeu = asyncHandler(async (request, response) => {
-        const baseUrl = `${request.protocol}://${request.get('host')}`;
+        const baseUrl = process.env.PUBLIC_BASE_URL?.trim() || `${request.protocol}://${request.get('host')}`;
         const dados = await this.#service.gerarQrCodeMeuProjeto(request.usuario, baseUrl);
         response.json({ success: true, data: dados });
     });
 
     qrPorMatricula = asyncHandler(async (request, response) => {
-        const baseUrl = `${request.protocol}://${request.get('host')}`;
+        const baseUrl = process.env.PUBLIC_BASE_URL?.trim() || `${request.protocol}://${request.get('host')}`;
         const dados = await this.#service.gerarQrCodePorMatricula(
             request.query.matricula,
             baseUrl

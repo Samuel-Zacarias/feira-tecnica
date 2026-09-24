@@ -18,8 +18,16 @@ module.exports = async function seedDatabase(database) {
     });
 
     const alunos = await database.getCollection('alunos');
-    await alunos.createIndex({ email: 1 }, { unique: true });
+    // Integrantes sem e-mail usam matrícula, sem endereços fictícios.
+    const indexes = await alunos.listIndexes().toArray().catch(error => {
+        if(error.code === 26) return [];
+        throw error;
+    });
+    const emailIndex = indexes.find(index => index.name === 'email_1');
+    if(emailIndex && !emailIndex.partialFilterExpression) await alunos.dropIndex('email_1');
+    await alunos.createIndex({ email: 1 }, { unique: true, partialFilterExpression: { email: { $type: 'string' } } });
     await alunos.createIndex({ matricula: 1 }, { unique: true });
+    if(await require('./ImportarCadastros').carregarCadastros(database)) return;
     const alunoDemo = await criarAlunoDemoSeNecessario(alunos);
 
     const projetos = await database.getCollection('projetos');

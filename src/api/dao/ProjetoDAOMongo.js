@@ -55,7 +55,10 @@ module.exports = class ProjetoDAOMongo {
             conditions.push({ "integrantes.matricula": String(matricula) });
         }
 
-        const document = await collection.findOne({ $or: conditions });
+        const document = await collection.findOne({ $or: [
+            { alunosAutorizados: String(alunoId) },
+            { alunosAutorizados: { $exists: false }, $or: conditions },
+        ] });
         return document ? this.#documentToObject(document) : null;
     }
 
@@ -69,6 +72,12 @@ module.exports = class ProjetoDAOMongo {
         }).toArray();
 
         return documents.map(document => this.#documentToObject(document));
+    }
+
+    async updatePresentation(id, values) {
+        const collection = await this.#database.getCollection('projetos');
+        const result = await collection.updateOne({_id:new ObjectId(id)},{$set:{...values,dataAtualizacao:new Date()}});
+        return result.matchedCount > 0;
     }
 
     #modelToDocument(projeto) {
@@ -106,6 +115,7 @@ module.exports = class ProjetoDAOMongo {
             outrosRecursos: document.outrosRecursos || null,
             observacoes: document.observacoes || null,
             alunoId: document.alunoId || null,
+            ...(Array.isArray(document.alunosAutorizados) ? {alunosAutorizados:document.alunosAutorizados} : {}),
             dataCadastro: document.dataCadastro,
             dataAtualizacao: document.dataAtualizacao || null,
             descricao: document.descricao || null,

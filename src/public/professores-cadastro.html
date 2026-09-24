@@ -6,8 +6,12 @@
   <title>Cadastrar professor | Feira Técnica</title>
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body>
+<body class="experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar">
@@ -17,7 +21,7 @@
   </aside>
   <div class="content">
     <header class="topbar"><div><h1>Cadastrar professor</h1><p>Crie um acesso para a banca ou administração.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
-    <main id="conteudo" class="main"><div class="alert" id="alerta"></div>
+    <main id="conteudo" class="main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">ORGANIZAÇÃO / ACESSOS · UNIVAP CENTRO</span><h2>Mais um olhar <em>para a feira.</em></h2><p>Cadastre o professor e selecione a função adequada para sua participação.</p></div></section><div class="alert" id="alerta"></div>
 <form id="form">
 <div class="form-grid">
 <div class="field"><label>Nome</label><input id="nome" minlength="3" placeholder="Nome do professor" required=""/></div>
@@ -49,5 +53,6 @@ form.addEventListener("submit", async e => {
 
 </script><script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

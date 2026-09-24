@@ -253,9 +253,9 @@
     color:#9a650c
 }
 .eval-state.done {
-    background:#edf8f1;
-    border-color:#d0ebdb;
-    color:#17794b
+    background:#f3f1ec;
+    border-color:#f3f1ec;
+    color:#424e5d
 }
 .eval-state.draft {
     background:#f2f4f7;

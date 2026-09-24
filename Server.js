@@ -109,6 +109,7 @@ module.exports = class Server {
         this.#configurarAluno();
         this.#configurarProjeto();
         this.#configurarAvaliacao();
+        this.#app.use("/api/v1/avaliacoes-visitantes", await require("./src/api/routes/VisitanteRouter")(this.#database));
         this.#configurarErros();
     };
 
@@ -124,7 +125,7 @@ module.exports = class Server {
 
     #configurarSessaoWeb() {
         this.#app.get("/", (request, response) => {
-            response.redirect(302, "/login.html");
+            response.redirect(302, "/index.html");
         });
 
         this.#app.post("/api/v1/sessao/logout", (request, response) => {

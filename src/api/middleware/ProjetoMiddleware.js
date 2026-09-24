@@ -61,8 +61,8 @@ module.exports = class ProjetoMiddleware {
     };
 
     #validateTema(tema) {
-        if (typeof tema !== 'string' || tema.trim().length < 3) {
-            throw new Error('O tema deve ter pelo menos 3 caracteres.');
+        if (typeof tema !== 'string') {
+            throw new Error('O tema não pode ser vazio.');
         }
     }
 

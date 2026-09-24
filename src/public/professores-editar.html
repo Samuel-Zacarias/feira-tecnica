@@ -6,8 +6,12 @@
   <title>Editar professor | Feira Técnica</title>
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body>
+<body class="experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar">
@@ -17,7 +21,7 @@
   </aside>
   <div class="content">
     <header class="topbar"><div><h1>Editar professor</h1><p>Atualize os dados de um professor.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
-    <main id="conteudo" class="main"><div class="alert" id="alerta"></div>
+    <main id="conteudo" class="main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">ORGANIZAÇÃO / ACESSOS · UNIVAP CENTRO</span><h2>Uma equipe <em>bem conectada.</em></h2><p>Mantenha os dados e as permissões do professor atualizados.</p></div></section><div class="alert" id="alerta"></div>
 <form id="form">
 <fieldset><legend>Selecionar</legend><div class="field"><label>Professor</label><select id="professorId" required=""><option value="">Carregando...</option></select></div></fieldset>
 <div class="form-grid">
@@ -61,5 +65,6 @@ carregarLista();
 
 </script><script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

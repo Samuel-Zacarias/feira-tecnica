@@ -6,8 +6,12 @@
   <title>Cadastrar aluno | Feira Técnica</title>
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+<link rel="stylesheet" href="css/experience.css">
+<link rel="icon" type="image/png" href="imagens/logo.png">
+<link rel="stylesheet" href="css/site-brand.css">
+<link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body>
+<body class="experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <aside class="sidebar">
@@ -17,7 +21,7 @@
   </aside>
   <div class="content">
     <header class="topbar"><div><h1>Cadastrar aluno</h1><p>Crie um acesso para um aluno.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
-    <main id="conteudo" class="main"><div class="section-title">
+    <main id="conteudo" class="main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">ORGANIZAÇÃO / ESTUDANTES · UNIVAP CENTRO</span><h2>O próximo capítulo <em>é do aluno.</em></h2><p>Os acessos dos estudantes acompanham os dados oficiais de suas equipes.</p></div></section><div class="section-title">
 <div>
 <h2>Dados do aluno</h2>
 <p>Use uma senha temporária segura e entregue ao estudante.</p>
@@ -55,7 +59,7 @@
 </div>
 <div class="field">
 <label for="senha">Senha inicial</label>
-<input id="senha" required="" type="password" value="Aluno@2026"/>
+<input id="senha" required="" type="password" minlength="8" autocomplete="new-password" placeholder="Crie uma senha inicial"/>
 <small>Mínimo 8 caracteres, com maiúscula, minúscula, número e símbolo.</small>
 </div>
 </div>
@@ -105,5 +109,6 @@
     });
   </script><script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

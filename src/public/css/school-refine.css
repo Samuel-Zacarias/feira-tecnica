@@ -135,8 +135,8 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):hover,select:hove
 
 /* Alertas e estados */
 .alert.show.ok,.alert.ok{
-  border-color:#b9dcc8;
-  background:#f0f9f4;
+  border-color:#ddd6ca;
+  background:#f3f1ec;
 }
 .alert.show.error,.alert.error{
   border-color:#ebc4ca;

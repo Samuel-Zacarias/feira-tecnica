@@ -3,7 +3,7 @@ const ErrorResponse = require("../utils/ErrorResponse");
 module.exports = class AlunoMiddleware {
     validateLoginBody = (req, res, next) => {
         const aluno = req.body.aluno || req.body;
-        if (!aluno?.identificacao || !aluno?.senha) {
+        if (typeof aluno?.identificacao !== 'string' || !aluno.identificacao.trim() || typeof aluno?.senha !== 'string' || !aluno.senha) {
             return next(new ErrorResponse(400, "Dados de login incompletos", { message: "Informe matrícula/e-mail e senha." }));
         }
         next();

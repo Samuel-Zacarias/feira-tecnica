@@ -37,9 +37,9 @@
     background:currentColor
 }
 .save-state.saved {
-    background:#eef8f2;
-    border-color:#d3eadb;
-    color:#17794b
+    background:#f3f1ec;
+    border-color:#f3f1ec;
+    color:#424e5d
 }
 .save-state.pending {
     background:#fff7e8;
@@ -466,7 +466,7 @@
 .badge-toggle-clean input {
     width:20px;
     height:20px;
-    accent-color:#17794b;
+    accent-color:#424e5d;
     flex:none
 }
 .badge-person-clean {
