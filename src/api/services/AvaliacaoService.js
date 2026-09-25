@@ -13,7 +13,7 @@ module.exports = class AvaliacaoService {
     createAvaliacao = async (dados) => {
         const projetoId = this.#getProjetoId(dados);
         await this.#validarProjeto(projetoId);
-        await this.#validarAvaliacaoDuplicada(projetoId, dados.avaliador);
+        await this.#validarAvaliacaoDuplicada(projetoId, dados.avaliadorId);
 
         const avaliacao = this.#createModel(dados, projetoId);
         avaliacao.id = await this.#avaliacaoDAO.create(avaliacao);
@@ -41,6 +41,9 @@ module.exports = class AvaliacaoService {
         const dados = requestBody.avaliacao || requestBody;
         const atual = await this.findById(idAvaliacao);
         const projetoId = this.#getProjetoId(dados);
+        if (projetoId !== atual.projeto?.id) {
+            throw new ErrorResponse(400, 'Não é permitido trocar o projeto de uma avaliação.');
+        }
 
         const avaliacao = this.#createModel({
             ...dados,
@@ -100,7 +103,7 @@ module.exports = class AvaliacaoService {
                 projetoId: item.projetoId,
                 tema: item.tema,
                 curso: item.curso,
-                media: Number((item.soma / item.avaliacoes).toFixed(2)),
+                media: item.soma / item.avaliacoes,
                 avaliacoes: item.avaliacoes,
                 atualizadoEm: item.atualizadoEm,
             }))
@@ -108,6 +111,7 @@ module.exports = class AvaliacaoService {
             .map((item, index) => ({
                 posicao: index + 1,
                 ...item,
+                media: Number(item.media.toFixed(2)),
             }));
 
         const rankingPorCurso = {};
@@ -123,12 +127,7 @@ module.exports = class AvaliacaoService {
         }
 
         for (const curso of Object.keys(rankingPorCurso)) {
-            rankingPorCurso[curso] = rankingPorCurso[curso]
-                .sort(this.#compararRanking)
-                .map((item, index) => ({
-                    ...item,
-                    posicao: index + 1,
-                }));
+            rankingPorCurso[curso] = rankingPorCurso[curso].sort((a, b) => a.posicao - b.posicao);
         }
 
         return {
@@ -152,11 +151,11 @@ module.exports = class AvaliacaoService {
         }
     }
 
-    async #validarAvaliacaoDuplicada(projetoId, avaliador) {
+    async #validarAvaliacaoDuplicada(projetoId, avaliadorId) {
         const avaliacoes =
             await this.#avaliacaoDAO.findByField('projetoId', projetoId);
 
-        if (avaliacoes.some(item => item.avaliador === avaliador?.trim())) {
+        if (avaliacoes.some(item => item.avaliadorId === avaliadorId)) {
             throw new ErrorResponse(400, 'Avaliação duplicada', {
                 message: 'Este avaliador já avaliou o projeto',
             });
@@ -177,6 +176,7 @@ module.exports = class AvaliacaoService {
 
         avaliacao.projeto = projetoId;
         avaliacao.avaliador = dados.avaliador;
+        avaliacao.avaliadorId = dados.avaliadorId;
 
         for (const criterio of [
             'criatividade',

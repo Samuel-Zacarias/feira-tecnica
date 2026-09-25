@@ -1,9 +1,9 @@
-const cors = require("cors");
 const express = require("express");
 const path = require("path");
 
 const MongoDatabase = require("./src/api/database/MongoDatabase");
 const seedDatabase = require("./src/api/database/SeedDatabase");
+const migrarAvaliacoes = require("./src/api/database/MigrarAvaliacoes");
 const MeuTokenJWT = require("./src/api/http/MeuTokenJWT");
 const { SESSION_COOKIE_NAME, clearSessionCookie } = require("./src/api/http/SessionCookie");
 const JwtMiddleware = require("./src/api/middleware/JwtMiddleware");
@@ -29,6 +29,8 @@ const AvaliacaoRouter = require("./src/api/routes/AvaliacaoRouter");
 const AlunoRouter = require("./src/api/routes/AlunoRouter");
 const ErrorResponse = require("./src/api/utils/ErrorResponse");
 const logger = require("./src/api/utils/Logger");
+const loginRateLimit = require('./src/api/middleware/LoginRateLimit');
+const { getAppBasePath, stripBasePath } = require('./src/api/utils/AppBasePath');
 
 const PAGINAS_PROTEGIDAS = new Map([
     ["/qrcodes.html", ["ADMINISTRADOR", "ALUNO"]],
@@ -40,13 +42,15 @@ const PAGINAS_PROTEGIDAS = new Map([
     ["/avaliacoes-cadastro.html", ["ADMINISTRADOR", "AVALIADOR"]],
     ["/avaliacoes-consulta.html", ["ADMINISTRADOR", "AVALIADOR"]],
     ["/avaliacoes-editar.html", ["ADMINISTRADOR", "AVALIADOR"]],
-    ["/professores-cadastro.html", ["ADMINISTRADOR"]],
+    ["/professores-novo.html", ["ADMINISTRADOR"]],
+    ["/professores-importar.html", ["ADMINISTRADOR"]],
     ["/professores-consulta.html", ["ADMINISTRADOR"]],
     ["/professores-editar.html", ["ADMINISTRADOR"]],
     ["/alunos-cadastro.html", ["ADMINISTRADOR"]],
     ["/alunos-consulta.html", ["ADMINISTRADOR"]],
     ["/receberExcel.html", ["ADMINISTRADOR"]],
-]);
+    ["/configuracoes-votacao.html", ["ADMINISTRADOR"]],
+].map(([url, roles]) => [url.toLowerCase(), roles]));
 
 function lerCookies(request) {
     return Object.fromEntries(
@@ -59,7 +63,7 @@ function lerCookies(request) {
                 if (separador === -1) return [parte, ""];
                 return [
                     parte.slice(0, separador),
-                    decodeURIComponent(parte.slice(separador + 1)),
+                    parte.slice(separador + 1),
                 ];
             })
     );
@@ -79,17 +83,45 @@ module.exports = class Server {
     #database;
     #jwtMiddleware;
     #projetoDAO;
+    #basePath;
 
     constructor(porta = 3000) {
         this.#porta = porta;
+        this.#basePath = getAppBasePath();
     }
 
     init = async () => {
         this.#app = express();
+        this.#app.disable('x-powered-by');
+        this.#app.use(stripBasePath(this.#basePath));
+        const proxyHops = Number(process.env.TRUST_PROXY_HOPS || 0);
+        if (Number.isInteger(proxyHops) && proxyHops >= 1 && proxyHops <= 3) this.#app.set('trust proxy', proxyHops);
         this.#jwtMiddleware = new JwtMiddleware();
 
         this.#app.use(express.json({ limit: "6mb" }));
-        this.#app.use(cors({ origin: true, credentials: true }));
+        this.#app.use((request, response, next) => {
+            response.set({
+                'X-Content-Type-Options': 'nosniff',
+                'X-Frame-Options': 'DENY',
+                'Referrer-Policy': 'strict-origin-when-cross-origin',
+            });
+            const origin = request.headers.origin;
+            if (origin) {
+                const permitted = new Set((process.env.CORS_ALLOWED_ORIGINS || '').split(',').map(item => item.trim()).filter(Boolean));
+                const sameOrigin = origin === `${request.protocol}://${request.get('host')}`;
+                if (!sameOrigin && !permitted.has(origin)) return response.status(403).json({success:false,message:'Origem não autorizada.'});
+                response.set('Vary', 'Origin');
+                if (!sameOrigin) response.set({
+                    'Access-Control-Allow-Origin': origin,
+                    'Access-Control-Allow-Credentials': 'true',
+                    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                });
+            }
+            if (request.method === 'OPTIONS') return response.sendStatus(204);
+            next();
+        });
+        this.#app.use(['/api/v1/alunos/login', '/api/v1/professores/login'], loginRateLimit);
         this.#configurarLogRequisicoes();
         this.#configurarSessaoWeb();
         this.#servirArquivosPublicos();
@@ -104,11 +136,13 @@ module.exports = class Server {
 
         await this.#database.connect();
         await seedDatabase(this.#database);
+        await migrarAvaliacoes(this.#database);
 
         this.#configurarProfessor();
         this.#configurarAluno();
+        await this.#configurarVotacao();
         this.#configurarProjeto();
-        this.#configurarAvaliacao();
+        await this.#configurarAvaliacao();
         this.#app.use("/api/v1/avaliacoes-visitantes", await require("./src/api/routes/VisitanteRouter")(this.#database));
         this.#configurarErros();
     };
@@ -125,7 +159,7 @@ module.exports = class Server {
 
     #configurarSessaoWeb() {
         this.#app.get("/", (request, response) => {
-            response.redirect(302, "/index.html");
+            response.redirect(302, `${this.#basePath}/index.html`);
         });
 
         this.#app.post("/api/v1/sessao/logout", (request, response) => {
@@ -136,17 +170,17 @@ module.exports = class Server {
         this.#app.use((request, response, next) => {
             if (request.method !== "GET") return next();
 
-            const rolesPermitidas = PAGINAS_PROTEGIDAS.get(request.path);
+            const rolesPermitidas = PAGINAS_PROTEGIDAS.get(request.path.toLowerCase());
             if (!rolesPermitidas) return next();
 
             const sessao = obterSessao(request);
             if (!sessao) {
                 const destino = encodeURIComponent(request.originalUrl);
-                return response.redirect(302, `/login.html?next=${destino}`);
+                return response.redirect(302, `${this.#basePath}/login.html?next=${destino}`);
             }
 
             if (!rolesPermitidas.includes(sessao.role)) {
-                const destino = sessao.role === "ALUNO" ? "/aluno.html" : "/dashboard.html";
+                const destino = `${this.#basePath}${sessao.role === "ALUNO" ? "/aluno.html" : "/dashboard.html"}`;
                 return response.redirect(302, destino);
             }
 
@@ -155,7 +189,7 @@ module.exports = class Server {
     }
 
     #servirArquivosPublicos() {
-        const publicPath = path.join(process.cwd(), "src/public");
+        const publicPath = path.join(__dirname, "src/public");
         this.#app.use(express.static(publicPath));
     }
 
@@ -179,6 +213,47 @@ module.exports = class Server {
         this.#app.use("/api/v1/alunos", router.createRoutes());
     }
 
+    async #configurarVotacao() {
+        const horario = require('./src/api/routes/HorarioAvaliacaoVisitantes');
+        const codigos = require('./src/api/routes/CodigosVisitantes');
+        const tickets = await this.#database.getCollection('codigosVisitantes');
+        await tickets.createIndex({ hash: 1 }, { unique: true });
+        const autenticado = this.#jwtMiddleware.validateToken;
+        const admin = this.#jwtMiddleware.permitirRoles('ADMINISTRADOR');
+        this.#app.get('/api/v1/configuracao-votacao', autenticado, admin, async (_req, res, next) => {
+            try { res.json({ success: true, data: { ...horario.carregar(), codigosGerados: await tickets.countDocuments() } }); }
+            catch (error) { next(error); }
+        });
+        this.#app.put('/api/v1/configuracao-votacao', autenticado, admin, async (req, res, next) => {
+            try {
+                const atual = horario.carregar();
+                if (req.body?.exigirCodigo && !(await tickets.countDocuments())) {
+                    return res.status(400).json({ success: false, message: 'Gere os códigos antes de exigir código na votação.' });
+                }
+                if (Boolean(req.body?.exigirCodigo) !== Boolean(atual.exigirCodigo)) {
+                    const votes = await this.#database.getCollection('avaliacoesVisitantes');
+                    if (await votes.countDocuments()) return res.status(409).json({ success: false, message: 'Não é possível trocar o modo de identificação após o início das avaliações.' });
+                }
+                res.json({ success: true, data: horario.salvar(req.body) });
+            } catch (error) { next(error); }
+        });
+        this.#app.post('/api/v1/configuracao-votacao/codigos', autenticado, admin, async (req, res, next) => {
+            try {
+                const quantidade = req.body?.quantidade;
+                if (!Number.isInteger(quantidade) || quantidade < 1 || quantidade > 1000) {
+                    return res.status(400).json({ success: false, message: 'Informe de 1 a 1000 códigos por lote.' });
+                }
+                const novos = [];
+                for (let index = 0; index < quantidade; index++) {
+                    const codigo = codigos.gerar();
+                    await tickets.insertOne({ hash: codigos.hash(codigo), criadoEm: new Date() });
+                    novos.push(codigo);
+                }
+                res.json({ success: true, data: { codigos: novos } });
+            } catch (error) { next(error); }
+        });
+    }
+
     #configurarProjeto() {
         const middleware = new ProjetoMiddleware();
         this.#projetoDAO = new ProjetoDAOMongo(this.#database);
@@ -189,9 +264,10 @@ module.exports = class Server {
         this.#app.use("/api/v1/projetos", router.createRoutes());
     }
 
-    #configurarAvaliacao() {
+    async #configurarAvaliacao() {
         const middleware = new AvaliacaoMiddleware();
         const dao = new AvaliacaoDAOMongo(this.#database);
+        await dao.ensureIndexes();
         const service = new AvaliacaoService(dao, this.#projetoDAO);
         const controller = new AvaliacaoController(service);
         const router = new AvaliacaoRouter(this.#jwtMiddleware, middleware, controller);
@@ -227,14 +303,15 @@ module.exports = class Server {
             response.status(500).json({
                 success: false,
                 message: "Ocorreu um erro interno no servidor",
-                error: { message: error.message || "Erro interno", code: error.code },
+                error: { message: "Erro interno" },
             });
         });
     }
 
 
     run = () => {
-        this.#app.listen(this.#porta, () => {
+        const host = process.env.ENABLE_TEST_PROFESSOR === 'true' ? '127.0.0.1' : '0.0.0.0';
+        this.#app.listen(this.#porta, host, () => {
             logger.info(`Servidor rodando em http://localhost:${this.#porta}/login.html`);
         });
     };

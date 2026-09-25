@@ -6,6 +6,7 @@ module.exports = class Avaliacao {
     #id;
     #projeto;
     #avaliador;
+    #avaliadorId;
     #data = new Date();
     #criatividade;
     #relevancia;
@@ -43,6 +44,14 @@ module.exports = class Avaliacao {
             throw new Error('avaliador deve ser uma string não vazia.');
         }
         this.#avaliador = value.trim();
+    }
+
+    get avaliadorId() { return this.#avaliadorId; }
+    set avaliadorId(value) {
+        if (typeof value !== 'string' || !/^[a-f\d]{24}$/i.test(value)) {
+            throw new Error('avaliadorId deve ser um ID válido.');
+        }
+        this.#avaliadorId = value.toLowerCase();
     }
 
     get data() { return this.#data; }

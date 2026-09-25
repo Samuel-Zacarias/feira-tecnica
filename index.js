@@ -3,7 +3,9 @@ const logger = require("./src/api/utils/Logger");
 
 async function iniciar() {
     try {
-        const server = new Server(3000);
+        const port = Number(process.env.PORT || 3000);
+        if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT deve ser uma porta válida.');
+        const server = new Server(port);
         await server.init();
         server.run();
     } catch (error) {

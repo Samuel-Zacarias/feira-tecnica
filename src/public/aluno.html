@@ -40,6 +40,18 @@
     <main id="conteudo" class="student-main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">01 / CONSTRUIR · UNIVAP CENTRO</span><h2>Sua ideia tem <em>uma história.</em></h2><p>Conte o que motivou a equipe, mostre a solução e prepare a página que os visitantes vão conhecer.</p></div></section>
       <div id="alerta" class="alert" role="status" aria-live="polite"></div>
 
+      <details class="student-card" id="segurancaConta" style="margin-bottom:24px;padding:20px">
+        <summary style="cursor:pointer;font-weight:700">Segurança da conta · Trocar senha</summary>
+        <p id="avisoSenhaTurma">Se você ainda usa a turma como senha, crie uma senha pessoal antes de editar seu projeto.</p>
+        <form id="formSenha" style="display:grid;gap:12px;max-width:460px">
+          <label for="senhaAtual">Senha atual</label><input id="senhaAtual" type="password" autocomplete="current-password" required>
+          <label for="novaSenha">Nova senha</label><input id="novaSenha" type="password" autocomplete="new-password" minlength="8" required aria-describedby="regraSenha">
+          <small id="regraSenha">Use ao menos 8 caracteres, com maiúscula, minúscula, número e símbolo.</small>
+          <button class="btn" type="submit">Salvar nova senha</button>
+          <p id="estadoSenha" role="status" aria-live="polite"></p>
+        </form>
+      </details>
+
       <section id="semProjeto" class="student-card student-empty" hidden>
         <h2>Projeto ainda não vinculado</h2>
         <p>Quando a planilha oficial for importada, seu projeto aparecerá automaticamente aqui.</p>
@@ -154,6 +166,15 @@ const alerta=$('alerta');
 const rt=value=>window.repararTexto?window.repararTexto(value):String(value??'');
 const esc=value=>window.escapeHtml?window.escapeHtml(value):String(value??'');
 let projetoAtual=null, imagens=[], dirty=false;
+
+if(SESSAO.usuario.deveTrocarSenha){$('segurancaConta').open=true;$('avisoSenhaTurma').textContent='Sua senha inicial é a turma e pode ser conhecida por outras pessoas. Troque-a agora por uma senha pessoal.'}
+$('formSenha').addEventListener('submit',async e=>{
+  e.preventDefault();const button=e.currentTarget.querySelector('button');button.disabled=true;$('estadoSenha').textContent='Salvando...';
+  try{
+    await api('/api/v1/alunos/me/senha',{method:'PUT',body:JSON.stringify({senhaAtual:$('senhaAtual').value,novaSenha:$('novaSenha').value})});
+    e.currentTarget.reset();SESSAO.usuario.deveTrocarSenha=false;$('avisoSenhaTurma').textContent='Sua senha pessoal está ativa.';$('estadoSenha').textContent='Senha alterada com sucesso.';
+  }catch(error){$('estadoSenha').textContent=error.message||'Não foi possível trocar a senha.'}finally{button.disabled=false}
+});
 
 $('turmaPerfil').textContent=[SESSAO.usuario.turma,SESSAO.usuario.curso].filter(Boolean).map(rt).join(' · ')||'Aluno';
 

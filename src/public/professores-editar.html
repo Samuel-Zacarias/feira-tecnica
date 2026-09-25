@@ -25,11 +25,13 @@
 <form id="form">
 <fieldset><legend>Selecionar</legend><div class="field"><label>Professor</label><select id="professorId" required=""><option value="">Carregando...</option></select></div></fieldset>
 <div class="form-grid">
+<div class="field"><label for="identificador">ID numérico de acesso do professor</label><input id="identificador" inputmode="numeric" pattern="[0-9]+" maxlength="64" placeholder="ID informado pela escola"/></div>
 <div class="field"><label>Nome</label><input id="nome" minlength="3" required=""/></div>
-<div class="field"><label>E-mail</label><input id="email" required="" type="email"/></div>
-<div class="field"><label>Nova senha (opcional)</label><input id="senha" placeholder="Deixe vazio para manter" type="password"/></div>
+<div class="field"><label>E-mail (obrigatório para administrador)</label><input id="email" type="email"/></div>
+<div class="field"><label>Nova senha</label><input id="senha" placeholder="Opcional, exceto ao promover a administrador" type="password"/></div>
 <div class="field"><label>Função</label><select id="role"><option>AVALIADOR</option><option>ADMINISTRADOR</option></select></div>
 </div>
+<p class="help">Ao promover um avaliador a administrador, informe uma senha forte. Ao mudar um administrador para avaliador, a senha inicial passa a ser univap e o acesso será pelo ID.</p>
 <div class="form-actions"><button class="btn sec" type="submit">Salvar alterações</button></div>
 </form></main>
   </div>
@@ -41,19 +43,19 @@ let lista=[];
 async function carregarLista(){
   try{
     const r=await api("/api/v1/professores"); lista=r.data.professores||[];
-    sel.innerHTML='<option value="">Selecione...</option>'+lista.map(p=>`<option value="${escapeHtml(p.id)}">${escapeHtml(p.nome)} — ${escapeHtml(p.email)}</option>`).join("");
+    sel.innerHTML='<option value="">Selecione...</option>'+lista.map(p=>`<option value="${escapeHtml(p.id)}">${escapeHtml(p.nome)} — ${escapeHtml(p.identificador||p.email||'sem ID')}</option>`).join("");
     const q=new URLSearchParams(location.search).get("id"); if(q){sel.value=q; preencher();}
   }catch(e){mostrarAlerta(alerta,"error",e.message);}
 }
 function preencher(){
   const p=lista.find(x=>x.id===sel.value); if(!p)return;
-  nome.value=p.nome||""; email.value=p.email||""; role.value=p.role||"AVALIADOR"; senha.value="";
+  nome.value=p.nome||""; email.value=p.email||""; identificador.value=p.identificador||""; role.value=p.role||"AVALIADOR"; senha.value="";
 }
 sel.addEventListener("change",preencher);
 document.getElementById("form").addEventListener("submit",async e=>{
   e.preventDefault();
   if(!sel.value) return mostrarAlerta(alerta,"error","Selecione um professor.");
-  const professor={nome:nome.value.trim(),email:email.value.trim(),role:role.value};
+  const professor={nome:nome.value.trim(),email:email.value.trim(),identificador:identificador.value.trim(),role:role.value};
   if(senha.value) professor.senha=senha.value;
   try{
     const r=await api(`/api/v1/professores/${sel.value}`,{method:"PUT",body:JSON.stringify({professor})});

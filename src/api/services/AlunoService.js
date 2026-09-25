@@ -55,6 +55,22 @@ module.exports = class AlunoService {
         return aluno;
     };
 
+    changePassword = async (id, data) => {
+        const current = data?.senhaAtual;
+        const next = data?.novaSenha;
+        if (typeof current !== 'string' || typeof next !== 'string') {
+            throw new ErrorResponse(400, 'Informe a senha atual e a nova senha.');
+        }
+        const aluno = new Aluno();
+        try { aluno.senha = next; }
+        catch (error) { throw new ErrorResponse(400, 'Nova senha inválida', { message: error.message }); }
+        if (next === current) throw new ErrorResponse(400, 'Escolha uma senha diferente da atual.');
+        if (!await this.#dao.changePassword(id, current, next)) {
+            throw new ErrorResponse(400, 'Senha atual incorreta.');
+        }
+        return { success: true };
+    };
+
     #createModel(dados) {
         try {
             const aluno = new Aluno();

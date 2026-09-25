@@ -1,4 +1,5 @@
 const asyncHandler = require('../utils/AsyncHandler');
+const { publicBaseUrl } = require('../utils/AppBasePath');
 
 module.exports = class ProjetoController {
     #service;
@@ -35,13 +36,13 @@ module.exports = class ProjetoController {
     });
 
     qrMeu = asyncHandler(async (request, response) => {
-        const baseUrl = process.env.PUBLIC_BASE_URL?.trim() || `${request.protocol}://${request.get('host')}`;
+        const baseUrl = publicBaseUrl(request);
         const dados = await this.#service.gerarQrCodeMeuProjeto(request.usuario, baseUrl);
         response.json({ success: true, data: dados });
     });
 
     qrPorMatricula = asyncHandler(async (request, response) => {
-        const baseUrl = process.env.PUBLIC_BASE_URL?.trim() || `${request.protocol}://${request.get('host')}`;
+        const baseUrl = publicBaseUrl(request);
         const dados = await this.#service.gerarQrCodePorMatricula(
             request.query.matricula,
             baseUrl

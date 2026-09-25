@@ -1,5 +1,5 @@
 (function (root) {
-    function parseCSV(text) {
+    function parseCSV(text, expectedColumns) {
         text = String(text).replace(/^\uFEFF/, '');
         const header = text.split(/\r?\n/, 1)[0];
         const separator = header.includes(';') ? ';' : ',';
@@ -22,7 +22,7 @@
         if (quoted) throw new Error('Há um campo com aspas abertas na planilha. Exporte o CSV novamente.');
         row.push(field.trim());
         if (row.some(Boolean)) rows.push(row);
-        if (rows.length < 2) throw new Error('A planilha está vazia ou não contém projetos.');
+        if (rows.length < 2) throw new Error('A planilha está vazia ou não contém registros.');
         const columns = rows.shift().map(value => value.trim().toLowerCase());
         const required = [
             'carimbo de data/hora',
@@ -65,7 +65,7 @@
             'observações'
         ];
         const legacy = ['tema','curso','representante_nome','representante_matricula','representante_email','representante_turma'];
-        const missing = (columns.includes('tema') ? legacy : required).filter(name => !columns.includes(name));
+        const missing = (expectedColumns || (columns.includes('tema') ? legacy : required)).filter(name => !columns.includes(name));
         if (missing.length) throw new Error(`Colunas ausentes: ${missing.join(', ')}. Use o modelo disponível nesta página.`);
         return rows.map((values, index) => {
             if (values.length !== columns.length) throw new Error(`Registro ${index + 1}: quantidade de colunas diferente do cabeçalho.`);

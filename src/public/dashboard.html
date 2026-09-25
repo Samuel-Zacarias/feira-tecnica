@@ -34,7 +34,7 @@
   <div class="content">
     <header class="topbar">
       <div><h1 id="topTitle">Painel do avaliador</h1><p id="welcome">Feira Técnica 2026</p></div>
-      <div class="top-actions"><a class="btn ghost sm" href="index.html">Vitrine</a><a class="btn sm" href="avaliacoes-cadastro.html">Nova avaliação</a></div>
+      <div class="top-actions"><a class="btn ghost sm" href="#segurancaConta" id="abrirSeguranca">Trocar senha</a><a class="btn ghost sm" href="index.html">Vitrine</a><a class="btn sm" href="avaliacoes-cadastro.html">Nova avaliação</a></div>
     </header>
 
     <main id="conteudo" class="evaluator-main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">01 / ORGANIZAR · UNIVAP CENTRO</span><h2>Toda descoberta merece <em>um bom olhar.</em></h2><p>Acompanhe os projetos, retome avaliações e encontre a próxima equipe.</p></div></section>
@@ -50,6 +50,19 @@
         <article class="eval-metric"><span id="labelMetric2">Minhas avaliações</span><strong id="mMinhas">—</strong><small id="subMetric2">registradas</small></article>
         <article class="eval-metric"><span id="labelMetric3">Média das notas</span><strong id="mMedia">—</strong><small id="subMetric3">nas avaliações concluídas</small></article>
       </section>
+
+      <details class="eval-panel account-security" id="segurancaConta">
+        <summary>Segurança da conta · Trocar senha</summary>
+        <p id="avisoSenhaProfessor">Crie uma senha pessoal para proteger suas avaliações.</p>
+        <form id="formSenhaProfessor" class="account-security-form">
+          <div class="field"><label for="senhaAtualProfessor">Senha atual</label><input id="senhaAtualProfessor" type="password" autocomplete="current-password" required></div>
+          <div class="field"><label for="novaSenhaProfessor">Nova senha</label><input id="novaSenhaProfessor" type="password" autocomplete="new-password" minlength="8" required aria-describedby="regraSenhaProfessor"></div>
+          <div class="field"><label for="confirmarSenhaProfessor">Confirmar nova senha</label><input id="confirmarSenhaProfessor" type="password" autocomplete="new-password" minlength="8" required></div>
+          <small id="regraSenhaProfessor">Use ao menos 8 caracteres, com maiúscula, minúscula, número e símbolo.</small>
+          <button class="btn" type="submit">Salvar nova senha</button>
+          <p id="estadoSenhaProfessor" role="status" aria-live="polite"></p>
+        </form>
+      </details>
 
       <div class="eval-dashboard-grid">
         <section class="eval-panel">
@@ -89,6 +102,38 @@
   document.getElementById('topTitle').textContent=admin?'Painel administrativo':'Painel do avaliador';
   document.getElementById('welcome').textContent=`Olá, ${nome.split(' ')[0]}.`;
   document.getElementById('adminTools').hidden=!admin;
+  const seguranca=document.getElementById('segurancaConta');
+  const estadoSenha=document.getElementById('estadoSenhaProfessor');
+  if(SESSAO.usuario.deveTrocarSenha){
+    seguranca.open=true;
+    document.getElementById('avisoSenhaProfessor').textContent='Você está usando a senha inicial da escola. Troque-a por uma senha pessoal antes de avaliar projetos.';
+  }
+  document.getElementById('abrirSeguranca').addEventListener('click',()=>{seguranca.open=true});
+  document.getElementById('formSenhaProfessor').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const form=event.currentTarget;
+    const button=form.querySelector('button[type="submit"]');
+    const current=document.getElementById('senhaAtualProfessor').value;
+    const next=document.getElementById('novaSenhaProfessor').value;
+    if(next!==document.getElementById('confirmarSenhaProfessor').value){
+      estadoSenha.textContent='As novas senhas não coincidem.';
+      return;
+    }
+    button.disabled=true;
+    estadoSenha.textContent='Salvando...';
+    try{
+      await api('/api/v1/professores/me/senha',{method:'PUT',body:JSON.stringify({senhaAtual:current,novaSenha:next})});
+      form.reset();
+      SESSAO.usuario.deveTrocarSenha=false;
+      try{
+        const stored=JSON.parse(localStorage.getItem('userData')||'null');
+        if(stored?.data?.professor){stored.data.professor.deveTrocarSenha=false;localStorage.setItem('userData',JSON.stringify(stored))}
+      }catch(_){/* A senha já foi salva no servidor; o estado será atualizado no próximo login. */}
+      document.getElementById('avisoSenhaProfessor').textContent='Sua senha pessoal está ativa.';
+      estadoSenha.textContent='Senha alterada com sucesso.';
+    }catch(error){estadoSenha.textContent=error.message||'Não foi possível trocar a senha.'}
+    finally{button.disabled=false}
+  });
 
   if(admin){
     document.getElementById('pageHeading').textContent='Visão geral da feira';

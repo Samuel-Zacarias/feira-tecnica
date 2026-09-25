@@ -1,9 +1,25 @@
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 const jwt = require("jsonwebtoken");
 
-const SECRET = process.env.JWT_SECRET || "x9S4q0v+V0IjvHkG20uAxaHx1ijj+q1HWjHKv+ohxp/oK+77qyXkVj/l4QYHHTF3";
+function loadSecret() {
+    if (process.env.JWT_SECRET) {
+        if (Buffer.byteLength(process.env.JWT_SECRET) < 32) throw new Error('JWT_SECRET precisa ter pelo menos 32 caracteres.');
+        return process.env.JWT_SECRET;
+    }
+    const file = path.resolve(__dirname, '../../../data/.jwt-secret');
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    try { fs.writeFileSync(file, crypto.randomBytes(48).toString('base64url'), { flag: 'wx', mode: 0o600 }); }
+    catch (error) { if (error.code !== 'EEXIST') throw error; }
+    const secret = fs.readFileSync(file, 'utf8').trim();
+    if (secret.length < 32) throw new Error('Chave JWT local inválida. Configure JWT_SECRET.');
+    return secret;
+}
+const SECRET = loadSecret();
 const ALGORITHM = "HS256";
-const TOKEN_DURATION_SECONDS = 60 * 24 * 60 * 60;
+const TOKEN_DURATION_SECONDS = 12 * 60 * 60;
+const ISSUER = 'feira-tecnica-2026';
 
 module.exports = class MeuTokenJWT {
     #payload = null;
@@ -11,8 +27,8 @@ module.exports = class MeuTokenJWT {
     gerarToken = claims => {
         const now = Math.floor(Date.now() / 1000);
         const payload = {
-            iss: "http://localhost",
-            aud: "http://localhost",
+            iss: ISSUER,
+            aud: ISSUER,
             sub: "acesso_sistema",
             iat: now,
             exp: now + TOKEN_DURATION_SECONDS,
@@ -43,6 +59,8 @@ module.exports = class MeuTokenJWT {
         try {
             this.#payload = jwt.verify(token, SECRET, {
                 algorithms: [ALGORITHM],
+                issuer: ISSUER,
+                audience: ISSUER,
             });
             return true;
         } catch (_) {

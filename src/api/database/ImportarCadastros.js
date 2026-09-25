@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const sourceFile = path.resolve(__dirname, '../../../data/cadastro-feira-2026.json');
+const projetosIncorporados = require('./projetos-feira-2026.json');
 
 // Importação repetível: não substitui senhas nem a apresentação editada pelos alunos.
 async function importarCadastros(database, dataset) {
@@ -19,7 +20,7 @@ async function importarCadastros(database, dataset) {
       }
       // A troca para a senha inicial por turma é aplicada uma única vez às contas desta carga.
       // Reimportações posteriores não alteram senhas que o aluno venha a trocar.
-      if (account.senhaVersao && found.senhaVersao !== account.senhaVersao) {
+      if (account.senhaVersao && !found.senhaVersao) {
         await alunos.updateOne({_id:found._id},{$set:{senha:account.senha,senhaVersao:account.senhaVersao}});
       }
       report.contasExistentes++;
@@ -39,7 +40,14 @@ async function importarCadastros(database, dataset) {
   for(const project of dataset.projects) {
     let found=await projetos.findOne({importKey:project.importKey});
     if(!found) found=await projetos.findOne({tema:project.tema,'representante.matricula':project.representante?.matricula,importKey:{$exists:false}});
-    if(found) {report.projetosExistentes++;continue;}
+    if(found) {
+      const autorizados = [...new Set([...(found.alunosAutorizados || []), ...(permitted.get(project.importKey) || [])])];
+      if (autorizados.length !== (found.alunosAutorizados || []).length) {
+        await projetos.updateOne({_id:found._id},{$set:{alunosAutorizados:autorizados}});
+      }
+      report.projetosExistentes++;
+      continue;
+    }
     const result=await projetos.updateOne({importKey:project.importKey},{$setOnInsert:{...project,alunosAutorizados:permitted.get(project.importKey)||[],dataCadastro:new Date()}},{upsert:true});
     if(result.upsertedCount)report.projetosCriados++;else report.projetosExistentes++;
   }
@@ -53,4 +61,33 @@ async function carregarCadastros(database) {
   console.log(`Cadastro da feira: ${report.projetosCriados} projetos novos, ${report.contasCriadas} contas novas, ${report.conflitos.length} conflitos. Relatório em data/resultado-importacao.json.`);
   return true;
 }
-module.exports={importarCadastros,carregarCadastros};
+async function importarProjetosIncorporados(database) {
+  const projetos = await database.getCollection('projetos');
+  await projetos.createIndex({importKey:1},{unique:true,partialFilterExpression:{importKey:{$type:'string'}}});
+  const report = {criados:0,atualizados:0,existentes:0};
+  for (const project of projetosIncorporados.projects) {
+    const found = await projetos.findOne({importKey:project.importKey});
+    if (found) {
+      if (found.importSourceSha256 === projetosIncorporados.sourceSha256) { report.existentes++; continue; }
+      const {sourceRow, ...campos} = project;
+      await projetos.updateOne({_id:found._id},{$set:{...campos,sourceRow,importSourceSha256:projetosIncorporados.sourceSha256}});
+      report.atualizados++;
+      continue;
+    }
+    const legacy = await projetos.findOne({tema:project.tema,'representante.matricula':project.representante?.matricula,importKey:{$exists:false}});
+    if (legacy) {
+      // O projeto antigo já existe, mas os alunos procuram a chave da planilha.
+      // Vincule-o sem substituir a apresentação que a equipe editou.
+      await projetos.updateOne(
+        {_id:legacy._id,importKey:{$exists:false}},
+        {$set:{importKey:project.importKey,importSourceSha256:projetosIncorporados.sourceSha256,sourceRow:project.sourceRow}}
+      );
+      report.existentes++;
+      continue;
+    }
+    const result = await projetos.updateOne({importKey:project.importKey},{$setOnInsert:{...project,importSourceSha256:projetosIncorporados.sourceSha256,alunosAutorizados:[],dataCadastro:new Date()}},{upsert:true});
+    if (result.upsertedCount) report.criados++; else report.existentes++;
+  }
+  return report;
+}
+module.exports={importarCadastros,carregarCadastros,importarProjetosIncorporados};

@@ -20,10 +20,10 @@
     <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span>Feira Técnica 2026</span><button class="logout" data-sair>Sair</button></div></div>
   </aside>
   <div class="content">
-    <header class="topbar"><div><h1>Professores</h1><p>Contas de professores cadastradas.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
+    <header class="topbar"><div><h1>Professores</h1><p>O professor entra com o ID informado pela escola; o administrador entra por e-mail.</p></div><div class="top-actions"><a class="btn ghost sm" href="dashboard.html">Painel</a><button class="btn sm" data-sair>Sair</button></div></header>
     <main id="conteudo" class="main"><section class="workspace-story" aria-label="Sobre esta área"><div><span class="story-kicker">ORGANIZAÇÃO / BANCA · UNIVAP CENTRO</span><h2>Quem ajuda as ideias <em>a crescer.</em></h2><p>Encontre professores, confira suas funções e gerencie os acessos da banca.</p></div></section><div class="alert show info" id="alerta">Carregando professores...</div>
-<div class="toolbar"><a class="btn" href="professores-cadastro.html">Cadastrar professor</a><button class="btn" id="recarregar">Recarregar</button></div>
-<div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Função</th><th>Identificador</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table></div></main>
+<div class="toolbar"><a class="btn" href="professores-novo.html">Cadastrar professor</a><a class="btn light" href="professores-importar.html">Importar planilha de professores</a><button class="btn" id="recarregar">Recarregar</button></div>
+<div class="table-wrap"><table><thead><tr><th>Nome</th><th>ID de acesso</th><th>E-mail</th><th>Função</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table></div></main>
   </div>
 </div>
 <script src="js/auth.js"></script><script>
@@ -35,8 +35,7 @@ async function carregar() {
     const r = await api("/api/v1/professores");
     const itens = r.data.professores || [];
     tbody.innerHTML = itens.map(p => `<tr>
-      <td>${escapeHtml(p.nome)}</td><td>${escapeHtml(p.email)}</td><td><span class="badge">${escapeHtml(p.role)}</span></td>
-      <td class="mono">${escapeHtml(p.id)}</td>
+      <td>${escapeHtml(p.nome)}</td><td class="mono">${escapeHtml(p.identificador||'—')}</td><td>${escapeHtml(p.email||'—')}</td><td><span class="badge">${escapeHtml(p.role)}</span></td>
       <td><a class="btn sec" href="professores-editar.html?id=${encodeURIComponent(p.id)}">Editar</a></td>
     </tr>`).join("");
     mostrarAlerta(alerta,"ok",`✓ ${itens.length} professor(es) encontrado(s).`);

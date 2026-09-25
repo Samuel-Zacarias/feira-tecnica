@@ -1,6 +1,7 @@
 const Projeto = require("../models/Projeto");
 const ErrorResponse = require("../utils/ErrorResponse");
 const QrCodeGenerator = require("../utils/QrCodeGenerator");
+const { projectPublicUrl } = require("../utils/ProjectPublicUrl");
 
 const CAMPOS_EDITAVEIS_ALUNO = [
     "statusProjeto",
@@ -67,8 +68,7 @@ module.exports = class ProjetoService {
     };
 
     #gerarQrCodeDeProjeto = async (projeto, baseUrl, matricula = null) => {
-        const origem = String(baseUrl || "http://localhost:3000").replace(/\/$/, "");
-        const urlPublica = `${origem}/projeto.html?id=${projeto.id}`;
+        const urlPublica = projectPublicUrl(baseUrl, projeto.id);
         const qrCode = await QrCodeGenerator.gerar(urlPublica);
 
         return {

@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongodb');
+const ErrorResponse = require('../utils/ErrorResponse');
 
 module.exports = class AvaliacaoDAOMongo {
     #database;
@@ -7,9 +8,22 @@ module.exports = class AvaliacaoDAOMongo {
         this.#database = databaseInstance;
     }
 
+    async ensureIndexes() {
+        const collection = await this.#database.getCollection('avaliacoes');
+        await collection.createIndex(
+            { projetoId: 1, avaliadorId: 1 },
+            { unique: true, partialFilterExpression: { avaliadorId: { $type: 'string' } } }
+        );
+    }
+
     async create(avaliacao) {
         const collection = await this.#database.getCollection('avaliacoes');
-        const result = await collection.insertOne(this.#modelToDocument(avaliacao));
+        let result;
+        try { result = await collection.insertOne(this.#modelToDocument(avaliacao)); }
+        catch (error) {
+            if (error.code === 11000) throw new ErrorResponse(409, 'Este professor já avaliou o projeto.');
+            throw error;
+        }
         if (!result.insertedId) throw new Error('Falha ao inserir avaliação');
         return result.insertedId.toString();
     }
@@ -50,7 +64,7 @@ module.exports = class AvaliacaoDAOMongo {
     }
 
     async findByField(field, value) {
-        const camposPermitidos = ['id', 'projetoId', 'avaliador', 'status'];
+        const camposPermitidos = ['id', 'projetoId', 'avaliador', 'avaliadorId', 'status'];
         if (!camposPermitidos.includes(field)) {
             throw new Error(`Campo inválido para busca: ${field}`);
         }
@@ -80,6 +94,7 @@ module.exports = class AvaliacaoDAOMongo {
         return {
             projetoId: new ObjectId(this.#getProjetoId(avaliacao)),
             avaliador: avaliacao.avaliador,
+            avaliadorId: avaliacao.avaliadorId,
             data: avaliacao.data,
             criatividade: avaliacao.criatividade,
             relevancia: avaliacao.relevancia,
@@ -125,6 +140,7 @@ module.exports = class AvaliacaoDAOMongo {
                 descricao: doc.projeto.descricao,
             } : null,
             avaliador: doc.avaliador,
+            avaliadorId: doc.avaliadorId || null,
             data: doc.data,
             criatividade: doc.criatividade,
             relevancia: doc.relevancia,

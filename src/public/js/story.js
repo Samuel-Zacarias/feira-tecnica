@@ -1,16 +1,18 @@
 (() => {
   const media = matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = matchMedia('(max-width: 700px)');
   const hero = document.querySelector('.hero-photo');
   if (!hero) return;
   let scheduled = false;
   function draw() {
     scheduled = false;
-    hero.style.transform = media.matches ? '' : `translateY(${Math.min(scrollY, innerHeight) * .12}px) scale(1.04)`;
+    hero.style.transform = media.matches || mobile.matches ? '' : `translateY(${Math.min(scrollY, innerHeight) * .12}px) scale(1.04)`;
   }
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(draw); } }
   addEventListener('scroll', schedule, { passive: true });
   addEventListener('resize', schedule);
   media.addEventListener('change', schedule);
+  mobile.addEventListener('change', schedule);
   draw();
   // Entrada progressiva somente abaixo da área visível, sem bloquear a rolagem.
   if ('IntersectionObserver' in window && !media.matches) {

@@ -25,6 +25,7 @@ app.use('/api',async(req,res)=>{
    const urlPublica=`http://127.0.0.1:${Number(process.env.PREVIEW_PORT||4174)}/projeto.html?id=${id}`;
    data={projetoId:id,tema:project.tema,urlPublica,qrCode:await QR.gerar(urlPublica)};
  }else if(route.includes('/publico/')){const p=projects.find(p=>p.id===route.split('/').pop());if(!p)return res.status(404).json({success:false,message:'Projeto não encontrado.'});data={projeto:p};}
+ else if(route.includes('configuracao-votacao'))data={data:'2026-10-02',periodos:[{inicio:'07:00',fim:'12:00'},{inicio:'17:00',fim:'22:30'}],exigirCodigo:false,codigosGerados:0};
  else if(route.includes('ranking')){const ranking=[{posicao:1,tema:projects[1].tema,curso:'QUÍMICA',media:8.4,avaliacoes:1,projetoId:projects[1].id}];data={ranking,rankingPorCurso:{'QUÍMICA':ranking},atualizadoEm:new Date().toISOString()};}
  else if(route.endsWith('/projetos/meu'))data={projeto:project};
  else if(route.endsWith('/projetos')||route.endsWith('/publicos'))data={projetos:projects};

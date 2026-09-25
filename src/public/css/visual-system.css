@@ -1,6 +1,7 @@
 @import url('./design-tokens.css');
 @import url('./component-layout.css');
 @import url('./public-story.css');
+@import url('./mobile-workspace.css');
 
 /* Base compartilhada: não interfere nos dados nem nas permissões das telas. */
 .experience,.story-site {font-family:var(--font-body);background:var(--canvas);color:var(--text);-webkit-font-smoothing:antialiased}
@@ -72,6 +73,9 @@
 .experience .visitor-rating-options label>span {padding:12px 0;text-align:center;min-height:44px}
 .experience .visitor-rating-options input:checked+span {background:var(--brand-navy);color:#fff;border-color:var(--brand-orange);box-shadow:0 0 0 2px var(--brand-orange)}
 .experience .visitor-rating .visitor-summary {color:var(--brand-navy)}
+.experience .visitor-ticket:not([hidden]){display:grid;gap:8px;max-width:360px;margin:0 0 18px;font-weight:650;color:var(--brand-navy)}
+.experience .visitor-ticket input{width:100%;min-height:46px;padding:10px 12px;border:1px solid #9bafc5;border-radius:8px;background:#fff;color:var(--brand-navy);font:inherit;letter-spacing:.04em}
+.experience .visitor-ticket input:focus-visible{outline:3px solid var(--brand-orange);outline-offset:2px}
 /* Foco claro sobre superfícies claras e escuras. */
 .experience :focus-visible,.story-site :focus-visible {outline:3px solid var(--brand-orange);outline-offset:4px}
 .preview-banner {background:#e9eef4!important;color:#334961!important;border-bottom:1px solid #cbd6e2}

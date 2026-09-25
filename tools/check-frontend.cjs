@@ -1,6 +1,80 @@
-const fs=require('fs'),path=require('path'),vm=require('vm');
-const root=path.resolve(__dirname,'../src/public');let count=0;const errors=[];
-for(const file of fs.readdirSync(root).filter(f=>f.endsWith('.html'))){const html=fs.readFileSync(path.join(root,file),'utf8');for(const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){if(!match[1].includes('src=')&&match[2].trim()){try{if(match[1].includes('module')){const checked=require('child_process').spawnSync(process.execPath,['--input-type=module','--check'],{input:match[2],encoding:'utf8'});if(checked.status!==0)throw new Error(checked.stderr);}else new vm.Script(match[2],{filename:file});count++;}catch(e){errors.push(e.message+' in '+file);}}}const markup=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');for(const [,ref]of markup.matchAll(/(?:href|src)="([^"#]+)"/g)){if(/^(https?:|data:|mailto:|tel:|\/|\$)/.test(ref)||ref.includes('${'))continue;const resource=ref.split(/[?#]/)[0];if(resource&&!fs.existsSync(path.join(root,resource)))errors.push(file+': '+resource);}}
-for(const file of fs.readdirSync(path.join(root,'js')).filter(f=>f.endsWith('.js'))){try{new vm.Script(fs.readFileSync(path.join(root,'js',file),'utf8'),{filename:file});count++;}catch(e){errors.push(e.message);}}
-if(errors.length){console.error(errors.join('\n'));process.exitCode=1;}else console.log(`${count} scripts validados; referências locais de todas as páginas conferidas.`);
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const { spawnSync } = require('node:child_process');
 
+const publicDir = path.resolve(__dirname, '../src/public');
+const errors = [];
+let scriptsChecked = 0;
+
+function checkLocalReference(file, reference) {
+    if (/^(?:https?:|data:|mailto:|tel:|\/|\$)/i.test(reference) || reference.includes('${')) return;
+    const resource = reference.split(/[?#]/)[0];
+    if (!resource) return;
+    const target = path.resolve(path.dirname(file), resource);
+    if (!target.startsWith(publicDir + path.sep) || !fs.existsSync(target)) {
+        errors.push(`${path.relative(publicDir, file)}: recurso ausente: ${reference}`);
+    }
+}
+
+function checkInlineScript(file, script, attributes) {
+    if (!script.trim()) return;
+    try {
+        if (/\btype=["']module["']/i.test(attributes)) {
+            const result = spawnSync(process.execPath, ['--input-type=module', '--check'], {
+                input: script,
+                encoding: 'utf8',
+            });
+            if (result.status !== 0) throw new Error(result.stderr.trim());
+        } else {
+            new vm.Script(script, { filename: file });
+        }
+        scriptsChecked++;
+    } catch (error) {
+        errors.push(`${path.relative(publicDir, file)}: ${error.message}`);
+    }
+}
+
+function checkHtml(file) {
+    const html = fs.readFileSync(file, 'utf8');
+    for (const [, attributes, script] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+        if (!/\bsrc\s*=/i.test(attributes)) checkInlineScript(file, script, attributes);
+    }
+    for (const [, reference] of html.matchAll(/(?:href|src)=["']([^"'#]+)["']/gi)) {
+        checkLocalReference(file, reference);
+    }
+}
+
+function checkAsset(file) {
+    const source = fs.readFileSync(file, 'utf8');
+    if (file.endsWith('.js')) {
+        try {
+            new vm.Script(source, { filename: file });
+            scriptsChecked++;
+        } catch (error) {
+            errors.push(`${path.relative(publicDir, file)}: ${error.message}`);
+        }
+    } else {
+        for (const [, reference] of source.matchAll(/@import\s+(?:url\()?\s*["']([^"']+)["']/gi)) {
+            checkLocalReference(file, reference);
+        }
+    }
+}
+
+for (const name of fs.readdirSync(publicDir).filter(name => name.endsWith('.html'))) {
+    checkHtml(path.join(publicDir, name));
+}
+for (const folder of ['js', 'css']) {
+    for (const name of fs.readdirSync(path.join(publicDir, folder))) {
+        if (name.endsWith(folder === 'js' ? '.js' : '.css')) {
+            checkAsset(path.join(publicDir, folder, name));
+        }
+    }
+}
+
+if (errors.length) {
+    console.error(errors.join('\n'));
+    process.exitCode = 1;
+} else {
+    console.log(`${scriptsChecked} scripts validados; referências HTML e imports CSS conferidos.`);
+}

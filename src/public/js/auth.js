@@ -22,7 +22,7 @@
 
     window.sair = async function sair() {
         try {
-            await fetch("/api/v1/sessao/logout", { method: "POST" });
+            await fetch("api/v1/sessao/logout", { method: "POST" });
         } catch (_) {
             // A sessão local ainda precisa ser encerrada mesmo sem resposta do servidor.
         }
@@ -37,7 +37,7 @@
             ...(options.headers || {}),
         };
 
-        const response = await fetch(url, { ...options, headers });
+        const response = await fetch(url.replace(/^\/api\//, "api/"), { ...options, headers });
         const refreshedToken = response.headers.get("authorization");
         if (refreshedToken) {
             localStorage.setItem(

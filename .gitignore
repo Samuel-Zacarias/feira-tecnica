@@ -15,4 +15,8 @@ Thumbs.db
 
 # Cadastro privado e credenciais de alunos: não publicar em repositórios.
 data/
+backups/
+feira-tecnica-atualizada/
 *acessos*privado*
+resultado-professores-ids.csv
+resultado-importacao-professores.csv

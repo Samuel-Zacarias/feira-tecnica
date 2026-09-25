@@ -26,6 +26,7 @@ module.exports = class AvaliacaoController {
         const avaliacao = await this.#avaliacaoService.createAvaliacao({
             ...request.body.avaliacao,
             avaliador: request.usuario.nome,
+            avaliadorId: request.usuario.idProfessor,
         });
 
         response.status(201).json({
@@ -79,13 +80,11 @@ module.exports = class AvaliacaoController {
             await this.#avaliacaoService.findById(request.params.idAvaliacao);
 
         this.#validarAcesso(request, atual, 'editar');
+        if (!atual.avaliadorId) {
+            throw new ErrorResponse(409, 'Avaliação antiga sem professor identificado. Peça à administração para conferir o cadastro.');
+        }
 
         const corpo = request.body.avaliacao;
-
-        const avaliador =
-            request.usuario.role === 'ADMINISTRADOR'
-                ? (corpo.avaliador || atual.avaliador)
-                : request.usuario.nome;
 
         const atualizada =
             await this.#avaliacaoService.updateAvaliacao(
@@ -93,7 +92,8 @@ module.exports = class AvaliacaoController {
                 {
                     avaliacao: {
                         ...corpo,
-                        avaliador,
+                        avaliador: atual.avaliador,
+                        avaliadorId: atual.avaliadorId,
                     },
                 }
             );
@@ -133,14 +133,14 @@ module.exports = class AvaliacaoController {
         }
 
         return avaliacoes.filter(
-            avaliacao => avaliacao.avaliador === request.usuario.nome
+            avaliacao => avaliacao.avaliadorId === request.usuario.idProfessor
         );
     }
 
     #validarAcesso(request, avaliacao, acao) {
         const permitido =
             request.usuario.role === 'ADMINISTRADOR' ||
-            avaliacao.avaliador === request.usuario.nome;
+            avaliacao.avaliadorId === request.usuario.idProfessor;
 
         if (!permitido) {
             throw new ErrorResponse(

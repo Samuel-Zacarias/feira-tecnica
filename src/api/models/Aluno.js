@@ -36,6 +36,7 @@ module.exports = class Aluno {
         if (typeof value !== "string" || value.length < 8) {
             throw new Error("senha deve ter pelo menos 8 caracteres.");
         }
+        if (Buffer.byteLength(value, 'utf8') > 72) throw new Error('senha deve ter no máximo 72 bytes.');
         if (!/[A-Z]/.test(value) || !/[a-z]/.test(value) || !/[0-9]/.test(value) || !/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
             throw new Error("senha deve possuir maiúscula, minúscula, número e caractere especial.");
         }

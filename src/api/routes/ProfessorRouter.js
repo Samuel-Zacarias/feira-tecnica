@@ -15,6 +15,9 @@ module.exports = class ProfessorRouter {
     createRoutes = () => {
         this.#router.post("/login", this.#middleware.validateBody, this.#controller.login);
 
+        this.#router.put("/me/senha", this.#jwt.validateToken,
+            this.#jwt.permitirRoles("AVALIADOR", "ADMINISTRADOR"), this.#controller.changePassword);
+
         const somenteAdmin = [
             this.#jwt.validateToken,
             this.#jwt.permitirRoles("ADMINISTRADOR"),

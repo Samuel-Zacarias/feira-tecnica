@@ -19,6 +19,7 @@ module.exports = class AlunoRouter {
 
         this.#router.post('/login', this.#middleware.validateLoginBody, this.#controller.login);
         this.#router.get('/me', autenticado, aluno, this.#controller.me);
+        this.#router.put('/me/senha', autenticado, aluno, this.#controller.changePassword);
         this.#router.post('/', autenticado, administrador, this.#middleware.validateCreateBody, this.#controller.store);
         this.#router.get('/', autenticado, administrador, this.#controller.index);
         return this.#router;

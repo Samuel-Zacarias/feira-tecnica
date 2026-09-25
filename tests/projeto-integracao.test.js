@@ -63,6 +63,13 @@ test('QR da matrícula e QR do aluno apontam para o mesmo projeto', async () => 
     assert.match(found.qrCode, /^data:image\/png;base64,/);
 });
 
+test('QR exige endereço acessível e preserva o prefixo da instalação', async () => {
+    const f = fixture();
+    await assert.rejects(f.service.gerarQrCodeMeuProjeto({ idAluno: 'aluno-1' }, 'http://localhost:3000'), error => error.httpCode === 503);
+    const generated = await f.service.gerarQrCodeMeuProjeto({ idAluno: 'aluno-1' }, 'https://escola.example/feira');
+    assert.equal(generated.urlPublica, `https://escola.example/feira/projeto.html?id=${f.get().id}`);
+});
+
 test('matrícula vazia e desconhecida retornam erros claros', async () => {
     const f = fixture();
     await assert.rejects(f.service.gerarQrCodePorMatricula(' '), e => e.httpCode === 400);
@@ -71,6 +78,12 @@ test('matrícula vazia e desconhecida retornam erros claros', async () => {
 
 test('rota de busca de matrícula exige administrador', async t => {
     const f = fixture(), app = express();
+    const oldPublicBaseUrl = process.env.PUBLIC_BASE_URL;
+    process.env.PUBLIC_BASE_URL = 'https://escola.example/feira';
+    t.after(() => {
+        if (oldPublicBaseUrl === undefined) delete process.env.PUBLIC_BASE_URL;
+        else process.env.PUBLIC_BASE_URL = oldPublicBaseUrl;
+    });
     // Autenticação simulada apenas neste teste; o roteador e o controller são reais.
     const jwt = {
         validateToken(req, res, next) {

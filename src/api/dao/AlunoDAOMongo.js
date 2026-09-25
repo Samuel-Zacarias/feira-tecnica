@@ -37,6 +37,17 @@ module.exports = class AlunoDAOMongo {
         return this.#documentToObject(documento);
     }
 
+    async changePassword(id, currentPassword, newPassword) {
+        if (!ObjectId.isValid(id)) return false;
+        const collection = await this.#database.getCollection('alunos');
+        const _id = new ObjectId(id);
+        const doc = await collection.findOne({ _id });
+        if (!doc?.senha || !await bcrypt.compare(currentPassword, doc.senha)) return false;
+        const hash = await bcrypt.hash(newPassword, 12);
+        const result = await collection.updateOne({ _id, senha: doc.senha }, { $set: { senha: hash, senhaVersao: 'pessoal-v1' } });
+        return result.matchedCount === 1;
+    }
+
     async findAll() {
         const collection = await this.#database.getCollection('alunos');
         const docs = await collection
@@ -79,6 +90,7 @@ module.exports = class AlunoDAOMongo {
             turma: doc.turma,
             curso: doc.curso,
             role: 'ALUNO',
+            deveTrocarSenha: doc.senhaVersao === 'turma-2026-v1',
             dataCadastro: doc.dataCadastro,
         };
     }

@@ -36,4 +36,9 @@ module.exports = class AlunoController {
         const aluno = await this.#service.findById(request.usuario.idAluno);
         response.json({ success: true, data: { aluno } });
     });
+
+    changePassword = asyncHandler(async (request, response) => {
+        await this.#service.changePassword(request.usuario.idAluno, request.body);
+        response.json({ success: true, message: 'Senha alterada com sucesso.' });
+    });
 };

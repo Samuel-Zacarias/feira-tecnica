@@ -50,8 +50,8 @@
       <div id="loginPanel" class="profile-panel active">
         <form id="loginForm">
           <div class="field">
-            <label id="labelIdentificacao" for="identificacao">E-mail institucional</label>
-            <input id="identificacao" autocomplete="username" inputmode="email" placeholder="nome@escola.com" required>
+            <label id="labelIdentificacao" for="identificacao">ID numérico do professor ou e-mail do administrador</label>
+            <input id="identificacao" autocomplete="username" inputmode="text" placeholder="ID numérico ou e-mail" required>
           </div>
           <div class="field">
             <label for="senha">Senha do sistema da feira</label>
@@ -113,11 +113,11 @@ function setPerfil(p){
     senha.placeholder='Sua turma (ex.: 2J)';
     document.getElementById('senhaAjuda').textContent='A senha inicial é sua turma em letras maiúsculas, como no cadastro. Não use a senha do Gmail.';
   }else{
-    label.textContent='E-mail institucional';
-    ident.placeholder='nome@escola.com';
-    ident.inputMode='email';
+    label.textContent='ID numérico do professor ou e-mail do administrador';
+    ident.placeholder='ID numérico ou e-mail';
+    ident.inputMode='text';
     senha.placeholder='Senha fornecida pela organização';
-    document.getElementById('senhaAjuda').textContent='Use a senha de acesso da feira. Ela não é a senha do seu Gmail.';
+    document.getElementById('senhaAjuda').textContent='Professores entram pelo ID e senha inicial da escola. Administradores usam e-mail e senha própria.';
   }
   
 }
@@ -136,10 +136,10 @@ form.addEventListener('submit',async e=>{
   entrar.disabled=true;
   entrar.querySelector('span:first-child').textContent='Entrando...';
   try{
-    const endpoint=perfil==='Aluno'?'/api/v1/alunos/login':'/api/v1/professores/login';
+    const endpoint=perfil==='Aluno'?'api/v1/alunos/login':'api/v1/professores/login';
     const body=perfil==='Aluno'
       ?{aluno:{identificacao:ident.value.trim(),senha:senha.value}}
-      :{professor:{email:ident.value.trim(),senha:senha.value}};
+      :{professor:{identificacao:ident.value.trim(),senha:senha.value}};
     const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)});
     const d=await r.json().catch(()=>null);
     if(!r.ok||!d?.success||!d?.data?.token)throw new Error(d?.error?.message||d?.message||'Não foi possível entrar.');
@@ -147,7 +147,10 @@ form.addEventListener('submit',async e=>{
     localStorage.setItem('userData',JSON.stringify(d));
     localStorage.setItem('perfilUsuario',perfil);
     const next=new URLSearchParams(location.search).get('next');
-    const destino=next&&next.startsWith('/')&&!next.startsWith('//')?next:(perfil==='Aluno'?'/aluno.html':'/dashboard.html');
+    let destino=perfil==='Aluno'?'aluno.html':'dashboard.html';
+    if(next&&next.startsWith('/')&&!next.includes('\\')){
+      try{const url=new URL(next,location.origin);if(url.origin===location.origin)destino=url.pathname+url.search+url.hash}catch(_){/* Usa a área inicial do perfil. */}
+    }
     location.replace(destino);
   }catch(err){
     alerta.className='alert show error';

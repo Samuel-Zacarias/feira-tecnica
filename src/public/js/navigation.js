@@ -16,18 +16,21 @@
     };
     const student = [
         ['aluno.html','Meu projeto','projects'], ['cracha-aluno.html','Meu crachá','badge'],
-        ['qrcodes.html','QR Code e estande','qr'], ['index.html','Vitrine de projetos','public'], ['ranking.html','Ranking','chart']
+        ['qrcodes.html','QR Code e estande','qr'], ['index.html','Vitrine de projetos','public'], ['ranking.html','Ranking da banca','chart'], ['ranking-visitantes.html','Ranking dos visitantes','chart']
     ];
     const staff = [
         ['dashboard.html','Visão geral','home'], ['projetos-consulta.html','Projetos','projects'],
         ['avaliacoes-cadastro.html','Avaliar projeto','rate'], ['avaliacoes-consulta.html','Avaliações','history'],
-        ['ranking.html','Ranking','chart']
+        ['ranking.html','Ranking da banca','chart'], ['ranking-visitantes.html','Ranking dos visitantes','chart']
     ];
     if (role === 'ADMINISTRADOR') staff.push(
         ['receberExcel.html','Importar planilha','import'], ['qrcodes.html','QR Code e estande','qr'],
-        ['professores-consulta.html','Professores','users'], ['alunos-consulta.html','Acessos dos alunos','badge']
+        ['professores-consulta.html','Professores','users'], ['alunos-consulta.html','Acessos dos alunos','badge'],
+        ['configuracoes-votacao.html','Votação do público','chart']
     );
     let current = location.pathname.split('/').pop();
+    if (current === 'professores-novo.html') current = 'professores-consulta.html';
+    if (current === 'professores-importar.html') current = 'professores-consulta.html';
     if (/^(professores|alunos|projetos)-(cadastro|editar)\.html$/.test(current)) current = current.replace(/-(cadastro|editar)/, '-consulta');
     if (current === 'avaliacoes-editar.html') current = 'avaliacoes-consulta.html';
     nav.setAttribute('aria-label', 'Navegação principal');

@@ -1,6 +1,6 @@
 // Prévia somente de leitura. Nunca expõe a carga privada ou simula login real.
 const express=require('express'),fs=require('fs'),path=require('path'),crypto=require('crypto');
-const data=require('../data/cadastro-feira-2026.json');
+const data=require('../src/api/database/projetos-feira-2026.json');
 const projects=data.projects.map(p=>({id:crypto.createHash('sha256').update(p.importKey).digest('hex').slice(0,24),tema:p.tema,curso:p.curso,representante:{nome:p.representante?.nome,turma:p.representante?.turma},integrantes:p.integrantes.map(i=>({nome:i.nome,turma:i.turma})),imagens:[],tecnologias:[],links:{},statusProjeto:p.statusProjeto}));
 const app=express(),root=path.resolve(__dirname,'../src/public');
 app.use((req,res,next)=>{res.set('Cache-Control','no-store');next();});

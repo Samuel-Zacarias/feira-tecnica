@@ -19,6 +19,11 @@ module.exports = class ProfessorController {
         });
     });
 
+    changePassword = asyncHandler(async (request, response) => {
+        await this.#professorService.changePassword(request.usuario.idProfessor, request.body);
+        response.json({ success: true, message: 'Senha alterada com sucesso.' });
+    });
+
     store = asyncHandler(async (request, response) => {
         const dados = request.body.professor || request.body.Professor;
         const professor = await this.#professorService.createProfessor(dados);

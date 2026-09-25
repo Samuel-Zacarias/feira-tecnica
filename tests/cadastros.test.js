@@ -6,7 +6,17 @@ const {importarCadastros}=require('../src/api/database/ImportarCadastros');
 const AlunoDAO=require('../src/api/dao/AlunoDAOMongo');
 const ProjetoDAO=require('../src/api/dao/ProjetoDAOMongo');
 const ProjetoService=require('../src/api/services/ProjetoService');
-const data=require('../data/cadastro-feira-2026.json');
+// Amostra fictícia: testes nunca dependem da planilha privada dos alunos.
+const data={
+  accounts:[
+    {importKey:'aluno-ficticio-1',projetoImportKey:'projeto-ficticio-1',nome:'Aluno Fictício',matricula:'90000001',turma:'2A',email:'aluno@example.test',senha:bcrypt.hashSync('2A',10),senhaVersao:'turma-2026-v1'},
+    {importKey:'aluno-ficticio-2',projetoImportKey:'projeto-ficticio-2',nome:'Outra Pessoa',matricula:'90000002',turma:'2B',senha:bcrypt.hashSync('2B',10),senhaVersao:'turma-2026-v1'},
+  ],
+  projects:[
+    {importKey:'projeto-ficticio-1',tema:'Projeto fictício 1',representante:{nome:'Aluno Fictício',matricula:'90000001',turma:'2A'}},
+    {importKey:'projeto-ficticio-2',tema:'Projeto fictício 2',representante:{nome:'Outra Pessoa',matricula:'90000002',turma:'2B'}},
+  ],
+};
 
 function matches(doc,query){return Object.entries(query).every(([key,value])=>{
   if(key==='$or')return value.some(q=>matches(doc,q));
@@ -21,16 +31,16 @@ function database(){const collections={};return {collections,getCollection:async
   async insertOne(doc){const d={_id:new ObjectId(),...doc};this.docs.push(d);return {insertedId:d._id};}
 }};}
 
-test('carga completa inclui 309 projetos e 1221 contas, é repetível e preserva alterações',async()=>{
+test('carga privada é repetível e preserva senhas e apresentações editadas',async()=>{
   const db=database();const first=await importarCadastros(db,data);
-  assert.equal(first.projetosCriados,309);assert.equal(first.contasCriadas,1221);
+  assert.equal(first.projetosCriados,2);assert.equal(first.contasCriadas,2);
   const aluno=db.collections.alunos.docs[0],project=db.collections.projetos.docs.find(p=>p.importKey===aluno.projetoImportKey);
   assert(project.alunosAutorizados.includes(aluno._id.toString()));
   aluno.senha='senha_alterada';project.descricao='Apresentação editada';
   const second=await importarCadastros(db,data);
   assert.equal(second.projetosCriados,0);assert.equal(second.contasCriadas,0);
   assert.equal(aluno.senha,'senha_alterada');assert.equal(project.descricao,'Apresentação editada');
-  assert.equal(new Set(data.accounts.map(a=>a.matricula)).size,1221);
+  assert.equal(new Set(data.accounts.map(a=>a.matricula)).size,2);
   assert(data.accounts.every(a=>/^\$2[aby]\$10\$/.test(a.senha)));
   assert(data.accounts.every(a=>a.senhaVersao==='turma-2026-v1'));
   assert(await bcrypt.compare(aluno.turma,data.accounts[0].senha));
@@ -64,6 +74,10 @@ test('login aceita matrícula ou e-mail normalizado e rejeita senha errada',asyn
   assert((await dao.login('ALUNO@EXAMPLE.TEST','Teste!12345')).id);
   assert.equal(await dao.login('001234','errada'),null);
   assert.equal((await dao.login('001234','Teste!12345')).senha,undefined);
+  assert.equal(await dao.changePassword(collection.docs[0]._id.toString(),'errada','Nova!12345'),false);
+  assert.equal(await dao.changePassword(collection.docs[0]._id.toString(),'Teste!12345','Nova!12345'),true);
+  assert.equal(await dao.login('001234','Teste!12345'),null);
+  assert((await dao.login('001234','Nova!12345')).id);
 });
 
 test('matrícula ambígua não permite acesso e apresentação pode ser editada com cadastro pendente',async()=>{
@@ -101,6 +115,11 @@ test('login HTTP emite sessão e abre somente o projeto autorizado',async()=>{
     const login=await response.json();assert.equal(login.data.aluno.senha,undefined);
     const own=await fetch(base+'/api/v1/projetos/meu',{headers:{Authorization:`Bearer ${login.data.token}`}});
     assert.equal(own.status,200);assert.equal((await own.json()).data.projeto.tema,'Projeto HTTP');
+    const change=await fetch(base+'/api/v1/alunos/me/senha',{method:'PUT',headers:{Authorization:`Bearer ${login.data.token}`,'Content-Type':'application/json'},body:JSON.stringify({senhaAtual:'Http!12345',novaSenha:'Nova!12345'})});
+    assert.equal(change.status,200);
+    assert.equal((await col.findOne({matricula:'009999'})).senhaVersao,'pessoal-v1');
+    assert.equal((await fetch(base+'/api/v1/alunos/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({aluno:{identificacao:'009999',senha:'Http!12345'}})})).status,401);
+    assert.equal((await fetch(base+'/api/v1/alunos/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({aluno:{identificacao:'009999',senha:'Nova!12345'}})})).status,200);
     assert.equal((await fetch(base+'/api/v1/projetos/meu')).status,401);
   } finally {server.closeAllConnections();await new Promise(r=>server.close(r));}
 });

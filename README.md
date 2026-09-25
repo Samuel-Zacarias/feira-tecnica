@@ -1,100 +1,99 @@
-# Feira Técnica 2026 · UNIVAP
+# Feira Técnica 2026 · Colégios Univap
 
-Projeto unificado a partir de **feira-tecnica-interface-refinada-avaliador(1)** (base principal) e **feira-tecnica-main (2)(1)**. A estrutura Express → Router → Middleware → Controller → Service → DAO → MongoDB foi preservada.
+Sistema da Feira Técnica da Unidade Centro: vitrine pública de projetos, área dos alunos, avaliação de professores, avaliação de visitantes, ranking, crachás e QR Codes. O front-end e o back-end ficam nesta pasta.
 
-## Executar no seu computador
+## Organização
 
-1. Extraia este ZIP em uma nova pasta. Abra no VS Code a pasta que contém `package.json` e `Server.js`.
-2. Deixe o serviço MongoDB em execução. O Compass é apenas a interface de consulta e não precisa ficar aberto.
-3. No terminal dessa pasta, execute um comando por vez:
+- `src/api/`: regras de negócio, rotas, acesso ao MongoDB e carga inicial dos projetos.
+- `src/public/`: páginas ativas, estilos, scripts e imagens exibidos pelo site.
+- `tests/`: testes das regras de acesso, importação, avaliação e rankings.
+- `tools/`: verificação do front-end, preparação de dados, prévia e manutenção.
+- `nginx/conf/`: exemplo de proxy para publicar o sistema em `/feira/`.
+- `IMPLANTACAO-ESCOLA.md`: passos para instalar e conferir o sistema no servidor da escola.
+- `Server.js` e `index.js`: configuração e inicialização do servidor.
+- `data/`: dados privados gerados na instalação; não faz parte do ZIP de entrega.
+
+Os arquivos de interface antigos sem ligação com as telas atuais foram retirados. `visual-system.css` carrega os módulos de estilo que ainda são usados; por isso esses módulos devem permanecer juntos.
+
+## Começar
+
+1. Instale o Node.js e inicie o MongoDB local.
+2. Nesta pasta, execute `npm ci`.
+3. Execute `npm start` e abra `http://localhost:3000/index.html`.
+
+No primeiro início, o sistema cria automaticamente apenas um administrador com senha forte individual. Abra `data/acessos-iniciais.json` para ver seu e-mail e senha gerada. Esse arquivo é privado e não deve ser publicado. O administrador entra pelo e-mail; cada professor entra com o ID numérico informado pela escola na planilha. Na primeira inicialização desta versão, avaliadores antigos sem ID informado recebem provisoriamente um ID numérico derivado da conta anterior. O administrador pode substituí-lo pelo ID oficial em **Editar professor**. A senha inicial `univap` é aplicada uma vez; reiniciar o servidor não altera a senha novamente.
+
+Ao entrar com `univap`, o professor vê **Segurança da conta · Trocar senha** aberto no painel. Ele informa a senha atual e uma nova senha pessoal forte (8 ou mais caracteres, com maiúscula, minúscula, número e símbolo). A antiga deixa de funcionar, e a senha pessoal é preservada nos reinícios. A opção também fica disponível depois pelo botão **Trocar senha** no painel. Somente a própria conta autenticada pode usar `PUT /api/v1/professores/me/senha`.
+
+Se quiser definir você mesmo a senha do primeiro administrador, configure antes de iniciar:
 
 ```powershell
-npm install
-npm start
+$env:BOOTSTRAP_ADMIN_EMAIL='professor@escola.com'
+$env:BOOTSTRAP_ADMIN_PASSWORD='uma-senha-longa-e-unica'
 ```
 
-4. Deixe esse terminal aberto. No navegador, acesse:
+A aplicação usa `MONGODB_URI` e `MONGODB_DATABASE` quando definidos; caso contrário, usa `mongodb://localhost:27017` e o banco `feira-tecnica2026`. O arquivo [LEIA-CADASTRO.md](LEIA-CADASTRO.md) traz a configuração completa.
 
-```text
-http://localhost:3000/login.html
-```
+## Publicar em `/feira/`
 
-A vitrine fica em `http://localhost:3000/index.html`. Não abra os HTMLs diretamente com `file://` ou Live Server: a autenticação e as APIs são servidas pelo Node.
+As páginas, arquivos estáticos e APIs funcionam sob o prefixo `/feira/` (padrão). Por exemplo: `https://escola.example/feira/receberExcel.html` e `https://escola.example/feira/api/v1/projetos`. O endereço sem prefixo continua disponível para desenvolvimento local. Se o servidor usar outro prefixo, defina `APP_BASE_PATH` antes de iniciar, por exemplo `$env:APP_BASE_PATH='/minha-feira'`; use uma string vazia para publicar só na raiz.
 
-O banco continua sendo `feira-tecnica2026`, em `localhost:27017`. Nenhuma migração ou exclusão do banco é necessária. Os dados que já estavam no seu MongoDB continuam sendo usados.
+Para QR Codes acessíveis pelos celulares, configure o endereço público **com o prefixo**, por exemplo `$env:PUBLIC_BASE_URL='https://escola.example/feira'`. Na prévia local iniciada com `npm start`, se houver exatamente um IP privado ativo na rede, o servidor usa automaticamente esse IP no QR mesmo que o navegador esteja em `localhost`. O telefone precisa estar na mesma rede e ter acesso à porta 3000. A prévia com contas de teste continua restrita ao próprio computador e não usa esse atalho. Na escola, defina `PUBLIC_BASE_URL` com o domínio HTTPS real. O proxy pode encaminhar `/feira/...` ao Node preservando ou removendo o prefixo; o navegador sempre usa URLs relativas à pasta da página. Reinicie o Node após mudar essas variáveis.
 
-Se aparecer `EADDRINUSE`, pare a outra instância do projeto com Ctrl+C no terminal em que ela está rodando. Depois inicie esta versão.
+## Acessos e dados
 
-## Acessos locais de demonstração
+- O CSV atualizado está incorporado em `src/api/database/projetos-feira-2026.json`: são 312 projetos carregados automaticamente ao iniciar o servidor. A importação usa uma chave por registro para não duplicar projetos; apresentações editadas pelas equipes são preservadas. O registro 311 do CSV veio sem título e precisa ser conferido pelo administrador.
+- O servidor cria automaticamente contas para os participantes do CSV incorporado que tenham matrícula e turma inequívocas e liga cada conta ao projeto correto. Uma simulação com o catálogo completo criou 1.229 acessos e separou 49 pendências. Confira `data/pendencias-importacao.json` após o primeiro início. O arquivo privado `data/cadastro-feira-2026.json`, se existir, é importado primeiro; senhas já trocadas e apresentações editadas são preservadas.
+- O aluno entra por matrícula ou por e-mail confirmado. A senha inicial é a turma em letras maiúsculas, por exemplo `2J`. Na área do aluno, em **Segurança da conta**, ele pode trocá-la por uma senha pessoal forte.
+- Não há contas administrativas com senha pública de demonstração. A senha do administrador inicial é gerada individualmente e salva em `data/acessos-iniciais.json`.
+- Administradores podem cadastrar professores em `professores-novo.html`, pelo botão **Cadastrar professor** na lista. Para avaliadores, informe o ID oficial usando somente números e o nome; o e-mail é opcional. O servidor define `univap` como senha inicial. Para administradores, são exigidos e-mail e senha forte próprios. O servidor exige sessão de administrador nessa página e na API de cadastro.
+- Para cadastrar vários professores, use **Importar planilha de professores** na lista. Baixe `modelo-professores.csv` e preencha `ID;Nome`, um professor por linha; o ID aceita apenas dígitos. Formate a coluna ID como texto no Excel para preservar zeros à esquerda e exporte como CSV UTF-8. As colunas `Email`, `Funcao` e `Senha` são opcionais para avaliadores; a função padrão é AVALIADOR. A página permite baixar `resultado-importacao-professores.csv` com sucessos e erros por ID. Guarde esse resultado em local privado. Para ADMINISTRADOR, e-mail e senha forte são obrigatórios. IDs e e-mails já cadastrados aparecem como falha sem alterar a conta existente.
 
-São os mesmos criados pelo seed da base principal, caso ainda não existam:
+### Professor e administrador de teste (somente local)
 
-| Perfil selecionado na tela | Identificação | Senha inicial |
-| --- | --- | --- |
-| Professor — administrador | admin@feira.com | Admin@2026 |
-| Professor — avaliador | avaliador@feira.com | Avaliador@2026 |
-| Aluno | aluno@feira.com ou 20260001 | Aluno@2026 |
+Com o MongoDB configurado, execute `npm run start:teste-acessos` e abra `http://localhost:3000/login.html`. Pare antes qualquer servidor que já esteja usando a porta 3000. O comando `npm start` não habilita as contas de teste.
 
-Se essas contas já existem com outras senhas, o seed não sobrescreve as senhas. Visitantes acessam a vitrine sem login, conforme o comportamento da base principal. Cadastro de visitantes e votação por e-mail não foram acrescentados nesta entrega.
+- Professor — ID numérico: `900000000001`; senha: `univap`.
+- Administrador — e-mail: `admin-teste@feira.local`; senha: `Univap@2026!`.
 
-## O que foi unificado
+As duas contas de teste só aceitam login com `ENABLE_TEST_PROFESSOR=true` fora de produção. O comando acima ativa essa opção apenas para o processo local. Em `NODE_ENV=production`, a aplicação recusa a ativação. As senhas fixas de teste são restauradas ao iniciar esse modo. O e-mail `professor-teste@feira.local` identifica a conta do professor, mas ele entra pelo ID. O administrador inicial real continua com senha individual gerada no primeiro início.
 
-| Área | Resultado |
-| --- | --- |
-| Identidade visual | Azul institucional, branco, vermelho em detalhes; tipografia, formulários e navegação compartilhados |
-| Login | Tela com seleção de perfil e apresentação da feira; mantém os endpoints e a sessão existentes |
-| Vitrine e projeto público | Apresentação editorial, filtros por curso, busca, galeria, equipe e localização |
-| Ranking | Classificação geral e por curso, atualização periódica da base principal |
-| Avaliador | Fila de projetos, notas por critério, avaliações individuais e revisão preservadas |
-| Administração | Cadastros, edição de projetos, localização do estande, acessos e importação |
-| Aluno | Apenas apresentação, etapa, fotos, tecnologias e links editáveis |
-| Crachá | Participante escolhido da equipe oficial, foto e função; nome preenchido automaticamente; impressão de até dois crachás por A4 |
-| QR Code e estande | Busca por matrícula do segundo projeto incorporada para administradores; QR do próprio projeto para alunos; download e placa A4 dobrável |
-| Importação | CSV com vírgula ou ponto e vírgula, acentos, aspas e quebras de linha; validação de cabeçalhos |
+- Há pendências de matrícula e e-mail na planilha original. Consulte [LEIA-CADASTRO.md](LEIA-CADASTRO.md) e `data/pendencias.json` antes de distribuir acessos.
+- O arquivo privado de acessos é entregue separadamente, fora deste projeto. Não publique a pasta `data` nem o arquivo de acessos.
 
-O tema, curso, equipe, matrículas, turmas, e-mails, equipamentos, necessidades, observações e localização são dados oficiais. Não são pedidos novamente ao aluno. A equipe e o tema continuam visíveis como referência. Correções oficiais ficam com a administração.
+## Fluxos
 
-A importação cadastra projetos usando o modelo `src/public/modelo-planilha-feira.csv`. Ela não cria automaticamente todas as contas de alunos: os acessos continuam sendo administrados em **Acessos dos alunos → Criar acesso**, como na base original. CSV não é a mesma coisa que XLSX; exporte a planilha como CSV antes de enviar.
+O visitante consulta os projetos e pode dar uma avaliação pública de 1 a 5 estrelas. A avaliação de professores é separada e alimenta o ranking da banca. O aluno edita a apresentação do próprio projeto e gera o QR Code que abre a página pública correspondente. O administrador cuida dos dados oficiais e dos acessos.
 
-## QR no celular e impressão
+Há dois rankings públicos: `ranking.html` usa somente avaliações finalizadas dos professores; `ranking-visitantes.html` usa somente as notas de 1 a 5 dos visitantes. Ambos ordenam pela média real, depois pelo número de avaliações e pelo título do projeto. A média é arredondada apenas para exibição. Filtrar por curso mantém a posição geral da equipe. O ranking dos visitantes permanece visível fora da janela de votação.
 
-Em **QR Code e estande**, o administrador pesquisa a matrícula; o aluno recebe seu próprio projeto automaticamente. A placa imprime as duas faces de uma folha A4 para dobrar ao meio. O QR abre a página pública do projeto, não uma votação.
+A votação começa configurada para **2 de outubro de 2026**, das **7h às 12h** e das **17h às 22h30**, no horário de São Paulo. O administrador pode alterar a data, os períodos e o uso de códigos em `configuracoes-votacao.html`, pelo menu interno. O servidor bloqueia envios fora dos horários; a página do projeto atualiza o estado automaticamente. O modo padrão permite uma nota por projeto neste navegador, com limite de envios por IP. Para uma votação com controle individual, gere os códigos no painel, guarde o CSV baixado e ative “Exigir código”. Um código identifica a mesma pessoa mesmo após limpar os cookies. O modo de identificação não pode ser trocado depois que houver votos.
 
-`localhost` aponta para o próprio aparelho. Para testar com um celular, computador e celular precisam estar na mesma rede, e o sistema deve ser aberto pelo endereço de rede do computador (por exemplo, `http://192.168.0.10:3000`). Gere o QR a partir desse endereço. O exemplo de IP deve ser substituído pelo IP real do seu computador.
+No celular, a página pública usa menu acessível, capa fotográfica ajustada à tela e filtros que podem ser percorridos com o dedo. A vitrine permite buscar, filtrar por curso e ordenar os títulos de A–Z ou Z–A. Ela mostra 24 projetos por vez; **Mostrar mais projetos** revela os próximos na ordem escolhida. As áreas internas e a página do projeto têm controles e espaçamentos adaptados para toque.
 
-Na impressão dos crachás e da placa, selecione A4, escala de 100%, sem cabeçalhos e rodapés; habilite gráficos de plano de fundo para manter as cores.
+Para abrir o QR Code no celular, o endereço do site precisa ser acessível pelo telefone. Na rede local, abra `http://IP-DO-COMPUTADOR:3000/feira/` no celular para conferir a conexão antes de imprimir o QR. Se houver mais de um IP de rede, configure `PUBLIC_BASE_URL` explicitamente. `localhost` no QR Code não funciona em outro aparelho.
 
-## Alterações no backend
+## Segurança e implantação
 
-Foram necessárias alterações pequenas e explícitas:
+O servidor gera uma chave de sessão em `data/.jwt-secret` se `JWT_SECRET` não for configurada. Preserve essa chave entre reinícios e use uma mesma `JWT_SECRET` longa em instalações com múltiplos servidores. Sessões expiram em 12 horas, o login tem limite de tentativas e as APIs não aceitam origens externas por padrão. Com HTTPS, configure `NODE_ENV=production` para marcar o cookie como seguro. Se houver um proxy confiável à frente do Node, configure `TRUST_PROXY_HOPS=1` (ou o número real de saltos) para identificar corretamente o IP e o protocolo.
 
-- `ProjetoService.js`: incorpora a geração de QR por matrícula do segundo projeto e retira `tema` e `localizacao` dos campos editáveis por aluno. A verificação de propriedade do projeto foi mantida.
-- `ProjetoController.js` e `ProjetoRouter.js`: incorporam `GET /api/v1/projetos/buscar-matricula`, restrito a administrador, do segundo projeto.
-- `Server.js`: protege `qrcodes.html` para administrador e aluno.
+Os códigos de visitante usam `data/.visitor-secret`; preserve também esse arquivo entre reinícios. Em múltiplos servidores, configure a mesma `VISITOR_TICKET_SECRET` longa em todos eles.
 
-Models, DAOs, banco, autenticação, seed e regras de notas permanecem os da base principal. A página de edição administrativa permite corrigir a localização que o aluno já não edita.
+Avaliações de professores são vinculadas ao ID da conta e há uma regra de unicidade no MongoDB para impedir duas avaliações do mesmo professor no mesmo projeto. Na primeira inicialização desta versão, avaliações antigas vinculadas apenas pelo nome são migradas quando há um único professor correspondente. Casos ambíguos ficam disponíveis somente para a administração e devem ser conferidos.
 
-As antigas URLs `prisma.html` e `QrCode.html` encaminham para a tela unificada. As demonstrações de cargos/funcionários, HTML de teste de PDF, nginx, dumps e dependências empacotadas não foram trazidos ao projeto final. As funções úteis de impressão foram incorporadas aos fluxos ativos.
+Faça uma cópia do MongoDB antes da feira e após o encerramento. Com as ferramentas oficiais do MongoDB instaladas, execute `powershell -File tools/backup-mongo.ps1`; o arquivo será criado em `backups/`, pasta que fica fora do ZIP de entrega. Teste a restauração em um banco separado antes de depender dela.
 
-## Organização do front-end
-
-- `src/public/css/feira.css`: identidade e componentes compartilhados, vitrine e responsividade.
-- `css/login.css`, `css/student.css`, `css/evaluator.css`, `css/qr-print.css`: estilos específicos e impressão.
-- `js/navigation.js`: menu consistente por perfil.
-- `js/auth.js`: sessão e cliente das APIs, preservado da base principal.
-- `js/csv.js`: leitura do CSV.
-- `js/qrcodes.js`: consulta e impressão do QR.
-
-O projeto não depende de fontes, ícones ou bibliotecas visuais carregadas de CDN.
+A senha inicial baseada na turma é previsível. A senha compartilhada `univap` para professores também é fácil de adivinhar. Antes de publicar o sistema na internet, substitua essas senhas iniciais por credenciais individuais ou autenticação institucional; o limite de tentativas de login não resolve esse risco por completo.
 
 ## Verificação
 
 ```powershell
 npm test
+node tools/check-frontend.cjs
 ```
 
-Os **9 testes automatizados passaram**. Cobrem preservação de dados oficiais, edição administrativa, bloqueio de edição de outra equipe, QR por matrícula, permissões da rota e leitura do CSV. Os testes usam DAO em memória e autenticação simulada; não alteram o MongoDB.
+Os testes usam um banco simulado. É necessário testar a conexão com o MongoDB e os fluxos completos no ambiente onde o sistema será usado.
 
-Também foram conferidos sintaxe JavaScript, IDs de elementos, destinos locais e referências de arquivos. Não foi possível executar o navegador de teste neste ambiente; a conferência visual, a impressão física e o fluxo completo conectado ao MongoDB real ainda precisam ser feitos no localhost.
+O ZIP de entrega contém uma única pasta do projeto, sem `node_modules`, dados privados ou cópias antigas. Instale as dependências com `npm ci`. As variáveis opcionais estão exemplificadas em `.env.example`; o Node não carrega esse arquivo automaticamente, configure-as no ambiente antes de iniciar.
 
-Roteiro de conferência: entrar em cada perfil; abrir projeto; salvar apresentação pelo aluno; imprimir crachá e placa; importar um CSV de teste; avaliar e revisar um projeto; consultar ranking; repetir a navegação em uma janela estreita. Use dados de teste para não alterar notas reais.
+Para gerar novamente o pacote limpo, execute `pwsh -File tools/package-project.ps1`.

@@ -83,6 +83,32 @@
     background:#fff;
     box-shadow:0 10px 28px rgba(8,33,62,.05)
 }
+.account-security {
+    margin:0 0 18px;
+    border-color:#cbd9e7;
+    background:#f8fbfe
+}
+.account-security summary {
+    cursor:pointer;
+    color:#08213e;
+    font-weight:700
+}
+.account-security > p {
+    margin:12px 0;
+    color:#52677c;
+    line-height:1.5
+}
+.account-security-form {
+    display:grid;
+    gap:12px;
+    max-width:470px
+}
+.account-security-form .field {min-width:0}
+.account-security-form .field label {display:block;margin-bottom:5px}
+.account-security-form .field input {width:100%}
+.account-security-form small {color:#52677c;line-height:1.5}
+.account-security-form button {justify-self:start}
+.account-security-form [role="status"] {margin:0;min-height:1.5em;color:#08213e}
 .eval-panel-head {
     display:flex;
     align-items:flex-start;
