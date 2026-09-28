@@ -1,6 +1,7 @@
 const Server = require("./Server");
 const logger = require("./src/api/utils/Logger");
 
+console.log("MONGODB_URI definida?", !!process.env.MONGODB_URI);
 async function iniciar() {
     try {
         const port = Number(process.env.PORT || 3000);

@@ -87,3 +87,7 @@
 {"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 18:16:18"}
 {"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 18:16:24","url":"/feira/api/v1/projetos/meu/qrcode"}
 {"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-28 18:32:29"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 18:55:09"}
+{"level":"info","message":"Projetos do CSV incorporado: 0 novos, 0 atualizados.","timestamp":"2026-09-28 18:55:10"}
+{"level":"info","message":"Alunos do CSV incorporado: 0 acessos novos, 0 vínculos, 49 pendências.","timestamp":"2026-09-28 18:55:11"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 18:55:11"}
