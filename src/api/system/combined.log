@@ -4,3 +4,39 @@
 {"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-23 21:40:52"}
 {"error":null,"httpCode":409,"level":"warn","message":"Esta matrícula aparece em mais de um projeto. Confira o cadastro antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-23 21:41:41","url":"/api/v1/projetos/buscar-matricula?matricula=50240143"}
 {"error":null,"httpCode":401,"level":"warn","message":"Matrícula/e-mail ou senha inválidos","method":"POST","timestamp":"2026-09-23 21:43:28","url":"/api/v1/alunos/login"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-24 14:19:45"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-24 14:19:46"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 13:56:43"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 13:56:45"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-28 14:06:01"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 14:06:05"}
+{"level":"warn","message":"Conta de demonstração insegura removida: admin@feira.com","timestamp":"2026-09-28 14:06:05"}
+{"level":"warn","message":"Conta de demonstração insegura removida: avaliador@feira.com","timestamp":"2026-09-28 14:06:05"}
+{"level":"warn","message":"Acessos iniciais criados. Consulte C:\\Users\\sczac\\OneDrive\\Desktop\\feira técnica\\feira-tecnica\\data\\acessos-iniciais.json. Troque a senha do administrador após o primeiro login.","timestamp":"2026-09-28 14:06:06"}
+{"level":"info","message":"Projetos do CSV incorporado: 3 novos, 34 atualizados.","timestamp":"2026-09-28 14:06:07"}
+{"level":"info","message":"Alunos do CSV incorporado: 14 acessos novos, 14 vínculos, 49 pendências.","timestamp":"2026-09-28 14:06:09"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 14:06:09"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 14:06:14","url":"/api/v1/professores/login"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 14:21:23"}
+{"level":"info","message":"Projetos do CSV incorporado: 0 novos, 0 atualizados.","timestamp":"2026-09-28 14:21:24"}
+{"level":"info","message":"Alunos do CSV incorporado: 0 acessos novos, 0 vínculos, 49 pendências.","timestamp":"2026-09-28 14:21:25"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 14:21:25"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 14:21:34","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 14:26:24","url":"/feira/api/v1/professores/login"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-28 14:26:34"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 14:26:37"}
+{"level":"info","message":"Projetos do CSV incorporado: 0 novos, 0 atualizados.","timestamp":"2026-09-28 14:26:37"}
+{"level":"info","message":"Alunos do CSV incorporado: 0 acessos novos, 0 vínculos, 49 pendências.","timestamp":"2026-09-28 14:26:38"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 14:26:38"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 14:26:43","url":"/feira/api/v1/professores/login"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-28 14:39:50"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 14:39:52"}
+{"level":"info","message":"Projetos do CSV incorporado: 0 novos, 0 atualizados.","timestamp":"2026-09-28 14:39:53"}
+{"level":"info","message":"Alunos do CSV incorporado: 0 acessos novos, 0 vínculos, 49 pendências.","timestamp":"2026-09-28 14:39:54"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 14:39:54"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 14:41:26","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 14:42:24","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 14:42:35","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 14:42:37","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 14:57:53","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-28 15:03:26"}
