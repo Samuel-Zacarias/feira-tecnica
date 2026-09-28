@@ -6,24 +6,28 @@
   <title>Importar Projetos | Feira Técnica</title>
   <link rel="stylesheet" href="css/feira.css">
   <link rel="stylesheet" href="css/school-refine.css">
+  <link rel="stylesheet" href="css/experience.css">
+  <link rel="icon" type="image/png" href="imagens/logo.png">
+  <link rel="stylesheet" href="css/site-brand.css">
+  <link rel="stylesheet" href="css/visual-system.css">
 </head>
-<body class="page-enter">
+<body class="experience">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 <div class="shell">
   <!-- BARRA LATERAL (MENU) -->
   <aside class="sidebar">
-    <div class="brand"><img src="imagens/logo.png" alt="UNIVAP"><div>Feira Técnica<small id="sideRole">Administração</small></div></div>
+    <div class="brand"><img src="imagens/logo.png" alt="UNIVAP"><div>Feira Técnica<small id="sideRole">Área interna</small></div></div>
     <nav class="nav-list">
       <a class="nav-link" href="dashboard.html"><span class="ico">⌂</span>Painel</a>
       <a class="nav-link" href="projetos-consulta.html"><span class="ico">◇</span>Projetos</a>
       <a class="nav-link" href="avaliacoes-cadastro.html"><span class="ico">★</span>Avaliar</a>
       <a class="nav-link" href="avaliacoes-consulta.html"><span class="ico">✓</span>Avaliações</a>
       <a class="nav-link" href="ranking.html"><span class="ico">↗</span>Ranking</a>
-      <a class="nav-link active" data-admin href="receberExcel.html"><span class="ico">⇩</span>Importar planilha</a>
-      <a class="nav-link" data-admin href="professores-consulta.html"><span class="ico">♙</span>Professores</a>
-      <a class="nav-link" data-admin href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a>
+      <a class="nav-link active admin-only" data-admin href="receberExcel.html"><span class="ico">⇩</span>Importar</a>
+      <a class="nav-link admin-only" data-admin href="professores-consulta.html"><span class="ico">♙</span>Professores</a>
+      <a class="nav-link admin-only" data-admin href="alunos-consulta.html"><span class="ico">◎</span>Alunos</a>
     </nav>
-    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span id="profileRole">Administrador</span><button class="logout" data-sair>Sair</button></div></div>
+    <div class="sidebar-foot"><div class="profile-mini"><strong data-usuario>Usuário</strong><span id="profileRole">Feira Técnica 2026</span><button class="logout" data-sair>Sair</button></div></div>
   </aside>
 
   <!-- CONTEÚDO PRINCIPAL -->
@@ -295,5 +299,6 @@
 
 <script src="js/navigation.js"></script>
 <script src="js/ui-effects.js"></script>
+<script src="js/experience.js"></script>
 </body>
 </html>

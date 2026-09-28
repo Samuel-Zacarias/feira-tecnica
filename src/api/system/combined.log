@@ -40,3 +40,13 @@
 {"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 14:42:37","url":"/feira/api/v1/projetos/meu/qrcode"}
 {"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 14:57:53","url":"/feira/api/v1/projetos/meu/qrcode"}
 {"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-28 15:03:26"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 15:06:46"}
+{"level":"info","message":"Projetos do CSV incorporado: 0 novos, 0 atualizados.","timestamp":"2026-09-28 15:06:46"}
+{"level":"info","message":"Alunos do CSV incorporado: 0 acessos novos, 0 vínculos, 49 pendências.","timestamp":"2026-09-28 15:06:47"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 15:06:47"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 15:07:22","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 15:07:24","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 15:07:32","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 15:07:34","url":"/feira/api/v1/professores/login"}
+{"error":null,"httpCode":400,"level":"warn","message":"O ID do professor deve conter apenas números.","method":"POST","timestamp":"2026-09-28 15:08:21","url":"/feira/api/v1/professores/login"}
+{"error":null,"httpCode":409,"level":"warn","message":"Esta matrícula aparece em mais de um projeto. Confira o cadastro antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 15:11:25","url":"/feira/api/v1/projetos/buscar-matricula?matricula=50240143"}
