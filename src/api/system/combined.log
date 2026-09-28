@@ -50,3 +50,34 @@
 {"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 15:07:34","url":"/feira/api/v1/professores/login"}
 {"error":null,"httpCode":400,"level":"warn","message":"O ID do professor deve conter apenas números.","method":"POST","timestamp":"2026-09-28 15:08:21","url":"/feira/api/v1/professores/login"}
 {"error":null,"httpCode":409,"level":"warn","message":"Esta matrícula aparece em mais de um projeto. Confira o cadastro antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 15:11:25","url":"/feira/api/v1/projetos/buscar-matricula?matricula=50240143"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 17:03:24"}
+{"level":"info","message":"Projetos do CSV incorporado: 0 novos, 0 atualizados.","timestamp":"2026-09-28 17:03:25"}
+{"level":"info","message":"Alunos do CSV incorporado: 0 acessos novos, 0 vínculos, 49 pendências.","timestamp":"2026-09-28 17:03:29"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 17:03:29"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 17:03:52","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 17:03:55","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 17:03:57","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 17:06:51","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:08:20","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:08:25","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:08:26","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:08:27","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:08:27","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:08:27","url":"/feira/api/v1/professores/login"}
+{"error":{"message":"Não foi possível realizar o login."},"httpCode":401,"level":"warn","message":"ID ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:08:28","url":"/feira/api/v1/professores/login"}
+{"error":null,"httpCode":401,"level":"warn","message":"Matrícula/e-mail ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:08:30","url":"/feira/api/v1/alunos/login"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-28 17:08:59"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 17:09:03"}
+{"level":"info","message":"Projetos do CSV incorporado: 0 novos, 0 atualizados.","timestamp":"2026-09-28 17:09:05"}
+{"level":"info","message":"Alunos do CSV incorporado: 0 acessos novos, 0 vínculos, 49 pendências.","timestamp":"2026-09-28 17:09:07"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 17:09:07"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 17:09:20","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 17:20:37","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"level":"info","message":"MongoDB conectado: feira-tecnica2026","timestamp":"2026-09-28 17:41:10"}
+{"level":"info","message":"Projetos do CSV incorporado: 0 novos, 0 atualizados.","timestamp":"2026-09-28 17:41:11"}
+{"level":"info","message":"Alunos do CSV incorporado: 0 acessos novos, 0 vínculos, 49 pendências.","timestamp":"2026-09-28 17:41:12"}
+{"level":"info","message":"Servidor rodando em http://localhost:3000/login.html","timestamp":"2026-09-28 17:41:12"}
+{"error":null,"httpCode":401,"level":"warn","message":"Matrícula/e-mail ou senha inválidos","method":"POST","timestamp":"2026-09-28 17:41:31","url":"/feira/api/v1/alunos/login"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 17:41:37","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"error":null,"httpCode":503,"level":"warn","message":"O celular não acessa localhost. Configure PUBLIC_BASE_URL com o domínio da feira ou o IP do servidor na rede Wi-Fi antes de gerar o QR Code.","method":"GET","timestamp":"2026-09-28 17:41:40","url":"/feira/api/v1/projetos/meu/qrcode"}
+{"level":"info","message":"Encerrando aplicação (SIGINT)","timestamp":"2026-09-28 17:42:48"}
