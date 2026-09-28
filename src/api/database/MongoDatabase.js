@@ -24,6 +24,21 @@ module.exports = class MongoDatabase {
             const client = new MongoClient(this.#url, {serverSelectionTimeoutMS:5000});
             try { await client.connect(); }
             catch(error) { await client.close(); throw new Error('Não foi possível conectar ao MongoDB. Inicie o banco ou configure MONGODB_URI.', {cause:error}); }
+            const minIndexSpace = process.env.MONGODB_INDEX_MIN_AVAILABLE_DISK_SPACE_MB;
+            if (minIndexSpace !== undefined) {
+                const megabytes = Number(minIndexSpace);
+                if (!Number.isInteger(megabytes) || megabytes < 50 || megabytes > 500) {
+                    await client.close();
+                    throw new Error('MONGODB_INDEX_MIN_AVAILABLE_DISK_SPACE_MB deve ser um inteiro entre 50 e 500.');
+                }
+                try {
+                    await client.db('admin').command({ setParameter: 1, indexBuildMinAvailableDiskSpaceMB: megabytes });
+                } catch (error) {
+                    await client.close();
+                    throw new Error('Não foi possível configurar a reserva de espaço para índices do MongoDB.', { cause: error });
+                }
+                logger.info(`Reserva mínima para índices do MongoDB: ${megabytes} MB`);
+            }
             MongoDatabase.#client = client;
             MongoDatabase.#db = client.db(this.#database);
             logger.info(`MongoDB conectado: ${this.#database}`);

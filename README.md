@@ -34,6 +34,8 @@ $env:BOOTSTRAP_ADMIN_PASSWORD='uma-senha-longa-e-unica'
 
 A aplicação usa `MONGODB_URI` e `MONGODB_DATABASE` quando definidos; caso contrário, usa `mongodb://localhost:27017` e o banco `feira-tecnica2026`. O arquivo [LEIA-CADASTRO.md](LEIA-CADASTRO.md) traz a configuração completa.
 
+Em um MongoDB com volume de apenas 0,5 GB, o limite padrão de 500 MB livres para construir índices pode impedir a inicialização. Nesse caso, configure `MONGODB_INDEX_MIN_AVAILABLE_DISK_SPACE_MB=100` no serviço da aplicação. A aplicação ajusta esse parâmetro no MongoDB antes de criar índices; acompanhe o espaço disponível e aumente o volume quando necessário.
+
 ## Publicar em `/feira/`
 
 As páginas, arquivos estáticos e APIs funcionam sob o prefixo `/feira/` (padrão). Por exemplo: `https://escola.example/feira/receberExcel.html` e `https://escola.example/feira/api/v1/projetos`. O endereço sem prefixo continua disponível para desenvolvimento local. Se o servidor usar outro prefixo, defina `APP_BASE_PATH` antes de iniciar, por exemplo `$env:APP_BASE_PATH='/minha-feira'`; use uma string vazia para publicar só na raiz.
@@ -41,6 +43,12 @@ As páginas, arquivos estáticos e APIs funcionam sob o prefixo `/feira/` (padr�
 Para QR Codes acessíveis pelos celulares, configure o endereço público **com o prefixo**, por exemplo `$env:PUBLIC_BASE_URL='https://escola.example/feira'`. Na prévia local iniciada com `npm start`, se houver exatamente um IP privado ativo na rede, o servidor usa automaticamente esse IP no QR mesmo que o navegador esteja em `localhost`. O telefone precisa estar na mesma rede e ter acesso à porta 3000. A prévia com contas de teste continua restrita ao próprio computador e não usa esse atalho. Na escola, defina `PUBLIC_BASE_URL` com o domínio HTTPS real. O proxy pode encaminhar `/feira/...` ao Node preservando ou removendo o prefixo; o navegador sempre usa URLs relativas à pasta da página. Reinicie o Node após mudar essas variáveis.
 
 ## Acessos e dados
+
+### Projetos no servidor sem alunos cadastrados
+
+Ao iniciar, o servidor confere os participantes dos projetos já presentes no MongoDB e cria as contas de aluno que faltam. Também é possível entrar como administrador, abrir **Importar** e clicar em **Cadastrar alunos dos projetos existentes**. Depois de enviar um CSV nessa tela, a mesma conferência é executada automaticamente. A tela mostra quantas contas e vínculos foram criados e as matrículas que precisam de conferência.
+
+A operação pode ser repetida. Ela não muda as senhas que os alunos já trocaram. Para novos acessos, a senha inicial é a turma em letras maiúsculas, como `2J`. Confira no log de inicialização a mensagem **Alunos dos projetos no banco** e use **Alunos** no painel para conferir os cadastros. O servidor precisa estar conectado ao mesmo banco indicado por `MONGODB_URI` e `MONGODB_DATABASE`.
 
 - O CSV atualizado está incorporado em `src/api/database/projetos-feira-2026.json`: são 312 projetos carregados automaticamente ao iniciar o servidor. A importação usa uma chave por registro para não duplicar projetos; apresentações editadas pelas equipes são preservadas. O registro 311 do CSV veio sem título e precisa ser conferido pelo administrador.
 - O servidor cria automaticamente contas para os participantes do CSV incorporado que tenham matrícula e turma inequívocas e liga cada conta ao projeto correto. Uma simulação com o catálogo completo criou 1.229 acessos e separou 49 pendências. Confira `data/pendencias-importacao.json` após o primeiro início. O arquivo privado `data/cadastro-feira-2026.json`, se existir, é importado primeiro; senhas já trocadas e apresentações editadas são preservadas.

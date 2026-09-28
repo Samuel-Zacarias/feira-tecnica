@@ -31,13 +31,14 @@ module.exports = async function importarAlunosIncorporados(database, projects = 
 
   const hashes = new Map();
   for (const [matricula, entries] of porMatricula) {
-    if (entries.length !== 1) {
+    const identidades = new Set(entries.map(({ person, turma }) => `${comparar(person.nome)}|${turma}`));
+    if (identidades.size !== 1) {
       report.pendencias.push({ tipo: 'matricula_em_mais_de_um_registro', matricula, projetos: entries.map(item => item.project.importKey) });
       continue;
     }
     const { project, person, turma } = entries[0];
-    const projeto = await projetos.findOne({ importKey: project.importKey });
-    if (!projeto) {
+    const projetoInicial = await projetos.findOne({ importKey: project.importKey });
+    if (!projetoInicial) {
       report.pendencias.push({ tipo: 'projeto_nao_encontrado', matricula, projeto: project.importKey });
       continue;
     }
@@ -65,11 +66,19 @@ module.exports = async function importarAlunosIncorporados(database, projects = 
       if (result.upsertedCount) report.contasCriadas++;
       else report.contasExistentes++;
     }
-    const ids = projeto.alunosAutorizados || [];
     const alunoId = aluno._id.toString();
-    if (!ids.includes(alunoId)) {
-      await projetos.updateOne({ _id: projeto._id }, { $set: { alunosAutorizados: [...ids, alunoId] } });
-      report.vinculosCriados++;
+    for (const entry of entries) {
+      const projeto = entry.project.importKey === project.importKey
+        ? projetoInicial
+        : await projetos.findOne({ importKey: entry.project.importKey });
+      if (!projeto) {
+        report.pendencias.push({ tipo: 'projeto_nao_encontrado', matricula, projeto: entry.project.importKey });
+        continue;
+      }
+      if (!(projeto.alunosAutorizados || []).includes(alunoId)) {
+        const result = await projetos.updateOne({ _id: projeto._id }, { $addToSet: { alunosAutorizados: alunoId } });
+        if (result.modifiedCount) report.vinculosCriados++;
+      }
     }
   }
 

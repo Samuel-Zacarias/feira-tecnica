@@ -49,6 +49,8 @@ module.exports = class AlunoService {
 
     findAll = () => this.#dao.findAll();
 
+    sincronizarProjetos = () => this.#dao.sincronizarProjetos();
+
     findById = async id => {
         const aluno = await this.#dao.findById(id);
         if (!aluno) throw new ErrorResponse(404, 'Aluno não encontrado');

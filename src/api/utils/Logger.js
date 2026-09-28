@@ -3,7 +3,8 @@ const path = require('path');
 const winston = require('winston');
 
 const logDirectory = path.join(__dirname, '../system');
-fs.mkdirSync(logDirectory, { recursive: true });
+const producao = process.env.NODE_ENV === 'production';
+if (!producao) fs.mkdirSync(logDirectory, { recursive: true });
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
@@ -13,7 +14,9 @@ const logger = winston.createLogger({
         winston.format.splat(),
         winston.format.json()
     ),
-    transports: [
+    transports: producao ? [
+        new winston.transports.Console(),
+    ] : [
         new winston.transports.File({
             filename: path.join(logDirectory, 'error.log'),
             level: 'error',
@@ -28,7 +31,7 @@ const logger = winston.createLogger({
     ],
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (!producao) {
     logger.add(new winston.transports.Console({
         level: 'debug',
         format: winston.format.combine(

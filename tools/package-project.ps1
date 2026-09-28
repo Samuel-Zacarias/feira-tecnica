@@ -4,7 +4,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $project = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$projectName = Split-Path $project -Leaf
+$projectName = 'feira'
 if (-not $OutputPath) {
     $OutputPath = Join-Path (Split-Path $project -Parent) 'feira-tecnica-organizada.zip'
 }

@@ -32,6 +32,11 @@ module.exports = class AlunoController {
         response.json({ success: true, data: { alunos } });
     });
 
+    sincronizarProjetos = asyncHandler(async (_request, response) => {
+        const relatorio = await this.#service.sincronizarProjetos();
+        response.json({ success: true, data: { relatorio } });
+    });
+
     me = asyncHandler(async (request, response) => {
         const aluno = await this.#service.findById(request.usuario.idAluno);
         response.json({ success: true, data: { aluno } });

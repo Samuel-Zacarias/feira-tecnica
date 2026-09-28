@@ -1,11 +1,16 @@
 const { ObjectId } = require('mongodb');
 const bcrypt = require('bcrypt');
+const sincronizarAlunosProjetos = require('../database/SincronizarAlunosProjetos');
 
 module.exports = class AlunoDAOMongo {
     #database;
 
     constructor(databaseInstance) {
         this.#database = databaseInstance;
+    }
+
+    sincronizarProjetos() {
+        return sincronizarAlunosProjetos(this.#database);
     }
 
     async create(aluno) {

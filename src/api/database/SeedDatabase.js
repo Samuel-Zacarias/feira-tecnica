@@ -16,10 +16,6 @@ const PROFESSOR_TESTE_LOGIN_ID = '900000000001';
 
 const ADMIN_TESTE_ID = '68d5d3c0a0b1c2d3e4f5a602';
 
-const ADMIN_EMAIL = 'admin@feira.com';
-
-const ADMIN_PASSWORD = 'Admin@2026';
-
 module.exports = async function seedDatabase(database, options = {}) {
 
     if (process.env.ENABLE_TEST_PROFESSOR === 'true' && process.env.NODE_ENV === 'production') {
@@ -55,12 +51,16 @@ module.exports = async function seedDatabase(database, options = {}) {
         }
     );
 
-    await criarProfessorSeNecessario(professores, {
-        nome: 'Administrador da Feira',
-        email: ADMIN_EMAIL,
-        senha: ADMIN_PASSWORD,
-        role: 'ADMINISTRADOR',
-    });
+    if (!await professores.findOne({ role: 'ADMINISTRADOR' })) {
+        const email = String(process.env.BOOTSTRAP_ADMIN_EMAIL || 'admin-inicial@feira.local').trim().toLowerCase();
+        const senha = process.env.BOOTSTRAP_ADMIN_PASSWORD || gerarSenhaInicial();
+        const criado = await criarProfessorSeNecessario(professores, {
+            nome: 'Administrador da Feira', email, senha, role: 'ADMINISTRADOR',
+        });
+        if (criado && !process.env.BOOTSTRAP_ADMIN_PASSWORD) {
+            salvarAcessosIniciais([{ perfil: 'Administrador', email, senha }]);
+        }
+    }
 
     const avaliadores = await professores.find({ role: 'AVALIADOR' }).toArray();
 
@@ -169,6 +169,15 @@ module.exports = async function seedDatabase(database, options = {}) {
     logger.info(
         `Alunos do CSV incorporado: ${acessosIncorporados.contasCriadas} acessos novos, ${acessosIncorporados.vinculosCriados} vínculos, ${acessosIncorporados.pendencias.length} pendências.`
     );
+
+    const sincronizarProjetos = options.sincronizarProjetos ||
+        (options.importarAlunos ? null : require('./SincronizarAlunosProjetos'));
+    if (sincronizarProjetos) {
+        const sincronizacao = await sincronizarProjetos(database);
+        logger.info(
+            `Alunos dos projetos no banco: ${sincronizacao.contasCriadas} acessos novos, ${sincronizacao.vinculosCriados} vínculos, ${sincronizacao.pendencias.length} pendências.`
+        );
+    }
 
     if (
         cargaPrivada ||
