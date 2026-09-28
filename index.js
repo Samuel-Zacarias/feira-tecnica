@@ -9,6 +9,7 @@ async function iniciar() {
         await server.init();
         server.run();
     } catch (error) {
+        console.error("ERRO AO INICIAR:", error); // <- adicionado
         logger.error("Falha ao iniciar a aplicação", {
             error: error.message,
             stack: error.stack,
@@ -19,6 +20,7 @@ async function iniciar() {
 }
 
 process.on("unhandledRejection", reason => {
+    console.error("PROMESSA REJEITADA:", reason); // <- adicionado
     logger.error("Promessa rejeitada sem tratamento", {
         reason: reason?.message || reason,
         stack: reason?.stack,
@@ -26,18 +28,13 @@ process.on("unhandledRejection", reason => {
 });
 
 process.on("uncaughtException", error => {
+    console.error("EXCEÇÃO NÃO CAPTURADA:", error); // <- adicionado
     logger.error("Exceção não capturada", {
+        // <- MANTENHA AQUI o restante original do seu arquivo
+        // (o print cortou daqui para baixo)
         error: error.message,
         stack: error.stack,
     });
-    process.exit(1);
 });
 
-for (const signal of ["SIGINT", "SIGTERM"]) {
-    process.on(signal, () => {
-        logger.info(`Encerrando aplicação (${signal})`);
-        process.exit(0);
-    });
-}
-
-iniciar();
+iniciar(); // <- mantenha a chamada final como estava no seu arquivo
