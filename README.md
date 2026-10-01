@@ -1,107 +1,196 @@
 # Feira Técnica 2026 · Colégios Univap
 
-Sistema da Feira Técnica da Unidade Centro: vitrine pública de projetos, área dos alunos, avaliação de professores, avaliação de visitantes, ranking, crachás e QR Codes. O front-end e o back-end ficam nesta pasta.
+> Plataforma web utilizada na **Univap Centro** para organizar e apresentar os projetos da Feira Técnica.
 
-## Organização
+O sistema reúne, em um só lugar, o catálogo dos trabalhos, a apresentação das equipes, as avaliações da banca e a votação dos visitantes. Também oferece ferramentas para preparar a participação na feira, como crachás e QR Codes que levam diretamente à página de cada projeto.
 
-- `src/api/`: regras de negócio, rotas, acesso ao MongoDB e carga inicial dos projetos.
-- `src/public/`: páginas ativas, estilos, scripts e imagens exibidos pelo site.
-- `tests/`: testes das regras de acesso, importação, avaliação e rankings.
-- `tools/`: verificação do front-end, preparação de dados, prévia e manutenção.
-- `nginx/conf/`: exemplo de proxy para publicar o sistema em `/feira/`.
-- `IMPLANTACAO-ESCOLA.md`: passos para instalar e conferir o sistema no servidor da escola.
-- `Server.js` e `index.js`: configuração e inicialização do servidor.
-- `data/`: dados privados gerados na instalação; não faz parte do ZIP de entrega.
+Desenvolvido como projeto acadêmico de Informática, conecta o trabalho dos alunos à experiência de professores, visitantes e organizadores. **Foi utilizado na escola Univap Centro e continua em evolução.**
 
-Os arquivos de interface antigos sem ligação com as telas atuais foram retirados. `visual-system.css` carrega os módulos de estilo que ainda são usados; por isso esses módulos devem permanecer juntos.
+## Visão geral
 
-## Começar
+| Item | Descrição |
+| --- | --- |
+| Contexto | Feira Técnica dos Colégios Univap — unidade Centro |
+| Objetivo | Centralizar a apresentação, a organização e a avaliação dos projetos |
+| Público | Alunos, professores avaliadores, visitantes e administradores |
+| Aplicação | Sistema web com interface responsiva e áreas de acesso por perfil |
+| Tecnologias principais | Node.js, Express, MongoDB, JavaScript, HTML e CSS |
+| Estado | Utilizado na escola; desenvolvimento e melhorias contínuas |
 
-1. Instale o Node.js e inicie o MongoDB local.
-2. Nesta pasta, execute `npm ci`.
-3. Execute `npm start` e abra `http://localhost:3000/index.html`.
+## Telas do sistema
 
-No primeiro início, o sistema cria automaticamente apenas um administrador com senha forte individual. Abra `data/acessos-iniciais.json` para ver seu e-mail e senha gerada. Esse arquivo é privado e não deve ser publicado. O administrador entra pelo e-mail; cada professor entra com o ID numérico informado pela escola na planilha. Na primeira inicialização desta versão, avaliadores antigos sem ID informado recebem provisoriamente um ID numérico derivado da conta anterior. O administrador pode substituí-lo pelo ID oficial em **Editar professor**. A senha inicial `univap` é aplicada uma vez; reiniciar o servidor não altera a senha novamente.
+As capturas abaixo mostram o projeto no ambiente da Univap Centro. Foram organizadas por funcionalidade para apresentar o fluxo de uso.
 
-Ao entrar com `univap`, o professor vê **Segurança da conta · Trocar senha** aberto no painel. Ele informa a senha atual e uma nova senha pessoal forte (8 ou mais caracteres, com maiúscula, minúscula, número e símbolo). A antiga deixa de funcionar, e a senha pessoal é preservada nos reinícios. A opção também fica disponível depois pelo botão **Trocar senha** no painel. Somente a própria conta autenticada pode usar `PUT /api/v1/professores/me/senha`.
+### 1. Vitrine de projetos
 
-Se quiser definir você mesmo a senha do primeiro administrador, configure antes de iniciar:
+O catálogo público apresenta os trabalhos em cartões com imagem, curso, etapa de desenvolvimento, resumo e acesso à página do projeto. A busca e os filtros ajudam o visitante a encontrar os trabalhos de interesse.
 
-```powershell
-$env:BOOTSTRAP_ADMIN_EMAIL='professor@escola.com'
-$env:BOOTSTRAP_ADMIN_PASSWORD='uma-senha-longa-e-unica'
+![Vitrine da Feira Técnica com cartões dos projetos e botão para abrir cada apresentação](docs/images/vitrine-projetos.png)
+
+### 2. Área do aluno
+
+O painel reúne as ferramentas da equipe: edição da página pública, acompanhamento do preenchimento e acesso ao QR Code do projeto. A apresentação é organizada em etapas para explicar a ideia e o que foi construído.
+
+![Área do aluno com apresentação do projeto, progresso de preenchimento e QR Code](docs/images/area-aluno.png)
+
+### 3. Edição da apresentação
+
+Os alunos autorizados podem descrever o problema, os objetivos, a solução, o diferencial, as tecnologias e os materiais utilizados, além de incluir fotos e links. O painel também permite consultar a equipe e salvar as informações da página pública.
+
+![Formulário de edição com campos de solução, diferencial, tecnologias, fotos e lista da equipe](docs/images/edicao-projeto.png)
+
+### 4. Crachás dos participantes
+
+A tela permite selecionar os integrantes, definir a função, adicionar uma foto e visualizar os crachás antes da impressão. É possível preparar dois crachás com margens de recorte em uma folha A4.
+
+![Configuração de participantes e pré-visualização de dois crachás da Feira Técnica](docs/images/crachas-participantes.png)
+
+### 5. QR Code e placa do estande
+
+Cada projeto possui um QR Code que direciona à sua apresentação pública. A placa pode ser impressa para o estande, facilitando o acesso pelo celular durante a visita.
+
+![Placas do estande com o título do projeto e QR Code para abrir sua página](docs/images/qr-code-estande.png)
+
+## Como o sistema funciona
+
+1. **A organização prepara a feira:** cadastra ou importa projetos, participantes e avaliadores, além de configurar o período da votação.
+2. **As equipes apresentam seus trabalhos:** completam a página pública com resumo, objetivos, solução, tecnologias, fotos e links.
+3. **Os participantes preparam os materiais:** geram os crachás e os QR Codes que serão utilizados nos estandes.
+4. **Os visitantes conhecem os projetos:** navegam pelo catálogo ou acessam as apresentações pelos QR Codes e podem votar no período autorizado.
+5. **A banca avalia os trabalhos:** registra avaliações, enquanto o sistema disponibiliza histórico e rankings.
+
+## Perfis de acesso
+
+| Perfil | Principais recursos |
+| --- | --- |
+| Visitante | Consultar o catálogo e as páginas públicas; votar quando a votação estiver liberada |
+| Aluno | Editar a apresentação da própria equipe, adicionar fotos e preparar crachás e QR Codes |
+| Professor avaliador | Acessar a área de avaliação, registrar avaliações e consultar os recursos da banca |
+| Administrador | Gerenciar cadastros, importações, projetos e configurações da votação |
+
+Os acessos de aluno, avaliador e administrador são separados e protegidos por autenticação e validação de permissões.
+
+## Funcionalidades
+
+- **Apresentação dos projetos:** catálogo com busca e filtros, páginas públicas e edição pelas equipes autorizadas.
+- **Avaliação e resultados:** avaliações da banca, histórico e ranking; votação de visitantes com período configurável e códigos opcionais.
+- **Materiais da feira:** geração de QR Codes, placas dos estandes e crachás.
+- **Organização:** cadastro e importação de professores por CSV, além de importação privada de projetos e participantes.
+- **Experiência de uso:** interface responsiva para computador e celular.
+- **Controle de acesso:** proteção de rotas, cookies de sessão, limite de tentativas de login e validações.
+
+## Tecnologias
+
+| Camada | Tecnologias |
+| --- | --- |
+| Interface | HTML, CSS e JavaScript |
+| Servidor e API | Node.js e Express |
+| Banco de dados | MongoDB |
+| Autenticação | JWT, bcrypt e cookies `HttpOnly` |
+| QR Codes | Biblioteca `qrcode` |
+| Logs | Winston |
+| Desenvolvimento | Nodemon e testes nativos do Node.js |
+
+## Organização do repositório
+
+| Caminho | Responsabilidade |
+| --- | --- |
+| `src/api/controllers/` | Tratamento das requisições da API |
+| `src/api/dao/` e `src/api/database/` | Persistência, conexão e rotinas do banco |
+| `src/api/models/` | Modelos e regras dos dados |
+| `src/api/routes/` e `src/api/middleware/` | Rotas, autenticação e validações |
+| `src/api/services/` | Serviços da aplicação |
+| `src/public/` | Páginas, estilos, scripts e imagens da interface |
+| `tests/` | Testes automatizados |
+| `tools/` | Ferramentas de importação, verificação e operação |
+| `docs/` | Documentação e capturas das telas |
+| `nginx/conf/` | Configuração de publicação com Nginx |
+| `Server.js` e `index.js` | Configuração e inicialização do servidor |
+
+## Executar localmente
+
+Instale uma versão LTS do Node.js compatível com as dependências e mantenha o MongoDB em execução.
+
+```bash
+git clone https://github.com/Samuel-Zacarias/feira-tecnica.git
+cd feira-tecnica
+npm ci
+npm start
 ```
 
-A aplicação usa `MONGODB_URI` e `MONGODB_DATABASE` quando definidos; caso contrário, usa `mongodb://localhost:27017` e o banco `feira-tecnica2026`. O arquivo [LEIA-CADASTRO.md](LEIA-CADASTRO.md) traz a configuração completa.
+Abra **http://localhost:3000/feira/**. O acesso sem prefixo também está disponível para desenvolvimento local.
 
-Em um MongoDB com volume de apenas 0,5 GB, o limite padrão de 500 MB livres para construir índices pode impedir a inicialização. Nesse caso, configure `MONGODB_INDEX_MIN_AVAILABLE_DISK_SPACE_MB=100` no serviço da aplicação. A aplicação ajusta esse parâmetro no MongoDB antes de criar índices; acompanhe o espaço disponível e aumente o volume quando necessário.
+Para reinício automático durante o desenvolvimento:
 
-## Publicar em `/feira/`
+```bash
+npm run dev
+```
 
-As páginas, arquivos estáticos e APIs funcionam sob o prefixo `/feira/` (padrão). Por exemplo: `https://escola.example/feira/receberExcel.html` e `https://escola.example/feira/api/v1/projetos`. O endereço sem prefixo continua disponível para desenvolvimento local. Se o servidor usar outro prefixo, defina `APP_BASE_PATH` antes de iniciar, por exemplo `$env:APP_BASE_PATH='/minha-feira'`; use uma string vazia para publicar só na raiz.
+As variáveis opcionais estão exemplificadas em [`.env.example`](.env.example). O Node.js não carrega esse arquivo automaticamente: configure as variáveis no ambiente do processo antes de iniciar.
 
-Para QR Codes acessíveis pelos celulares, configure o endereço público **com o prefixo**, por exemplo `$env:PUBLIC_BASE_URL='https://escola.example/feira'`. Na prévia local iniciada com `npm start`, se houver exatamente um IP privado ativo na rede, o servidor usa automaticamente esse IP no QR mesmo que o navegador esteja em `localhost`. O telefone precisa estar na mesma rede e ter acesso à porta 3000. A prévia com contas de teste continua restrita ao próprio computador e não usa esse atalho. Na escola, defina `PUBLIC_BASE_URL` com o domínio HTTPS real. O proxy pode encaminhar `/feira/...` ao Node preservando ou removendo o prefixo; o navegador sempre usa URLs relativas à pasta da página. Reinicie o Node após mudar essas variáveis.
+## Configuração e operação
 
-## Acessos e dados
+O [guia de operação](docs/OPERACAO.md) reúne as instruções específicas desta versão: preparação dos acessos, importação de alunos e professores, configuração dos rankings, votação, QR Codes, MongoDB e backups.
 
-### Projetos no servidor sem alunos cadastrados
+| Configuração | Uso |
+| --- | --- |
+| `MONGODB_URI` e `MONGODB_DATABASE` | Conexão e banco do MongoDB |
+| `APP_BASE_PATH` | Prefixo de publicação; padrão `/feira/` |
+| `PUBLIC_BASE_URL` | URL pública completa, incluindo o prefixo, utilizada nos QR Codes |
+| `BOOTSTRAP_ADMIN_EMAIL` e `BOOTSTRAP_ADMIN_PASSWORD` | Credenciais opcionais para criar o primeiro administrador |
+| `JWT_SECRET` | Chave persistente das sessões |
+| `VISITOR_TICKET_SECRET` | Chave persistente dos códigos de votação |
+| `NODE_ENV` e `TRUST_PROXY_HOPS` | Configuração de produção e proxy confiável |
 
-Ao iniciar, o servidor confere os participantes dos projetos já presentes no MongoDB e cria as contas de aluno que faltam. Também é possível entrar como administrador, abrir **Importar** e clicar em **Cadastrar alunos dos projetos existentes**. Depois de enviar um CSV nessa tela, a mesma conferência é executada automaticamente. A tela mostra quantas contas e vínculos foram criados e as matrículas que precisam de conferência.
+No primeiro início, se não forem fornecidas credenciais próprias, a aplicação gera uma senha individual para o administrador e salva o acesso em `data/acessos-iniciais.json`. Esse arquivo é privado.
 
-A operação pode ser repetida. Ela não muda as senhas que os alunos já trocaram. Para novos acessos, a senha inicial é a turma em letras maiúsculas, como `2J`. Confira no log de inicialização a mensagem **Alunos dos projetos no banco** e use **Alunos** no painel para conferir os cadastros. O servidor precisa estar conectado ao mesmo banco indicado por `MONGODB_URI` e `MONGODB_DATABASE`.
+**Esta versão inclui a carga de projetos em `src/api/database/projetos-feira-2026.json`.** O servidor importa os registros e prepara os vínculos dos alunos, preservando as apresentações editadas e as senhas já trocadas. Confira as pendências geradas antes de distribuir os acessos.
 
-- O CSV atualizado está incorporado em `src/api/database/projetos-feira-2026.json`: são 312 projetos carregados automaticamente ao iniciar o servidor. A importação usa uma chave por registro para não duplicar projetos; apresentações editadas pelas equipes são preservadas. O registro 311 do CSV veio sem título e precisa ser conferido pelo administrador.
-- O servidor cria automaticamente contas para os participantes do CSV incorporado que tenham matrícula e turma inequívocas e liga cada conta ao projeto correto. Uma simulação com o catálogo completo criou 1.229 acessos e separou 49 pendências. Confira `data/pendencias-importacao.json` após o primeiro início. O arquivo privado `data/cadastro-feira-2026.json`, se existir, é importado primeiro; senhas já trocadas e apresentações editadas são preservadas.
-- O aluno entra por matrícula ou por e-mail confirmado. A senha inicial é a turma em letras maiúsculas, por exemplo `2J`. Na área do aluno, em **Segurança da conta**, ele pode trocá-la por uma senha pessoal forte.
-- Não há contas administrativas com senha pública de demonstração. A senha do administrador inicial é gerada individualmente e salva em `data/acessos-iniciais.json`.
-- Administradores podem cadastrar professores em `professores-novo.html`, pelo botão **Cadastrar professor** na lista. Para avaliadores, informe o ID oficial usando somente números e o nome; o e-mail é opcional. O servidor define `univap` como senha inicial. Para administradores, são exigidos e-mail e senha forte próprios. O servidor exige sessão de administrador nessa página e na API de cadastro.
-- Para cadastrar vários professores, use **Importar planilha de professores** na lista. Baixe `modelo-professores.csv` e preencha `ID;Nome`, um professor por linha; o ID aceita apenas dígitos. Formate a coluna ID como texto no Excel para preservar zeros à esquerda e exporte como CSV UTF-8. As colunas `Email`, `Funcao` e `Senha` são opcionais para avaliadores; a função padrão é AVALIADOR. A página permite baixar `resultado-importacao-professores.csv` com sucessos e erros por ID. Guarde esse resultado em local privado. Para ADMINISTRADOR, e-mail e senha forte são obrigatórios. IDs e e-mails já cadastrados aparecem como falha sem alterar a conta existente.
+## Avaliações e rankings
 
-### Professor e administrador de teste (somente local)
+- A banca registra avaliações vinculadas à conta do professor.
+- Visitantes avaliam os projetos de 1 a 5 estrelas durante o período liberado.
+- O ranking da banca e o ranking dos visitantes são separados.
+- O administrador pode ajustar data, horários e exigência de códigos de votação.
+- A ordenação considera a média real, o número de avaliações e o título do projeto.
 
-Com o MongoDB configurado, execute `npm run start:teste-acessos` e abra `http://localhost:3000/login.html`. Pare antes qualquer servidor que já esteja usando a porta 3000. O comando `npm start` não habilita as contas de teste.
+Consulte o [guia de operação](docs/OPERACAO.md) para os períodos configurados nesta versão e os detalhes do controle de votos.
 
-- Professor — ID numérico: `900000000001`; senha: `univap`.
-- Administrador — e-mail: `admin-teste@feira.local`; senha: `Univap@2026!`.
+## Implantação e cuidados com os dados
 
-As duas contas de teste só aceitam login com `ENABLE_TEST_PROFESSOR=true` fora de produção. O comando acima ativa essa opção apenas para o processo local. Em `NODE_ENV=production`, a aplicação recusa a ativação. As senhas fixas de teste são restauradas ao iniciar esse modo. O e-mail `professor-teste@feira.local` identifica a conta do professor, mas ele entra pelo ID. O administrador inicial real continua com senha individual gerada no primeiro início.
+A configuração de Nginx fica em `nginx/conf/`. Na escola, configure HTTPS e `PUBLIC_BASE_URL` com o endereço real, incluindo `/feira/`. Teste o QR Code em um celular conectado à rede que será usada na feira antes de imprimir as placas.
 
-- Há pendências de matrícula e e-mail na planilha original. Consulte [LEIA-CADASTRO.md](LEIA-CADASTRO.md) e `data/pendencias.json` antes de distribuir acessos.
-- O arquivo privado de acessos é entregue separadamente, fora deste projeto. Não publique a pasta `data` nem o arquivo de acessos.
+- Não publique `data/`, arquivos de acessos, logs, backups, credenciais ou configurações com segredos.
+- Preserve as chaves de sessão e votação entre reinícios.
+- Em múltiplos servidores, utilize as mesmas chaves persistentes em todas as instâncias.
+- Configure `NODE_ENV=production` e o número correto de proxies confiáveis.
+- As senhas iniciais dos alunos baseadas na turma e a senha compartilhada dos avaliadores precisam ser substituídas por credenciais individuais ou autenticação institucional antes da exposição do sistema na internet.
+- As contas de demonstração devem ser utilizadas somente em ambiente local, fora de produção.
 
-## Fluxos
+O projeto inclui `tools/backup-mongo.ps1` para backup do MongoDB. Teste a restauração em um banco separado e consulte o [guia de operação](docs/OPERACAO.md) para os comandos e cuidados completos.
 
-O visitante consulta os projetos e pode dar uma avaliação pública de 1 a 5 estrelas. A avaliação de professores é separada e alimenta o ranking da banca. O aluno edita a apresentação do próprio projeto e gera o QR Code que abre a página pública correspondente. O administrador cuida dos dados oficiais e dos acessos.
+## Testes e verificações
 
-Há dois rankings públicos: `ranking.html` usa somente avaliações finalizadas dos professores; `ranking-visitantes.html` usa somente as notas de 1 a 5 dos visitantes. Ambos ordenam pela média real, depois pelo número de avaliações e pelo título do projeto. A média é arredondada apenas para exibição. Filtrar por curso mantém a posição geral da equipe. O ranking dos visitantes permanece visível fora da janela de votação.
-
-A votação começa configurada para **2 de outubro de 2026**, das **7h às 12h** e das **17h às 22h30**, no horário de São Paulo. O administrador pode alterar a data, os períodos e o uso de códigos em `configuracoes-votacao.html`, pelo menu interno. O servidor bloqueia envios fora dos horários; a página do projeto atualiza o estado automaticamente. O modo padrão permite uma nota por projeto neste navegador, com limite de envios por IP. Para uma votação com controle individual, gere os códigos no painel, guarde o CSV baixado e ative “Exigir código”. Um código identifica a mesma pessoa mesmo após limpar os cookies. O modo de identificação não pode ser trocado depois que houver votos.
-
-No celular, a página pública usa menu acessível, capa fotográfica ajustada à tela e filtros que podem ser percorridos com o dedo. A vitrine permite buscar, filtrar por curso e ordenar os títulos de A–Z ou Z–A. Ela mostra 24 projetos por vez; **Mostrar mais projetos** revela os próximos na ordem escolhida. As áreas internas e a página do projeto têm controles e espaçamentos adaptados para toque.
-
-Para abrir o QR Code no celular, o endereço do site precisa ser acessível pelo telefone. Na rede local, abra `http://IP-DO-COMPUTADOR:3000/feira/` no celular para conferir a conexão antes de imprimir o QR. Se houver mais de um IP de rede, configure `PUBLIC_BASE_URL` explicitamente. `localhost` no QR Code não funciona em outro aparelho.
-
-## Segurança e implantação
-
-O servidor gera uma chave de sessão em `data/.jwt-secret` se `JWT_SECRET` não for configurada. Preserve essa chave entre reinícios e use uma mesma `JWT_SECRET` longa em instalações com múltiplos servidores. Sessões expiram em 12 horas, o login tem limite de tentativas e as APIs não aceitam origens externas por padrão. Com HTTPS, configure `NODE_ENV=production` para marcar o cookie como seguro. Se houver um proxy confiável à frente do Node, configure `TRUST_PROXY_HOPS=1` (ou o número real de saltos) para identificar corretamente o IP e o protocolo.
-
-Os códigos de visitante usam `data/.visitor-secret`; preserve também esse arquivo entre reinícios. Em múltiplos servidores, configure a mesma `VISITOR_TICKET_SECRET` longa em todos eles.
-
-Avaliações de professores são vinculadas ao ID da conta e há uma regra de unicidade no MongoDB para impedir duas avaliações do mesmo professor no mesmo projeto. Na primeira inicialização desta versão, avaliações antigas vinculadas apenas pelo nome são migradas quando há um único professor correspondente. Casos ambíguos ficam disponíveis somente para a administração e devem ser conferidos.
-
-Faça uma cópia do MongoDB antes da feira e após o encerramento. Com as ferramentas oficiais do MongoDB instaladas, execute `powershell -File tools/backup-mongo.ps1`; o arquivo será criado em `backups/`, pasta que fica fora do ZIP de entrega. Teste a restauração em um banco separado antes de depender dela.
-
-A senha inicial baseada na turma é previsível. A senha compartilhada `univap` para professores também é fácil de adivinhar. Antes de publicar o sistema na internet, substitua essas senhas iniciais por credenciais individuais ou autenticação institucional; o limite de tentativas de login não resolve esse risco por completo.
-
-## Verificação
-
-```powershell
+```bash
 npm test
 node tools/check-frontend.cjs
+npm audit --omit=dev
 ```
 
-Os testes usam um banco simulado. É necessário testar a conexão com o MongoDB e os fluxos completos no ambiente onde o sistema será usado.
+Os testes utilizam um banco simulado. A conexão real com o MongoDB e os fluxos completos também devem ser verificados no ambiente de implantação.
 
-O ZIP de entrega contém uma única pasta do projeto, sem `node_modules`, dados privados ou cópias antigas. Instale as dependências com `npm ci`. As variáveis opcionais estão exemplificadas em `.env.example`; o Node não carrega esse arquivo automaticamente, configure-as no ambiente antes de iniciar.
+## Melhorias futuras
 
-Para gerar novamente o pacote limpo, execute `pwsh -File tools/package-project.ps1`.
+- ampliar os testes dos fluxos completos com MongoDB;
+- validar impressão, QR Codes e navegação em diferentes dispositivos;
+- substituir senhas iniciais compartilhadas por acessos individuais;
+- conferir pendências de importação e proteger os dados dos participantes;
+- testar periodicamente a restauração dos backups;
+- aprimorar a experiência a partir do uso na escola.
+
+## Créditos
+
+Projeto acadêmico desenvolvido a partir da base do professor **Hélio Lourenço Esperidião Ferreira**, com evolução colaborativa no repositório de **Samuel Zacarias** e participação de **Vitor Hens**.
+
+**Contexto de uso:** escola Univap Centro, Feira Técnica dos Colégios Univap.
+
